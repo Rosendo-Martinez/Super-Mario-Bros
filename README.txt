@@ -45,3 +45,23 @@ Player GX GY CW CH SX SY SM GY B
     Max Speed           SM (float)
     Gravity             GY (float)
     Bullet Animation    B (string)
+
+Assets File Specification
+-------------------------
+
+Texture Asset:
+Texture N P
+    Texture Name        N (string)
+    Texture FilePath    P (string)
+
+Animation Asset:
+Animation N T F S
+    Animation Name      N (string)
+    Texture Name        T (string, reference to existing texture/image)
+    Frame Count         F (int, # frames in animation)
+    Animation Speed     S (int, # of game frames between animation frames)
+
+Font Asset:
+Font N P
+    Font Name           N (string)
+    Font File Path      P (string)

@@ -7,23 +7,33 @@
 #include <map>
 #include <memory>
 
+typedef std::map<std::string, std::shared_ptr<Scene>> SceneMap;
+
 class GameEngine
 {
-private:
-    std::map<std::string, std::shared_ptr<Scene>> m_scenes;
+protected:
     sf::RenderWindow m_window;
     Assets m_assets;
     std::string m_currentScene;
-    bool running;
+    SceneMap m_sceneMap;
+    size_t m_simulationSpeed = 1;
+    bool m_running = true;
 
-    void init();
+    void init(const std::string & assetSpecFilePath); // load in all assets, create window, frame limit, set menu scene
+    void update();
+
+    void sUserInput(); // get user input, and pass it to scene as action if scene has it registered
+
     std::shared_ptr<Scene> currentScene();
 public:
-    void run();
-    void update();
-    void quit();
-    void changeScene(std::string name, std::shared_ptr<Scene> scene); // changes scene to new or existing scene
-    Assets & getAssets();
-    sf::Window & window();
-    void sUserInput();
+    GameEngine(const std::string & assetSpecFilePath);
+
+    void changeScene(const std::string & sceneName, std::shared_ptr<Scene> scene, bool endCurrentScene = false); // changes scene to new or existing scene 
+
+    void quit(); // closes the game
+    void run(); // main game loop
+
+    sf::RenderWindow & window();
+    const Assets & assets() const;
+    bool isRunning();
 };
