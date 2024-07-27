@@ -33,7 +33,7 @@ public:
 
     virtual void doAction(const Action & action);
     void simulate(const size_t frames); // calls derived scene's update() a count number of times
-    void registerAction(int inputeKey, const std::string & actionName);
+    void registerAction(int inputKey, const std::string & actionName);
 
     size_t width() const;
     size_t height() const;
