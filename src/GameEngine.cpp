@@ -1,5 +1,9 @@
 #include "GameEngine.h"
 
+GameEngine::GameEngine()
+{
+}
+
 void GameEngine::init(const std::string & assetSpecFilePath) // load in all assets, create window, frame limit, set menu scene
 {
 }
@@ -20,7 +24,7 @@ GameEngine::GameEngine(const std::string & assetSpecFilePath)
 {
 }
 
-void GameEngine::changeScene(const std::string & sceneName, std::shared_ptr<Scene> scene, bool endCurrentScene = false) // changes scene to new or existing scene 
+void GameEngine::changeScene(const std::string & sceneName, std::shared_ptr<Scene> scene, bool endCurrentScene) // changes scene to new or existing scene 
 {
 }
 

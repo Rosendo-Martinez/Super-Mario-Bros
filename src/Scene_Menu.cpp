@@ -16,7 +16,7 @@ void Scene_Menu::sDoAction(const Action & action)
 {
 }
 
-Scene_Menu::Scene_Menu(GameEngine * gameEngine = nullptr)
+Scene_Menu::Scene_Menu(GameEngine * gameEngine)
 {
 }
 

@@ -7,6 +7,8 @@
 #include <map>
 #include <memory>
 
+class Scene;
+
 typedef std::map<std::string, std::shared_ptr<Scene>> SceneMap;
 
 class GameEngine
@@ -26,6 +28,7 @@ protected:
 
     std::shared_ptr<Scene> currentScene();
 public:
+    GameEngine();
     GameEngine(const std::string & assetSpecFilePath);
 
     void changeScene(const std::string & sceneName, std::shared_ptr<Scene> scene, bool endCurrentScene = false); // changes scene to new or existing scene 

@@ -6,7 +6,7 @@
 #include <map>
 #include <string>
 
-// class GameEngine; ???
+class GameEngine;
 
 typedef std::map<int, std::string> ActionMap;
 
