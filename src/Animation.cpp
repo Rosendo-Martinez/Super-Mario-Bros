@@ -19,7 +19,7 @@ Animation::Animation(const std::string & name, const sf::Texture & t, size_t fra
 {
     m_size = Vec2((float)t.getSize().x / frameCount, (float)t.getSize().y);
     m_sprite.setOrigin(m_size.x / 2.0f, m_size.y / 2.0f);
-    m_sprite.setTextureRect(sf::IntRect(std::floor(m_currentFrame) * m_size.x, 0, m_size.x, m_size.y)); // floor?
+    m_sprite.setTextureRect(sf::IntRect(0, 0, m_size.x, m_size.y));
 }
 
 // updates the animation to show the next frame, depending on its speed
