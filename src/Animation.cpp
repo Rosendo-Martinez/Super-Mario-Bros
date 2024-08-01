@@ -28,8 +28,12 @@ void Animation::update()
 {
     m_currentFrame++;
 
-    // TODO: 1) calc correct frame of animation
-    //       2) set the texture rect
+    // zero-indexed frame count
+    int fullAnimationFramesPlayed = (int) floor(m_currentFrame / m_speed);
+    // zero-indexed animation frames
+    int currentAnimationFrame = fullAnimationFramesPlayed % m_frameCount;
+
+    m_sprite.setTextureRect(sf::IntRect(currentAnimationFrame * m_size.x, 0, m_size.x, m_size.y));
 }
 
 bool Animation::hasEnded() const
