@@ -26,3 +26,8 @@ $(BINDIR)/%.o: $(SRCDIR)/%.cpp
 # Clean up build files
 clean:
 	rm -f $(BINDIR)/*.o $(BINDIR)/*.exe
+
+# Compile test
+animation_tests: ./tests/animation_tests.cpp ./src/Animation.cpp ./src/Vec2.cpp
+	$(CXX) $(CXX_FLAGS) ./tests/animation_tests.cpp ./src/Animation.cpp ./src/Vec2.cpp  $(LDFLAGS) -o ./tests/tests.exe
+
