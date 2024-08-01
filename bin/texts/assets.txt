@@ -1,0 +1,8 @@
+Texture MarioStand bin/images/mario/MarioStand16.png
+Texture BigCloud bin/images/mario/BigCloud16.png
+Texture QuestionBlock bin/images/mario/QuestionMarkBlock16.png
+Texture Brick bin/images/mario/Brick16.png
+Animation MarioStand MarioStand 1 0
+Animation BigCloud BigCloud 1 0
+Animation QuestionBlock QuestionBlock 1 0
+Animation Brick Brick 1 0
