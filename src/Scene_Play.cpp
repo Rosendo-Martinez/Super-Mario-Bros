@@ -1,5 +1,5 @@
 #include "Scene_Play.h"
-#include <iostream> // for debuging only
+#include <iostream>
 #include <sstream> 
 #include <cmath>
 
@@ -64,24 +64,22 @@ void Scene_Play::sDoAction(const Action & action) // do the action
 void Scene_Play::sDebug()
 {   
     sf::RenderWindow & window = m_game->window();
-    window.clear(sf::Color::Blue); 
-
     int heightWindow = window.getSize().y;
     int widthWindow = window.getSize().x;
     int heightCell = m_gridSize.y;
     int widthCell = m_gridSize.x;
+
+    window.clear(sf::Color::Blue); 
 
     // Draw grid vertical lines
     int verticalLines = floor(widthWindow / widthCell);
     for (int i = 0; i < verticalLines; i++) 
     {
         int x = widthCell * (i + 1);
-
         sf::VertexArray line(sf::Lines, 2);
 
         line[0].position = sf::Vector2f(x, 0);
         line[1].position = sf::Vector2f(x, heightWindow);
-
         line[0].color = sf::Color::White;
         line[1].color = sf::Color::White;
 
@@ -93,30 +91,31 @@ void Scene_Play::sDebug()
     for (int i = 0; i < horizontalLines; i++)
     {
         int y = heightWindow - heightCell * (i + 1);
-
         sf::VertexArray line(sf::Lines, 2);
 
         line[0].position = sf::Vector2f(0, y);
         line[1].position = sf::Vector2f(widthWindow, y);
+        line[0].color = sf::Color::White;
+        line[1].color = sf::Color::White;
 
         window.draw(line);
     }
 
-    // for gx = [0, verticalLines)
-        // for gy = [0, horizontalLines)
-            // draw "(gx,gy)" at top left of current grid cell
+    // Draw grid coordinates
     for (int gx = 0; gx < verticalLines; gx++)
     {
         for (int gy = 0; gy < horizontalLines; gy++)
         {
             sf::Text text; 
             std::ostringstream oss;
+
             oss << "(" << gx << "," << gy << ")";
             text.setFont(m_gridFont);
             text.setString(oss.str());
             text.setCharacterSize(12);
             text.setFillColor(sf::Color::White);
 
+            // relative to top left of window
             int x = widthCell * gx;
             int y = heightWindow - (heightCell * (gy + 1));
             text.setPosition(sf::Vector2f(x, y));
@@ -124,7 +123,6 @@ void Scene_Play::sDebug()
             window.draw(text);
         }
     }
-
 
     window.display();
 }
