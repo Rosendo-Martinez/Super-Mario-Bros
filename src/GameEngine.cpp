@@ -58,6 +58,7 @@ void GameEngine::run() // main game loop
 
 sf::RenderWindow & GameEngine::window()
 {
+    return m_window;
 }
 
 const Assets & GameEngine::assets() const
