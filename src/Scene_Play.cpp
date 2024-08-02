@@ -64,15 +64,15 @@ void Scene_Play::sDoAction(const Action & action) // do the action
 void Scene_Play::sDebug()
 {   
     sf::RenderWindow & window = m_game->window();
-    int heightWindow = window.getSize().y;
-    int widthWindow = window.getSize().x;
-    int heightCell = m_gridSize.y;
-    int widthCell = m_gridSize.x;
+    const int heightWindow = window.getSize().y;
+    const int widthWindow = window.getSize().x;
+    const int heightCell = m_gridSize.y;
+    const int widthCell = m_gridSize.x;
 
     window.clear(sf::Color::Blue); 
 
     // Draw grid vertical lines
-    int verticalLines = floor(widthWindow / widthCell);
+    const int verticalLines = ceil((float) widthWindow / widthCell);
     for (int i = 0; i < verticalLines; i++) 
     {
         int x = widthCell * (i + 1);
@@ -87,7 +87,7 @@ void Scene_Play::sDebug()
     }
 
     // Draw grid horizontal lines
-    int horizontalLines = floor(heightWindow / heightCell);
+    const int horizontalLines = ceil((float) heightWindow / heightCell);
     for (int i = 0; i < horizontalLines; i++)
     {
         int y = heightWindow - heightCell * (i + 1);
