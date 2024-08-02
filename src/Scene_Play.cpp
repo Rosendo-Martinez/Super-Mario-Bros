@@ -1,5 +1,6 @@
 #include "Scene_Play.h"
 #include <iostream> // for debuging only
+#include <sstream> 
 #include <cmath>
 
 void Scene_Play::init(const std::string & levelPath) // register actions, font/text, loadlevel(path)
@@ -25,6 +26,10 @@ void Scene_Play::spawnBullet(std::shared_ptr<Entity> entity)
 Scene_Play::Scene_Play(GameEngine * gameEngine, const std::string & levelPath)
     : Scene(gameEngine)
 {
+    if (!m_gridFont.loadFromFile("bin/fonts/Roboto-Regular.ttf"))
+    {
+        std::cout << "Error: could not load grid font!\n";
+    }
 }
 
 void Scene_Play::update() // update EM, and cal systems
@@ -96,6 +101,30 @@ void Scene_Play::sDebug()
 
         window.draw(line);
     }
+
+    // for gx = [0, verticalLines)
+        // for gy = [0, horizontalLines)
+            // draw "(gx,gy)" at top left of current grid cell
+    for (int gx = 0; gx < verticalLines; gx++)
+    {
+        for (int gy = 0; gy < horizontalLines; gy++)
+        {
+            sf::Text text; 
+            std::ostringstream oss;
+            oss << "(" << gx << "," << gy << ")";
+            text.setFont(m_gridFont);
+            text.setString(oss.str());
+            text.setCharacterSize(12);
+            text.setFillColor(sf::Color::White);
+
+            int x = widthCell * gx;
+            int y = heightWindow - (heightCell * (gy + 1));
+            text.setPosition(sf::Vector2f(x, y));
+            
+            window.draw(text);
+        }
+    }
+
 
     window.display();
 }
