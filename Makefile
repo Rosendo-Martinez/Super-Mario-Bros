@@ -31,3 +31,6 @@ clean:
 animation_tests: ./tests/animation_tests.cpp ./src/Animation.cpp ./src/Vec2.cpp
 	$(CXX) $(CXX_FLAGS) ./tests/animation_tests.cpp ./src/Animation.cpp ./src/Vec2.cpp  $(LDFLAGS) -o ./tests/tests.exe
 
+run: all
+	$(BINDIR)/game.exe
+
