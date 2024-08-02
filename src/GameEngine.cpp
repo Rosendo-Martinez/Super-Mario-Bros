@@ -9,8 +9,8 @@ GameEngine::GameEngine()
 void GameEngine::init(const std::string & assetSpecFilePath) // load in all assets, create window, frame limit, set menu scene
 {
     m_window.create(sf::VideoMode(64*10,64*10), "Super Mario World");
-    m_sceneMap["Play"] = std::make_shared<Scene_Play>(this, assetSpecFilePath);
-    m_currentScene = "Play";
+
+    changeScene("Scene_Play", std::make_shared<Scene_Play>(this, assetSpecFilePath), true);
 }
 
 void GameEngine::update()
@@ -29,8 +29,14 @@ GameEngine::GameEngine(const std::string & assetSpecFilePath)
 {
 }
 
-void GameEngine::changeScene(const std::string & sceneName, std::shared_ptr<Scene> scene, bool endCurrentScene) // changes scene to new or existing scene 
+void GameEngine::changeScene(const std::string & sceneName, std::shared_ptr<Scene> scene, bool endCurrentScene)
 {
+    m_sceneMap[sceneName] = scene;
+
+    if (endCurrentScene)
+    {
+        m_currentScene = sceneName;
+    }
 }
 
 void GameEngine::quit() // closes the game
