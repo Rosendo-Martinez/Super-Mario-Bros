@@ -60,18 +60,20 @@ void Scene_Play::sDebug()
     sf::RenderWindow & window = m_game->window();
     window.clear(sf::Color::Blue); 
 
-    int height = window.getSize().y;
-    int width = window.getSize().x;
+    int heightWindow = window.getSize().y;
+    int widthWindow = window.getSize().x;
+    int heightCell = m_gridSize.y;
+    int widthCell = m_gridSize.x;
 
-    int verticalLines = height / 64;
+    int verticalLines = widthWindow / widthCell;
     for (int i = 0; i < verticalLines; i++) 
     {
-        int x = 64 * (i + 1);
+        int x = widthCell * (i + 1);
 
         sf::VertexArray line(sf::Lines, 2);
 
         line[0].position = sf::Vector2f(x, 0);
-        line[1].position = sf::Vector2f(x, height);
+        line[1].position = sf::Vector2f(x, heightWindow);
 
         line[0].color = sf::Color::White;
         line[1].color = sf::Color::White;
@@ -79,15 +81,15 @@ void Scene_Play::sDebug()
         window.draw(line);
     }
 
-    int horizontalLines = width / 64;
+    int horizontalLines = heightWindow / heightCell;
     for (int i = 0; i < horizontalLines; i++)
     {
-        int y = height - 64 * (i + 1);
+        int y = heightWindow - heightCell * (i + 1);
 
         sf::VertexArray line(sf::Lines, 2);
 
         line[0].position = sf::Vector2f(0, y);
-        line[1].position = sf::Vector2f(width, y);
+        line[1].position = sf::Vector2f(widthWindow, y);
 
         window.draw(line);
     }
