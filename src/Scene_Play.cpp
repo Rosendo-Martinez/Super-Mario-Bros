@@ -1,5 +1,6 @@
 #include "Scene_Play.h"
 #include <iostream> // for debuging only
+#include <cmath>
 
 void Scene_Play::init(const std::string & levelPath) // register actions, font/text, loadlevel(path)
 {
@@ -65,7 +66,8 @@ void Scene_Play::sDebug()
     int heightCell = m_gridSize.y;
     int widthCell = m_gridSize.x;
 
-    int verticalLines = widthWindow / widthCell;
+    // Draw grid vertical lines
+    int verticalLines = floor(widthWindow / widthCell);
     for (int i = 0; i < verticalLines; i++) 
     {
         int x = widthCell * (i + 1);
@@ -81,7 +83,8 @@ void Scene_Play::sDebug()
         window.draw(line);
     }
 
-    int horizontalLines = heightWindow / heightCell;
+    // Draw grid horizontal lines
+    int horizontalLines = floor(heightWindow / heightCell);
     for (int i = 0; i < horizontalLines; i++)
     {
         int y = heightWindow - heightCell * (i + 1);
