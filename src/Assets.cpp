@@ -28,6 +28,14 @@ void Assets::addSound(std::string name, std::string path)
 
 void Assets::addFont(std::string name, std::string path)
 {
+    sf::Font font;
+    if (!font.loadFromFile(path))
+    {
+        std::cout << "Error: could not load " << name << " font with path " << path << std::endl;
+        return;
+    }
+
+    m_fonts[name] = font;
 }
 
 sf::Texture & Assets::getTexture(const std::string & name)
@@ -54,6 +62,12 @@ sf::Sound & Assets::getSound(std::string name)
 {
 }
 
-sf::Font & Assets::getFont(std::string name)
+const sf::Font & Assets::getFont(const std::string & name) const
 {
+    if (m_fonts.find(name) == m_fonts.end())
+    {
+        std::cout << "Error: called getFont() with name " << name << ", but font does not exist!\n";
+    }
+
+    return m_fonts.at(name);
 }

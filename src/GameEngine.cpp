@@ -9,6 +9,8 @@ GameEngine::GameEngine()
 void GameEngine::init(const std::string & assetSpecFilePath) // load in all assets, create window, frame limit, set menu scene
 {
     m_window.create(sf::VideoMode(64*10,64*10), "Super Mario World");
+    
+    m_assets.addFont("Grid", "bin/fonts/Roboto-Regular.ttf");
 
     changeScene("Scene_Play", std::make_shared<Scene_Play>(this, assetSpecFilePath), true);
 }
@@ -63,6 +65,7 @@ sf::RenderWindow & GameEngine::window()
 
 const Assets & GameEngine::assets() const
 {
+    return m_assets;
 }
 
 bool GameEngine::isRunning()

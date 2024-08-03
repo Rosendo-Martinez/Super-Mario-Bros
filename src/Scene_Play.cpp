@@ -26,12 +26,7 @@ void Scene_Play::spawnBullet(std::shared_ptr<Entity> entity)
 Scene_Play::Scene_Play(GameEngine * gameEngine, const std::string & levelPath)
     : Scene(gameEngine)
 {
-    if (!m_gridFont.loadFromFile("bin/fonts/Roboto-Regular.ttf"))
-    {
-        std::cout << "Error: could not load grid font!\n";
-    }
-
-    m_gridText.setFont(m_gridFont);
+    m_gridText.setFont(m_game->assets().getFont("Grid"));
     m_gridText.setCharacterSize(12);
     m_gridText.setFillColor(sf::Color::White);
 }

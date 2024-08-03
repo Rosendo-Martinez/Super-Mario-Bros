@@ -24,5 +24,5 @@ public:
     sf::Texture & getTexture(const std::string & name);
     Animation & getAnimation(const std::string & name);
     sf::Sound & getSound(std::string name);
-    sf::Font & getFont(std::string name);
+    const sf::Font & getFont(const std::string & name) const;
 };
