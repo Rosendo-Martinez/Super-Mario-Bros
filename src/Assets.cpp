@@ -35,7 +35,6 @@ void Assets::addFont(const std::string & name, const std::string & path)
 
 const sf::Texture & Assets::getTexture(const std::string & name) const
 {
-    std::cout << name << '\n';
     assert(m_textures.find(name) != m_textures.end() && "Key is wrong or texture does not exist.");
 
     return m_textures.at(name);
