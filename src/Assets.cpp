@@ -54,7 +54,7 @@ const sf::Sound & Assets::getSound(const std::string & name) const
 
 const sf::Font & Assets::getFont(const std::string & name) const
 {
-    assert(m_animations.find(name) != m_animations.end() && "Key is wrong or font does not exist.");
+    assert(m_fonts.find(name) != m_fonts.end() && "Key is wrong or font does not exist.");
 
     return m_fonts.at(name);
 }
