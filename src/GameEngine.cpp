@@ -1,5 +1,6 @@
 #include "GameEngine.h"
 #include "Scene_Play.h"
+#include <iostream>
 
 GameEngine::GameEngine()
 {
@@ -9,6 +10,7 @@ GameEngine::GameEngine()
 void GameEngine::init(const std::string & assetSpecFilePath) // load in all assets, create window, frame limit, set menu scene
 {
     m_window.create(sf::VideoMode(64*10,64*10), "Super Mario World");
+    m_window.setKeyRepeatEnabled(false);
     
     m_assets.addFont("Grid", "bin/fonts/Roboto-Regular.ttf");
 
@@ -21,6 +23,21 @@ void GameEngine::update()
 
 void GameEngine::sUserInput() // get user input, and pass it to scene as action if scene has it registered
 {
+    sf::Event e;
+    while (m_window.pollEvent(e))
+    {
+        if (e.type == sf::Event::KeyPressed)
+        {
+            if (e.key.code == sf::Keyboard::G)
+            {
+                m_sceneMap[m_currentScene]->sDoAction(Action("TOGGLE_GRID", "START"));
+            }
+        }
+
+        if (e.type == sf::Event::KeyReleased)
+        {
+        }
+    }
 }
 
 std::shared_ptr<Scene> GameEngine::currentScene()
@@ -49,10 +66,7 @@ void GameEngine::run() // main game loop
 {
     while (m_window.isOpen())
     {
-        sf::Event event;
-        while (m_window.pollEvent(event)) {}; // temporary so that OS doesn't btch
-
-        // TODO: passing ACTIONS to scene
+        sUserInput();
         m_sceneMap[m_currentScene]->update();
         m_sceneMap[m_currentScene]->sRender();
     }

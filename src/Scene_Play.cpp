@@ -29,6 +29,8 @@ Scene_Play::Scene_Play(GameEngine * gameEngine, const std::string & levelPath)
     m_gridText.setFont(m_game->assets().getFont("Grid"));
     m_gridText.setCharacterSize(12);
     m_gridText.setFillColor(sf::Color::White);
+
+    registerAction(sf::Keyboard::G, "TOGGLE_GRID");
 }
 
 void Scene_Play::update() // update EM, and cal systems
@@ -58,64 +60,80 @@ void Scene_Play::sRender()
 
 void Scene_Play::sDoAction(const Action & action) // do the action
 {
+    if (action.type() == "START")
+    {
+        if (action.name() == "TOGGLE_GRID")
+        {
+            m_drawGrid = !m_drawGrid;
+        }
+    }
+    else if (action.type() == "END")
+    {
+
+    }
 }
 
 void Scene_Play::sDebug()
 {   
     sf::RenderWindow & window = m_game->window();
-    const int heightWindow = window.getSize().y;
-    const int widthWindow = window.getSize().x;
-    const int heightCell = m_gridSize.y;
-    const int widthCell = m_gridSize.x;
-
     window.clear(sf::Color::Blue); 
 
-    // Draw grid vertical lines
-    const int verticalLines = ceil((float) widthWindow / widthCell);
-    for (int i = 0; i < verticalLines; i++) 
+    if (m_drawGrid)
     {
-        int x = widthCell * (i + 1);
-        sf::VertexArray line(sf::Lines, 2);
+        const int heightWindow = window.getSize().y;
+        const int widthWindow = window.getSize().x;
+        const int heightCell = m_gridSize.y;
+        const int widthCell = m_gridSize.x;
 
-        line[0].position = sf::Vector2f(x, 0);
-        line[1].position = sf::Vector2f(x, heightWindow);
-        line[0].color = sf::Color::White;
-        line[1].color = sf::Color::White;
 
-        window.draw(line);
-    }
-
-    // Draw grid horizontal lines
-    const int horizontalLines = ceil((float) heightWindow / heightCell);
-    for (int i = 0; i < horizontalLines; i++)
-    {
-        int y = heightWindow - heightCell * (i + 1);
-        sf::VertexArray line(sf::Lines, 2);
-
-        line[0].position = sf::Vector2f(0, y);
-        line[1].position = sf::Vector2f(widthWindow, y);
-        line[0].color = sf::Color::White;
-        line[1].color = sf::Color::White;
-
-        window.draw(line);
-    }
-
-    // Draw grid coordinates
-    for (int gx = 0; gx < verticalLines; gx++)
-    {
-        for (int gy = 0; gy < horizontalLines; gy++)
+        // Draw grid vertical lines
+        const int verticalLines = ceil((float) widthWindow / widthCell);
+        for (int i = 0; i < verticalLines; i++) 
         {
-            std::ostringstream oss;
-            oss << "(" << gx << "," << gy << ")";
-            m_gridText.setString(oss.str());
+            int x = widthCell * (i + 1);
+            sf::VertexArray line(sf::Lines, 2);
 
-            // relative to top left of window
-            int x = widthCell * gx;
-            int y = heightWindow - (heightCell * (gy + 1));
-            m_gridText.setPosition(sf::Vector2f(x, y));
-            
-            window.draw(m_gridText);
+            line[0].position = sf::Vector2f(x, 0);
+            line[1].position = sf::Vector2f(x, heightWindow);
+            line[0].color = sf::Color::White;
+            line[1].color = sf::Color::White;
+
+            window.draw(line);
         }
+
+        // Draw grid horizontal lines
+        const int horizontalLines = ceil((float) heightWindow / heightCell);
+        for (int i = 0; i < horizontalLines; i++)
+        {
+            int y = heightWindow - heightCell * (i + 1);
+            sf::VertexArray line(sf::Lines, 2);
+
+            line[0].position = sf::Vector2f(0, y);
+            line[1].position = sf::Vector2f(widthWindow, y);
+            line[0].color = sf::Color::White;
+            line[1].color = sf::Color::White;
+
+            window.draw(line);
+        }
+
+        // Draw grid coordinates
+        for (int gx = 0; gx < verticalLines; gx++)
+        {
+            for (int gy = 0; gy < horizontalLines; gy++)
+            {
+                std::ostringstream oss;
+                oss << "(" << gx << "," << gy << ")";
+                m_gridText.setString(oss.str());
+
+                // relative to top left of window
+                int x = widthCell * gx;
+                int y = heightWindow - (heightCell * (gy + 1));
+                m_gridText.setPosition(sf::Vector2f(x, y));
+                
+                window.draw(m_gridText);
+            }
+        }
+
     }
 
     window.display();

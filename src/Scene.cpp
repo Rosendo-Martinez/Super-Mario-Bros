@@ -39,6 +39,7 @@ void Scene::simulate(const size_t frames) // calls derived scene's update() a co
 
 void Scene::registerAction(int inputKey, const std::string & actionName)
 {
+    m_actionMap[inputKey] = actionName;
 }
 
 size_t Scene::width() const
@@ -59,6 +60,7 @@ bool Scene::hasEnded() const
 
 const ActionMap & Scene::getActionMap() const
 {
+    return m_actionMap;
 }
 
 void Scene::drawLine(const Vec2 & p1, const Vec2 & p2)
