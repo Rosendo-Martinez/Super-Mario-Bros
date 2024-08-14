@@ -35,7 +35,7 @@ Scene_Play::Scene_Play(GameEngine * gameEngine, const std::string & levelPath)
 
 void Scene_Play::update() // update EM, and cal systems
 {
-    sDebug();
+    sRender();
 }
 
 void Scene_Play::sAnimation()
@@ -56,25 +56,6 @@ void Scene_Play::sCollision()
 
 void Scene_Play::sRender()
 {
-}
-
-void Scene_Play::sDoAction(const Action & action) // do the action
-{
-    if (action.type() == "START")
-    {
-        if (action.name() == "TOGGLE_GRID")
-        {
-            m_drawGrid = !m_drawGrid;
-        }
-    }
-    else if (action.type() == "END")
-    {
-
-    }
-}
-
-void Scene_Play::sDebug()
-{   
     sf::RenderWindow & window = m_game->window();
     window.clear(sf::Color::Blue); 
 
@@ -137,6 +118,25 @@ void Scene_Play::sDebug()
     }
 
     window.display();
+}
+
+void Scene_Play::sDoAction(const Action & action) // do the action
+{
+    if (action.type() == "START")
+    {
+        if (action.name() == "TOGGLE_GRID")
+        {
+            m_drawGrid = !m_drawGrid;
+        }
+    }
+    else if (action.type() == "END")
+    {
+
+    }
+}
+
+void Scene_Play::sDebug()
+{   
 }
 
 void Scene_Play::onEnd() // before scene ends change to menu scene
