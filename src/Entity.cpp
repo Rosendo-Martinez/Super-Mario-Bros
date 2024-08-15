@@ -1,5 +1,11 @@
 #include "Entity.h"
 
+Entity::Entity(const size_t & id, const std::string & tag)
+    : m_active(id)
+    , m_tag(tag)
+{
+}
+
 void Entity::destroy()
 {
     m_active = false;

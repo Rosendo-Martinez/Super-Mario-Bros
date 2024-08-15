@@ -17,6 +17,8 @@ void GameEngine::init(const std::string & assetSpecFilePath) // load in all asse
     m_assets.addTexture("QuestionBlock", "bin/images/mario/QuestionMarkBlock16.png");
     m_assets.addTexture("Brick", "bin/images/mario/Brick16.png");
 
+    m_assets.addAnimation("MarioStand", Animation("MarioStand", m_assets.getTexture("MarioStand")));
+
     changeScene("Scene_Play", std::make_shared<Scene_Play>(this, assetSpecFilePath), true);
 }
 

@@ -17,6 +17,10 @@ void Scene_Play::loadLevel(const std::string & filename) // load/reset/reload le
 
 void Scene_Play::spawnPlayer()
 {
+    auto player = m_entityManager.addEntity("Player");
+    player->addComponent<CTransform>(Vec2(64*3, 64*3));
+    player->addComponent<CAnimation>(m_game->assets().getAnimation("MarioStand"), true);
+    m_player = player;
 }
 
 void Scene_Play::spawnBullet(std::shared_ptr<Entity> entity)
@@ -31,6 +35,7 @@ Scene_Play::Scene_Play(GameEngine * gameEngine, const std::string & levelPath)
     m_gridText.setFillColor(sf::Color::White);
 
     registerAction(sf::Keyboard::G, "TOGGLE_GRID");
+    spawnPlayer();
 }
 
 void Scene_Play::update() // update EM, and cal systems
@@ -58,6 +63,13 @@ void Scene_Play::sRender()
 {
     sf::RenderWindow & window = m_game->window();
     window.clear(sf::Color::Blue); 
+
+    // Draw the player
+    Vec2 playerPos = m_player->getComponent<CTransform>().pos;
+    sf::Sprite playerSprite = m_player->getComponent<CAnimation>().animation.getSprite();
+    playerSprite.setPosition(sf::Vector2f(playerPos.x, playerPos.y));
+    playerSprite.scale(sf::Vector2f(4.f,4.f));
+    window.draw(playerSprite);
 
     if (m_drawGrid)
     {
