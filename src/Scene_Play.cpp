@@ -9,6 +9,23 @@ void Scene_Play::init(const std::string & levelPath) // register actions, font/t
 
 Vec2 Scene_Play::gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity)
 {
+    sf::RenderWindow & window = m_game->window();
+
+    sf::Sprite sprite = entity->getComponent<CAnimation>().animation.getSprite();
+    const int heighGrid = window.getSize().y;
+    const int widthGrid = window.getSize().x;
+    const int heightCell = m_gridSize.y;
+    const int widthCell = m_gridSize.x;
+
+    // grid to cartesian coordinates
+    float x_c = widthCell * (gridX);
+    float y_c = heighGrid - heightCell * (gridY);
+
+    // center of entity
+    float x_m = x_c + sprite.getGlobalBounds().width * 4 / 2; // 4 is the scale in x
+    float y_m = y_c - sprite.getGlobalBounds().height * 4 / 2; // 4 is the scale in y
+
+    return Vec2(x_m, y_m);
 }
 
 void Scene_Play::loadLevel(const std::string & filename) // load/reset/reload level
