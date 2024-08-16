@@ -85,7 +85,6 @@ void Scene_Play::sRender()
     Vec2 playerPos = m_player->getComponent<CTransform>().pos;
     sf::Sprite playerSprite = m_player->getComponent<CAnimation>().animation.getSprite();
     playerSprite.setPosition(sf::Vector2f(playerPos.x, playerPos.y));
-    playerSprite.scale(sf::Vector2f(4.f,4.f));
     window.draw(playerSprite);
 
     if (m_drawGrid)
