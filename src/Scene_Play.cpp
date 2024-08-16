@@ -22,8 +22,8 @@ Vec2 Scene_Play::gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity
     float y_c = heighGrid - heightCell * (gridY);
 
     // center of entity
-    float x_m = x_c + sprite.getGlobalBounds().width * 4 / 2; // 4 is the scale in x
-    float y_m = y_c - sprite.getGlobalBounds().height * 4 / 2; // 4 is the scale in y
+    float x_m = x_c + sprite.getGlobalBounds().width * sprite.getScale().x / 2;
+    float y_m = y_c - sprite.getGlobalBounds().height * sprite.getScale().y / 2;
 
     return Vec2(x_m, y_m);
 }
