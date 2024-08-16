@@ -40,7 +40,7 @@ const sf::Texture & Assets::getTexture(const std::string & name) const
     return m_textures.at(name);
 }
 
-const Animation & Assets::getAnimation(const std::string & name) const
+Animation Assets::getAnimation(const std::string & name) const
 {
     assert(m_animations.find(name) != m_animations.end() && "Key is wrong or animation does not exist.");
 
