@@ -22,8 +22,8 @@ Vec2 Scene_Play::gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity
     float y_c = heighGrid - heightCell * (gridY);
 
     // center of entity
-    float x_m = x_c + sprite.getGlobalBounds().width * sprite.getScale().x / 2;
-    float y_m = y_c - sprite.getGlobalBounds().height * sprite.getScale().y / 2;
+    float x_m = x_c + sprite.getGlobalBounds().width / 2;
+    float y_m = y_c - sprite.getGlobalBounds().height / 2;
 
     return Vec2(x_m, y_m);
 }
@@ -35,8 +35,8 @@ void Scene_Play::loadLevel(const std::string & filename) // load/reset/reload le
 void Scene_Play::spawnPlayer()
 {
     auto player = m_entityManager.addEntity("Player");
-    player->addComponent<CTransform>(Vec2(64*3, 64*3));
     player->addComponent<CAnimation>(m_game->assets().getAnimation("MarioStand"), true);
+    player->addComponent<CTransform>(gridToMidPixel(4,7,player));
     m_player = player;
 }
 
