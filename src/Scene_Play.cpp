@@ -30,6 +30,16 @@ Vec2 Scene_Play::gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity
 
 void Scene_Play::loadLevel(const std::string & filename) // load/reset/reload level
 {
+    // create a ? block entity
+    auto qBlock = m_entityManager.addEntity("Block");
+    qBlock->addComponent<CAnimation>(m_game->assets().getAnimation("QuestionBlock"), true);
+    qBlock->addComponent<CTransform>(gridToMidPixel(5,5,qBlock));
+    // create a brick entity
+    auto brick = m_entityManager.addEntity("Brick");
+    brick->addComponent<CAnimation>(m_game->assets().getAnimation("Brick"), true);
+    brick->addComponent<CTransform>(gridToMidPixel(6,5,brick));
+
+    std::cout << "Entities Created: " << m_entityManager.getTotalEntitiesCreated() << "\n";
 }
 
 void Scene_Play::spawnPlayer()
@@ -53,10 +63,13 @@ Scene_Play::Scene_Play(GameEngine * gameEngine, const std::string & levelPath)
 
     registerAction(sf::Keyboard::G, "TOGGLE_GRID");
     spawnPlayer();
+    loadLevel("");
 }
 
 void Scene_Play::update() // update EM, and cal systems
 {
+    m_entityManager.update();
+
     sRender();
 }
 

@@ -20,4 +20,5 @@ public:
     std::shared_ptr<Entity> addEntity(const std::string& tag);
     EntityVec& getEntities();
     EntityVec& getEntities(const std::string& tag);
+    size_t getTotalEntitiesCreated();
 };
