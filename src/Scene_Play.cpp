@@ -95,11 +95,15 @@ void Scene_Play::sRender()
     sf::RenderWindow & window = m_game->window();
     window.clear(sf::Color::Blue); 
 
-    // Draw the player
-    Vec2 playerPos = m_player->getComponent<CTransform>().pos;
-    sf::Sprite playerSprite = m_player->getComponent<CAnimation>().animation.getSprite();
-    playerSprite.setPosition(sf::Vector2f(playerPos.x, playerPos.y));
-    window.draw(playerSprite);
+    // Draw entities
+    for (auto e : m_entityManager.getEntities())
+    {
+        Vec2 pos = e->getComponent<CTransform>().pos;
+        sf::Sprite & sprite = e->getComponent<CAnimation>().animation.getSprite();
+
+        sprite.setPosition(sf::Vector2f(pos.x,pos.y));
+        window.draw(sprite);
+    }
 
     if (m_drawGrid)
     {

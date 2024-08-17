@@ -27,6 +27,7 @@ std::shared_ptr<Entity> EntityManager::addEntity(const std::string& tag)
 
 EntityVec& EntityManager::getEntities()
 {
+    return m_entities;
 }
 
 EntityVec& EntityManager::getEntities(const std::string& tag)
