@@ -5,6 +5,9 @@
 
 void Scene_Play::init(const std::string & levelPath) // register actions, font/text, loadlevel(path)
 {
+    spawnPlayer();
+    loadLevel(levelPath);
+    registerAction(sf::Keyboard::G, "TOGGLE_GRID");
 }
 
 Vec2 Scene_Play::gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity)
@@ -61,9 +64,7 @@ Scene_Play::Scene_Play(GameEngine * gameEngine, const std::string & levelPath)
     m_gridText.setCharacterSize(12);
     m_gridText.setFillColor(sf::Color::White);
 
-    registerAction(sf::Keyboard::G, "TOGGLE_GRID");
-    spawnPlayer();
-    loadLevel("");
+    init("");
 }
 
 void Scene_Play::update() // update EM, and cal systems
