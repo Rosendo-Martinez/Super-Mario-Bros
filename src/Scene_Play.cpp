@@ -37,10 +37,12 @@ void Scene_Play::loadLevel(const std::string & filename) // load/reset/reload le
     auto qBlock = m_entityManager.addEntity("Block");
     qBlock->addComponent<CAnimation>(m_game->assets().getAnimation("QuestionBlock"), true);
     qBlock->addComponent<CTransform>(gridToMidPixel(5,5,qBlock));
+    qBlock->addComponent<CBoundingBox>(Vec2(64, 64));
     // create a brick entity
     auto brick = m_entityManager.addEntity("Brick");
     brick->addComponent<CAnimation>(m_game->assets().getAnimation("Brick"), true);
     brick->addComponent<CTransform>(gridToMidPixel(6,5,brick));
+    brick->addComponent<CBoundingBox>(Vec2(64, 64));
 
     std::cout << "Entities Created: " << m_entityManager.getTotalEntitiesCreated() << "\n";
 }
@@ -50,6 +52,7 @@ void Scene_Play::spawnPlayer()
     auto player = m_entityManager.addEntity("Player");
     player->addComponent<CAnimation>(m_game->assets().getAnimation("MarioStand"), true);
     player->addComponent<CTransform>(gridToMidPixel(4,7,player));
+    player->addComponent<CBoundingBox>(Vec2(64, 64));
     m_player = player;
 }
 
@@ -103,6 +106,21 @@ void Scene_Play::sRender()
 
         sprite.setPosition(sf::Vector2f(pos.x,pos.y));
         window.draw(sprite);
+    }
+
+    // Draw Bounding Boxes
+    for (auto e : m_entityManager.getEntities())
+    {
+        Vec2 pos = e->getComponent<CTransform>().pos;
+        Vec2 size = e->getComponent<CBoundingBox>().size;
+        sf::RectangleShape bb(sf::Vector2f(size.x,size.y));
+
+        bb.setPosition(sf::Vector2f(pos.x - size.x/2, pos.y - size.y/2));
+        bb.setFillColor(sf::Color(0,0,0,0));
+        bb.setOutlineColor(sf::Color::White);
+        bb.setOutlineThickness(1.f);
+        
+        window.draw(bb);
     }
 
     if (m_drawGrid)
