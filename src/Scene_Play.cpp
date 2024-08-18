@@ -8,6 +8,7 @@ void Scene_Play::init(const std::string & levelPath) // register actions, font/t
     spawnPlayer();
     loadLevel(levelPath);
     registerAction(sf::Keyboard::G, "TOGGLE_GRID");
+    registerAction(sf::Keyboard::C, "TOGGLE_BOUNDING_BOXES");
 }
 
 Vec2 Scene_Play::gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity)
@@ -109,18 +110,21 @@ void Scene_Play::sRender()
     }
 
     // Draw Bounding Boxes
-    for (auto e : m_entityManager.getEntities())
+    if (m_drawCollision)
     {
-        Vec2 pos = e->getComponent<CTransform>().pos;
-        Vec2 size = e->getComponent<CBoundingBox>().size;
-        sf::RectangleShape bb(sf::Vector2f(size.x,size.y));
+        for (auto e : m_entityManager.getEntities())
+        {
+            Vec2 pos = e->getComponent<CTransform>().pos;
+            Vec2 size = e->getComponent<CBoundingBox>().size;
+            sf::RectangleShape bb(sf::Vector2f(size.x,size.y));
 
-        bb.setPosition(sf::Vector2f(pos.x - size.x/2, pos.y - size.y/2));
-        bb.setFillColor(sf::Color(0,0,0,0));
-        bb.setOutlineColor(sf::Color::White);
-        bb.setOutlineThickness(1.f);
-        
-        window.draw(bb);
+            bb.setPosition(sf::Vector2f(pos.x - size.x/2, pos.y - size.y/2));
+            bb.setFillColor(sf::Color(0,0,0,0));
+            bb.setOutlineColor(sf::Color::White);
+            bb.setOutlineThickness(1.f);
+
+            window.draw(bb);
+        }
     }
 
     if (m_drawGrid)
@@ -191,6 +195,11 @@ void Scene_Play::sDoAction(const Action & action) // do the action
         if (action.name() == "TOGGLE_GRID")
         {
             m_drawGrid = !m_drawGrid;
+        }
+
+        if (action.name() == "TOGGLE_BOUNDING_BOXES")
+        {
+            m_drawCollision = !m_drawCollision;
         }
     }
     else if (action.type() == "END")

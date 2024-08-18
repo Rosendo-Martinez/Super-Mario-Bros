@@ -39,6 +39,10 @@ void GameEngine::sUserInput() // get user input, and pass it to scene as action 
             {
                 m_sceneMap[m_currentScene]->sDoAction(Action("TOGGLE_GRID", "START"));
             }
+            if (e.key.code == sf::Keyboard::C)
+            {
+                m_sceneMap[m_currentScene]->sDoAction(Action("TOGGLE_BOUNDING_BOXES", "START"));
+            }
         }
 
         if (e.type == sf::Event::KeyReleased)
