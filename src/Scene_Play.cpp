@@ -9,6 +9,7 @@ void Scene_Play::init(const std::string & levelPath) // register actions, font/t
     loadLevel(levelPath);
     registerAction(sf::Keyboard::G, "TOGGLE_GRID");
     registerAction(sf::Keyboard::C, "TOGGLE_BOUNDING_BOXES");
+    registerAction(sf::Keyboard::T, "TOGGLE_TEXTURES");
 }
 
 Vec2 Scene_Play::gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity)
@@ -100,13 +101,16 @@ void Scene_Play::sRender()
     window.clear(sf::Color::Blue); 
 
     // Draw entities
-    for (auto e : m_entityManager.getEntities())
+    if (m_drawTextures)
     {
-        Vec2 pos = e->getComponent<CTransform>().pos;
-        sf::Sprite & sprite = e->getComponent<CAnimation>().animation.getSprite();
+        for (auto e : m_entityManager.getEntities())
+        {
+            Vec2 pos = e->getComponent<CTransform>().pos;
+            sf::Sprite & sprite = e->getComponent<CAnimation>().animation.getSprite();
 
-        sprite.setPosition(sf::Vector2f(pos.x,pos.y));
-        window.draw(sprite);
+            sprite.setPosition(sf::Vector2f(pos.x,pos.y));
+            window.draw(sprite);
+        }
     }
 
     // Draw Bounding Boxes
@@ -200,6 +204,11 @@ void Scene_Play::sDoAction(const Action & action) // do the action
         if (action.name() == "TOGGLE_BOUNDING_BOXES")
         {
             m_drawCollision = !m_drawCollision;
+        }
+
+        if (action.name() == "TOGGLE_TEXTURES")
+        {
+            m_drawTextures = !m_drawTextures;
         }
     }
     else if (action.type() == "END")

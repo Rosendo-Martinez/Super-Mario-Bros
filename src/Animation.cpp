@@ -58,7 +58,7 @@ const Vec2 & Animation::getSize() const
     return m_size;
 }
 
-const sf::Sprite & Animation::getSprite() const
+sf::Sprite & Animation::getSprite()
 {
     return m_sprite;
 }
