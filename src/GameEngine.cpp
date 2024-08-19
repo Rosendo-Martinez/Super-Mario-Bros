@@ -38,17 +38,11 @@ void GameEngine::sUserInput() // get user input, and pass it to scene as action 
     {
         if (e.type == sf::Event::KeyPressed)
         {
-            if (e.key.code == sf::Keyboard::G)
+            const ActionMap & actions = m_sceneMap[m_currentScene]->getActionMap();
+
+            if (actions.count(e.key.code) == 1)
             {
-                m_sceneMap[m_currentScene]->sDoAction(Action("TOGGLE_GRID", "START"));
-            }
-            if (e.key.code == sf::Keyboard::C)
-            {
-                m_sceneMap[m_currentScene]->sDoAction(Action("TOGGLE_BOUNDING_BOXES", "START"));
-            }
-            if (e.key.code == sf::Keyboard::T)
-            {
-                m_sceneMap[m_currentScene]->sDoAction(Action("TOGGLE_TEXTURES", "START"));
+                m_sceneMap[m_currentScene]->sDoAction(Action(actions.at(e.key.code), "START"));
             }
         }
 
