@@ -34,12 +34,15 @@ void Animation::update()
 {
     m_currentFrame++;
 
-    // zero-indexed frame count
-    int fullAnimationFramesPlayed = (int) floor(m_currentFrame / m_speed);
-    // zero-indexed animation frames
-    int currentAnimationFrame = fullAnimationFramesPlayed % m_frameCount;
+    if (m_speed != 0)
+    {
+        // zero-indexed frame count
+        int fullAnimationFramesPlayed = (int) floor(m_currentFrame / m_speed);
+        // zero-indexed animation frames
+        int currentAnimationFrame = fullAnimationFramesPlayed % m_frameCount;
 
-    m_sprite.setTextureRect(sf::IntRect(currentAnimationFrame * m_size.x, 0, m_size.x, m_size.y));
+        m_sprite.setTextureRect(sf::IntRect(currentAnimationFrame * m_size.x, 0, m_size.x, m_size.y));
+    }
 }
 
 bool Animation::hasEnded() const

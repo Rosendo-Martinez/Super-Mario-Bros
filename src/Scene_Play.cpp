@@ -45,6 +45,11 @@ void Scene_Play::loadLevel(const std::string & filename) // load/reset/reload le
     brick->addComponent<CAnimation>(m_game->assets().getAnimation("Brick"), true);
     brick->addComponent<CTransform>(gridToMidPixel(6,5,brick));
     brick->addComponent<CBoundingBox>(Vec2(64, 64));
+    // create a blinking ? block entity
+    auto qBlockBlink = m_entityManager.addEntity("Block");
+    qBlockBlink->addComponent<CAnimation>(m_game->assets().getAnimation("QuestionMarkBlink"), true);
+    qBlockBlink->addComponent<CTransform>(gridToMidPixel(7,3,qBlockBlink));
+    qBlockBlink->addComponent<CBoundingBox>(Vec2(64,64));
 
     std::cout << "Entities Created: " << m_entityManager.getTotalEntitiesCreated() << "\n";
 }
@@ -76,11 +81,16 @@ void Scene_Play::update() // update EM, and cal systems
 {
     m_entityManager.update();
 
+    sAnimation();
     sRender();
 }
 
 void Scene_Play::sAnimation()
 {
+    for (auto e: m_entityManager.getEntities())
+    {
+        e->getComponent<CAnimation>().animation.update();
+    }
 }
 
 void Scene_Play::sMovement()
