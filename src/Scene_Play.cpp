@@ -10,6 +10,10 @@ void Scene_Play::init(const std::string & levelPath) // register actions, font/t
     registerAction(sf::Keyboard::G, "TOGGLE_GRID");
     registerAction(sf::Keyboard::C, "TOGGLE_BOUNDING_BOXES");
     registerAction(sf::Keyboard::T, "TOGGLE_TEXTURES");
+    registerAction(sf::Keyboard::W, "UP");
+    registerAction(sf::Keyboard::S, "DOWN");
+    registerAction(sf::Keyboard::A, "LEFT");
+    registerAction(sf::Keyboard::D, "RIGHT");
 }
 
 Vec2 Scene_Play::gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity)
@@ -60,6 +64,7 @@ void Scene_Play::spawnPlayer()
     player->addComponent<CAnimation>(m_game->assets().getAnimation("MarioStand"), true);
     player->addComponent<CTransform>(gridToMidPixel(4,7,player));
     player->addComponent<CBoundingBox>(Vec2(64, 64));
+    player->addComponent<CInput>();
     m_player = player;
 }
 
@@ -82,6 +87,7 @@ void Scene_Play::update() // update EM, and cal systems
     m_entityManager.update();
 
     sAnimation();
+    sMovement();
     sRender();
 }
 
@@ -95,6 +101,26 @@ void Scene_Play::sAnimation()
 
 void Scene_Play::sMovement()
 {
+    float speed = 5.f;
+    m_player->getComponent<CTransform>().velocity = Vec2(0,0);
+
+    if (m_player->getComponent<CInput>().left)
+    {
+        m_player->getComponent<CTransform>().velocity.x -= speed;
+    }
+
+    if (m_player->getComponent<CInput>().right)
+    {
+        m_player->getComponent<CTransform>().velocity.x += speed;
+    }
+
+    for (auto e : m_entityManager.getEntities())
+    {
+        if (e->hasComponent<CTransform>())
+        {
+            e->getComponent<CTransform>().pos += e->getComponent<CTransform>().velocity;
+        }
+    }
 }
 
 void Scene_Play::sEnemySpawn()
@@ -220,10 +246,48 @@ void Scene_Play::sDoAction(const Action & action) // do the action
         {
             m_drawTextures = !m_drawTextures;
         }
+
+        if (action.name() == "UP")
+        {
+            m_player->getComponent<CInput>().up = true;
+        }
+
+        if (action.name() == "DOWN")
+        {
+            m_player->getComponent<CInput>().down = true;
+        }
+
+        if (action.name() == "LEFT")
+        {
+            m_player->getComponent<CInput>().left = true;
+        }
+
+        if (action.name() == "RIGHT")
+        {
+            m_player->getComponent<CInput>().right = true;
+        }
     }
     else if (action.type() == "END")
     {
+        if (action.name() == "UP")
+        {
+            m_player->getComponent<CInput>().up = false;
+        }
 
+        if (action.name() == "DOWN")
+        {
+            m_player->getComponent<CInput>().down = false;
+        }
+
+        if (action.name() == "LEFT")
+        {
+            m_player->getComponent<CInput>().left = false;
+        }
+
+        if (action.name() == "RIGHT")
+        {
+            m_player->getComponent<CInput>().right = false;
+        }
     }
 }
 

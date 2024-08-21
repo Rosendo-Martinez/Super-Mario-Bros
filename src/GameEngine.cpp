@@ -36,18 +36,20 @@ void GameEngine::sUserInput() // get user input, and pass it to scene as action 
     sf::Event e;
     while (m_window.pollEvent(e))
     {
+        const ActionMap & actions = m_sceneMap[m_currentScene]->getActionMap();
         if (e.type == sf::Event::KeyPressed)
         {
-            const ActionMap & actions = m_sceneMap[m_currentScene]->getActionMap();
-
             if (actions.count(e.key.code) == 1)
             {
                 m_sceneMap[m_currentScene]->sDoAction(Action(actions.at(e.key.code), "START"));
             }
         }
-
-        if (e.type == sf::Event::KeyReleased)
+        else if (e.type == sf::Event::KeyReleased)
         {
+            if (actions.count(e.key.code) == 1)
+            {
+                m_sceneMap[m_currentScene]->sDoAction(Action(actions.at(e.key.code), "END"));
+            }
         }
     }
 }
