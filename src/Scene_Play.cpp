@@ -114,6 +114,16 @@ void Scene_Play::sMovement()
         m_player->getComponent<CTransform>().velocity.x += speed;
     }
 
+    if (m_player->getComponent<CInput>().up)
+    {
+        m_player->getComponent<CTransform>().velocity.y -= speed;
+    }
+
+    if (m_player->getComponent<CInput>().down)
+    {
+        m_player->getComponent<CTransform>().velocity.y += speed;
+    }
+
     for (auto e : m_entityManager.getEntities())
     {
         if (e->hasComponent<CTransform>())
