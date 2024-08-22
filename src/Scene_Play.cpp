@@ -1,4 +1,5 @@
 #include "Scene_Play.h"
+#include "Physics.h"
 #include <iostream>
 #include <sstream> 
 #include <cmath>
@@ -88,6 +89,7 @@ void Scene_Play::update() // update EM, and cal systems
 
     sAnimation();
     sMovement();
+    sCollision();
     sRender();
 }
 
@@ -128,6 +130,7 @@ void Scene_Play::sMovement()
     {
         if (e->hasComponent<CTransform>())
         {
+            e->getComponent<CTransform>().prevPos = e->getComponent<CTransform>().pos;
             e->getComponent<CTransform>().pos += e->getComponent<CTransform>().velocity;
         }
     }
@@ -139,6 +142,70 @@ void Scene_Play::sEnemySpawn()
 
 void Scene_Play::sCollision()
 {
+    // player-block collisions
+    for (auto e : m_entityManager.getEntities())
+    {
+        if (m_player->id() == e->id() || !e->hasComponent<CBoundingBox>())
+        {
+            continue;
+        }
+        
+        Vec2 overlap = Physics::GetOverlap(m_player, e);
+        Vec2 prevOverlap = Physics::GetPreviousOverlap(m_player, e);
+
+        // collision
+        if (overlap.x > 0 && overlap.y > 0)
+        {
+            // horizontal collision
+            if (prevOverlap.y > 0)
+            {
+                // came from left
+                if (m_player->getComponent<CTransform>().prevPos.x < e->getComponent<CTransform>().prevPos.x)
+                {
+                    // push left
+                    m_player->getComponent<CTransform>().pos.x -= overlap.x;
+                }
+                // came from right
+                else
+                {
+                    // push right
+                    m_player->getComponent<CTransform>().pos.x += overlap.x;
+                }
+            }
+            // vertical collision
+            else if (prevOverlap.x > 0)
+            {
+                // came from top
+                if (m_player->getComponent<CTransform>().prevPos.y < e->getComponent<CTransform>().prevPos.y)
+                {
+                    // push up
+                    m_player->getComponent<CTransform>().pos.y -= overlap.y;
+                }
+                // came from bottom
+                else
+                {
+                    // push down
+                    m_player->getComponent<CTransform>().pos.y += overlap.y;
+                }
+            }
+            // diagonal collision 
+            else
+            {
+                // came from left
+                if (m_player->getComponent<CTransform>().prevPos.x < e->getComponent<CTransform>().prevPos.x)
+                {
+                    // push left
+                    m_player->getComponent<CTransform>().pos.x -= overlap.x;
+                }
+                // came from right
+                else
+                {
+                    // push right
+                    m_player->getComponent<CTransform>().pos.x += overlap.x;
+                }
+            }
+        }
+    }
 }
 
 void Scene_Play::sRender()
