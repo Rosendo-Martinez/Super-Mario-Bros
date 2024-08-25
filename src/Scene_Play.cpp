@@ -3,6 +3,7 @@
 #include <iostream>
 #include <sstream> 
 #include <cmath>
+#include <fstream>
 
 void Scene_Play::init(const std::string & levelPath) // register actions, font/text, loadlevel(path)
 {
@@ -40,21 +41,54 @@ Vec2 Scene_Play::gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity
 
 void Scene_Play::loadLevel(const std::string & filename) // load/reset/reload level
 {
-    // create a ? block entity
-    auto qBlock = m_entityManager.addEntity("Block");
-    qBlock->addComponent<CAnimation>(m_game->assets().getAnimation("QuestionBlock"), true);
-    qBlock->addComponent<CTransform>(gridToMidPixel(5,5,qBlock));
-    qBlock->addComponent<CBoundingBox>(Vec2(64, 64));
-    // create a brick entity
-    auto brick = m_entityManager.addEntity("Brick");
-    brick->addComponent<CAnimation>(m_game->assets().getAnimation("Brick"), true);
-    brick->addComponent<CTransform>(gridToMidPixel(4,3,brick));
-    brick->addComponent<CBoundingBox>(Vec2(64, 64));
-    // create a blinking ? block entity
-    auto qBlockBlink = m_entityManager.addEntity("Block");
-    qBlockBlink->addComponent<CAnimation>(m_game->assets().getAnimation("QuestionMarkBlink"), true);
-    qBlockBlink->addComponent<CTransform>(gridToMidPixel(7,3,qBlockBlink));
-    qBlockBlink->addComponent<CBoundingBox>(Vec2(64,64));
+    std::ifstream levelSpec ("bin/texts/level1.txt");
+
+    if (!levelSpec.is_open())
+    {
+        std::cout << "Error: level specification file could not be open.\n";
+    }
+    else
+    {
+        while (levelSpec)
+        {
+            std::string type;
+            levelSpec >> type;
+
+            if (type == "Tile")
+            {
+                auto e = m_entityManager.addEntity(type);
+                std::string animationName;
+                float gx;
+                float gy;
+
+                levelSpec >> animationName >> gx >> gy;
+
+                e->addComponent<CAnimation>(m_game->assets().getAnimation(animationName), true);
+                e->addComponent<CTransform>(gridToMidPixel(gx,gy,e));
+                e->addComponent<CBoundingBox>(Vec2(64,64));
+            }
+            else if (type == "Decoration")
+            {
+                auto e = m_entityManager.addEntity(type);
+                std::string animationName;
+                float gx;
+                float gy;
+
+                levelSpec >> animationName >> gx >> gy;
+
+                e->addComponent<CAnimation>(m_game->assets().getAnimation(animationName), true);
+                e->addComponent<CTransform>(gridToMidPixel(gx,gy,e));
+            }
+            else if (type == "Player")
+            {
+                std::cout << type << "\n";
+            }
+            else
+            {
+                std::cout << "Error: " << type << " is not a supported entity type.\n";
+            }
+        }
+    }
 
     std::cout << "Entities Created: " << m_entityManager.getTotalEntitiesCreated() << "\n";
 }
