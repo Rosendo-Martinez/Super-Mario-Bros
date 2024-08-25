@@ -48,7 +48,7 @@ void Scene_Play::loadLevel(const std::string & filename) // load/reset/reload le
     // create a brick entity
     auto brick = m_entityManager.addEntity("Brick");
     brick->addComponent<CAnimation>(m_game->assets().getAnimation("Brick"), true);
-    brick->addComponent<CTransform>(gridToMidPixel(6,5,brick));
+    brick->addComponent<CTransform>(gridToMidPixel(4,3,brick));
     brick->addComponent<CBoundingBox>(Vec2(64, 64));
     // create a blinking ? block entity
     auto qBlockBlink = m_entityManager.addEntity("Block");
@@ -66,6 +66,7 @@ void Scene_Play::spawnPlayer()
     player->addComponent<CTransform>(gridToMidPixel(4,7,player));
     player->addComponent<CBoundingBox>(Vec2(64, 64));
     player->addComponent<CInput>();
+    player->addComponent<CState>();
     m_player = player;
 }
 
@@ -104,7 +105,10 @@ void Scene_Play::sAnimation()
 void Scene_Play::sMovement()
 {
     float speed = 5.f;
-    m_player->getComponent<CTransform>().velocity = Vec2(0,0);
+    float initialJumpSpeed = 24.f;
+    float gravity = 1.f;
+    m_player->getComponent<CTransform>().velocity = Vec2(0,m_player->getComponent<CTransform>().velocity.y + gravity);
+
 
     if (m_player->getComponent<CInput>().left)
     {
@@ -116,14 +120,20 @@ void Scene_Play::sMovement()
         m_player->getComponent<CTransform>().velocity.x += speed;
     }
 
-    if (m_player->getComponent<CInput>().up)
+    if (m_player->getComponent<CInput>().up && m_player->getComponent<CState>().state == "Grounded")
     {
-        m_player->getComponent<CTransform>().velocity.y -= speed;
+        m_player->getComponent<CTransform>().velocity.y -= initialJumpSpeed;
+        m_player->getComponent<CState>().state = "Airborne";
     }
 
     if (m_player->getComponent<CInput>().down)
     {
         m_player->getComponent<CTransform>().velocity.y += speed;
+    }
+
+    if (!m_player->getComponent<CInput>().up && m_player->getComponent<CState>().state == "Airborne" && m_player->getComponent<CTransform>().velocity.y < 0)
+    {
+        m_player->getComponent<CTransform>().velocity.y = 0;
     }
 
     for (auto e : m_entityManager.getEntities())
@@ -180,6 +190,7 @@ void Scene_Play::sCollision()
                 {
                     // push up
                     m_player->getComponent<CTransform>().pos.y -= overlap.y;
+                    m_player->getComponent<CState>().state = "Grounded";
                 }
                 // came from bottom
                 else
@@ -187,6 +198,8 @@ void Scene_Play::sCollision()
                     // push down
                     m_player->getComponent<CTransform>().pos.y += overlap.y;
                 }
+
+                m_player->getComponent<CTransform>().velocity.y = 0;
             }
             // diagonal collision 
             else
