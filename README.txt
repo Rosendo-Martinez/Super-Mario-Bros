@@ -49,6 +49,8 @@ Player GX GY CW CH SX SY SM GY B
 Assets File Specification
 -------------------------
 
+Note, Texture must come before Animations.
+
 Texture Asset:
 Texture N P
     Texture Name        N (string)

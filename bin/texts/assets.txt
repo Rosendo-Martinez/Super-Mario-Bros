@@ -1,8 +1,17 @@
-Texture MarioStand bin/images/mario/MarioStand16.png
+Font Grid bin/fonts/Roboto-Regular.ttf
 Texture BigCloud bin/images/mario/BigCloud16.png
-Texture QuestionBlock bin/images/mario/QuestionMarkBlock16.png
+Texture Block bin/images/mario/Block16.png
 Texture Brick bin/images/mario/Brick16.png
-Animation MarioStand MarioStand 1 0
+Texture Ground bin/images/mario/Ground16.png
+Texture MarioStand bin/images/mario/MarioStand16.png
+Texture MarioAir bin/images/mario/MarioAir16.png
+Texture MarioRun bin/images/mario/MarioRun16.png
+Texture QuestionBlock bin/images/mario/QuestionMarkBlock16.png
+Texture QuestionMarkBlink bin/images/mario/QuestionMarkBlink16.png
+Texture QuestionMarkBlockHit bin/images/mario/QuestionMarkBlockHit16.png
 Animation BigCloud BigCloud 1 0
-Animation QuestionBlock QuestionBlock 1 0
 Animation Brick Brick 1 0
+Animation QuestionBlock QuestionBlock 1 0
+Animation QuestionMarkBlink QuestionMarkBlink 3 5
+Animation MarioRun MarioRun 3 20
+Animation MarioStand MarioStand 1 0

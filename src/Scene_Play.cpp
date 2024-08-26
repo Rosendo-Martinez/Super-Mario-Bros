@@ -261,7 +261,7 @@ void Scene_Play::sCollision()
 void Scene_Play::sRender()
 {
     sf::RenderWindow & window = m_game->window();
-    window.clear(sf::Color::Blue); 
+    window.clear(sf::Color(97, 126, 248)); 
 
     // Draw entities
     if (m_drawTextures)
