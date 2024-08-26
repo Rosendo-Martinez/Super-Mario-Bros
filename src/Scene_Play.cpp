@@ -266,7 +266,25 @@ void Scene_Play::sRender()
     // Draw entities
     if (m_drawTextures)
     {
-        for (auto e : m_entityManager.getEntities())
+        for (auto e : m_entityManager.getEntities("Decoration"))
+        {
+            Vec2 pos = e->getComponent<CTransform>().pos;
+            sf::Sprite & sprite = e->getComponent<CAnimation>().animation.getSprite();
+
+            sprite.setPosition(sf::Vector2f(pos.x,pos.y));
+            window.draw(sprite);
+        }
+
+        for (auto e : m_entityManager.getEntities("Tile"))
+        {
+            Vec2 pos = e->getComponent<CTransform>().pos;
+            sf::Sprite & sprite = e->getComponent<CAnimation>().animation.getSprite();
+
+            sprite.setPosition(sf::Vector2f(pos.x,pos.y));
+            window.draw(sprite);
+        }
+
+        for (auto e : m_entityManager.getEntities("Player"))
         {
             Vec2 pos = e->getComponent<CTransform>().pos;
             sf::Sprite & sprite = e->getComponent<CAnimation>().animation.getSprite();

@@ -32,6 +32,7 @@ EntityVec& EntityManager::getEntities()
 
 EntityVec& EntityManager::getEntities(const std::string& tag)
 {
+    return m_entityMap[tag];
 }
 
 size_t EntityManager::getTotalEntitiesCreated()
