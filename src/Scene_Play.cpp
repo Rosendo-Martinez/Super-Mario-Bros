@@ -238,18 +238,21 @@ void Scene_Play::sCollision()
             // diagonal collision 
             else
             {
-                // came from left
-                if (m_player->getComponent<CTransform>().prevPos.x < e->getComponent<CTransform>().prevPos.x)
+                // came from top
+                if (m_player->getComponent<CTransform>().prevPos.y < e->getComponent<CTransform>().prevPos.y)
                 {
-                    // push left
-                    m_player->getComponent<CTransform>().pos.x -= overlap.x;
+                    // push up
+                    m_player->getComponent<CTransform>().pos.y -= overlap.y;
+                    m_player->getComponent<CState>().state = "Grounded";
                 }
-                // came from right
+                // came from bottom
                 else
                 {
-                    // push right
-                    m_player->getComponent<CTransform>().pos.x += overlap.x;
+                    // push down
+                    m_player->getComponent<CTransform>().pos.y += overlap.y;
                 }
+
+                m_player->getComponent<CTransform>().velocity.y = 0;
             }
         }
     }
@@ -384,6 +387,7 @@ void Scene_Play::sDoAction(const Action & action) // do the action
         if (action.name() == "LEFT")
         {
             m_player->getComponent<CInput>().left = true;
+            std::cout << "Action Move Left\n";
         }
 
         if (action.name() == "RIGHT")
