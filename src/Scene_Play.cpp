@@ -122,6 +122,8 @@ void Scene_Play::update() // update EM, and cal systems
 {
     m_entityManager.update();
 
+    std::cout << m_player->getComponent<CState>().state << "\n";
+
     sAnimation();
     sMovement();
     sCollision();
@@ -130,6 +132,31 @@ void Scene_Play::update() // update EM, and cal systems
 
 void Scene_Play::sAnimation()
 {
+    // if player is running
+        // give him running animation
+    // if player is standing
+        // give him standing animation
+    // if player is jumping
+        // give him jumping animation
+    
+    // if player is pressing left
+        // flip animation to left
+    // if player is pressing right
+        // flip animatoin to right
+
+    if (m_player->getComponent<CState>().state == "Running" && m_player->getComponent<CAnimation>().animation.getName() != "MarioRun")
+    {
+        m_player->getComponent<CAnimation>().animation = m_game->assets().getAnimation("MarioRun");
+    }
+    else if (m_player->getComponent<CState>().state == "Standing" && m_player->getComponent<CAnimation>().animation.getName() != "MarioStand")
+    {
+        m_player->getComponent<CAnimation>().animation = m_game->assets().getAnimation("MarioStand");
+    }
+    else if (m_player->getComponent<CState>().state == "Jumping" && m_player->getComponent<CAnimation>().animation.getName() != "MarioAir")
+    {
+        m_player->getComponent<CAnimation>().animation = m_game->assets().getAnimation("MarioAir");
+    }
+
     for (auto e: m_entityManager.getEntities())
     {
         e->getComponent<CAnimation>().animation.update();
@@ -154,10 +181,10 @@ void Scene_Play::sMovement()
         m_player->getComponent<CTransform>().velocity.x += speed;
     }
 
-    if (m_player->getComponent<CInput>().up && m_player->getComponent<CState>().state == "Grounded")
+    if (m_player->getComponent<CInput>().up && (m_player->getComponent<CState>().state == "Standing" || m_player->getComponent<CState>().state == "Running"))
     {
         m_player->getComponent<CTransform>().velocity.y -= initialJumpSpeed;
-        m_player->getComponent<CState>().state = "Airborne";
+        m_player->getComponent<CState>().state = "Jumping";
     }
 
     if (m_player->getComponent<CInput>().down)
@@ -165,7 +192,7 @@ void Scene_Play::sMovement()
         m_player->getComponent<CTransform>().velocity.y += speed;
     }
 
-    if (!m_player->getComponent<CInput>().up && m_player->getComponent<CState>().state == "Airborne" && m_player->getComponent<CTransform>().velocity.y < 0)
+    if (!m_player->getComponent<CInput>().up && m_player->getComponent<CState>().state == "Jumping" && m_player->getComponent<CTransform>().velocity.y < 0)
     {
         m_player->getComponent<CTransform>().velocity.y = 0;
     }
@@ -186,6 +213,7 @@ void Scene_Play::sEnemySpawn()
 
 void Scene_Play::sCollision()
 {
+    int collisionCount = 0;
     // player-block collisions
     for (auto e : m_entityManager.getEntities())
     {
@@ -219,12 +247,21 @@ void Scene_Play::sCollision()
             // vertical collision
             else if (prevOverlap.x > 0)
             {
+                std::cout << "Vertical Collision.\n";
                 // came from top
                 if (m_player->getComponent<CTransform>().prevPos.y < e->getComponent<CTransform>().prevPos.y)
                 {
                     // push up
                     m_player->getComponent<CTransform>().pos.y -= overlap.y;
-                    m_player->getComponent<CState>().state = "Grounded";
+                    
+                    if (m_player->getComponent<CInput>().left || m_player->getComponent<CInput>().right)
+                    {
+                        m_player->getComponent<CState>().state = "Running";
+                    }
+                    else
+                    {
+                        m_player->getComponent<CState>().state = "Standing";
+                    }
                 }
                 // came from bottom
                 else
@@ -243,7 +280,15 @@ void Scene_Play::sCollision()
                 {
                     // push up
                     m_player->getComponent<CTransform>().pos.y -= overlap.y;
-                    m_player->getComponent<CState>().state = "Grounded";
+
+                    if (m_player->getComponent<CInput>().left || m_player->getComponent<CInput>().right)
+                    {
+                        m_player->getComponent<CState>().state = "Running";
+                    }
+                    else
+                    {
+                        m_player->getComponent<CState>().state = "Standing";
+                    }
                 }
                 // came from bottom
                 else
@@ -254,7 +299,14 @@ void Scene_Play::sCollision()
 
                 m_player->getComponent<CTransform>().velocity.y = 0;
             }
+
+            collisionCount++;
         }
+    }
+
+    if (collisionCount == 0)
+    {
+        m_player->getComponent<CState>().state = "Jumping";
     }
 }
 
