@@ -9,6 +9,7 @@ Texture MarioRun bin/images/mario/MarioRun16.png
 Texture QuestionBlock bin/images/mario/QuestionMarkBlock16.png
 Texture QuestionMarkBlink bin/images/mario/QuestionMarkBlink16.png
 Texture QuestionMarkBlockHit bin/images/mario/QuestionMarkBlockHit16.png
+Animation Ground Ground 1 0
 Animation BigCloud BigCloud 1 0
 Animation Brick Brick 1 0
 Animation QuestionBlock QuestionBlock 1 0

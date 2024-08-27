@@ -168,7 +168,7 @@ void Scene_Play::sAnimation()
 
 void Scene_Play::sMovement()
 {
-    float speed = 5.f;
+    float speed = 6.f;
     float initialJumpSpeed = 24.f;
     float gravity = 1.f;
     m_player->getComponent<CTransform>().velocity = Vec2(0,m_player->getComponent<CTransform>().velocity.y + gravity);
