@@ -157,6 +157,16 @@ void Scene_Play::sAnimation()
         m_player->getComponent<CAnimation>().animation = m_game->assets().getAnimation("MarioAir");
     }
 
+    if (m_player->getComponent<CInput>().left && m_player->getComponent<CAnimation>().animation.getSprite().getScale().x > 0)
+    {
+        m_player->getComponent<CAnimation>().animation.getSprite().scale(sf::Vector2f(-1.f,1.f));
+    }
+    
+    if (m_player->getComponent<CInput>().right && m_player->getComponent<CAnimation>().animation.getSprite().getScale().x < 0)
+    {
+        m_player->getComponent<CAnimation>().animation.getSprite().scale(sf::Vector2f(-1.f,1.f));
+    }
+
     for (auto e: m_entityManager.getEntities())
     {
         e->getComponent<CAnimation>().animation.update();
