@@ -89,8 +89,6 @@ void Scene_Play::loadLevel(const std::string & filename) // load/reset/reload le
             }
         }
     }
-
-    std::cout << "Entities Created: " << m_entityManager.getTotalEntitiesCreated() << "\n";
 }
 
 void Scene_Play::spawnPlayer()
@@ -122,8 +120,6 @@ void Scene_Play::update() // update EM, and cal systems
 {
     m_entityManager.update();
 
-    std::cout << m_player->getComponent<CState>().state << "\n";
-
     sAnimation();
     sMovement();
     sCollision();
@@ -132,18 +128,6 @@ void Scene_Play::update() // update EM, and cal systems
 
 void Scene_Play::sAnimation()
 {
-    // if player is running
-        // give him running animation
-    // if player is standing
-        // give him standing animation
-    // if player is jumping
-        // give him jumping animation
-    
-    // if player is pressing left
-        // flip animation to left
-    // if player is pressing right
-        // flip animatoin to right
-
     if (m_player->getComponent<CState>().state == "Running" && m_player->getComponent<CAnimation>().animation.getName() != "MarioRun")
     {
         m_player->getComponent<CAnimation>().animation = m_game->assets().getAnimation("MarioRun");
@@ -257,7 +241,6 @@ void Scene_Play::sCollision()
             // vertical collision
             else if (prevOverlap.x > 0)
             {
-                std::cout << "Vertical Collision.\n";
                 // came from top
                 if (m_player->getComponent<CTransform>().prevPos.y < e->getComponent<CTransform>().prevPos.y)
                 {
@@ -467,7 +450,6 @@ void Scene_Play::sDoAction(const Action & action) // do the action
         if (action.name() == "LEFT")
         {
             m_player->getComponent<CInput>().left = true;
-            std::cout << "Action Move Left\n";
         }
 
         if (action.name() == "RIGHT")
