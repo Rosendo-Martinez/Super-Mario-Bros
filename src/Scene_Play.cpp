@@ -130,15 +130,24 @@ void Scene_Play::sAnimation()
 {
     if (m_player->getComponent<CState>().state == "Running" && m_player->getComponent<CAnimation>().animation.getName() != "MarioRun")
     {
+        // negative is left, positive is right
+        float facingDirection =  m_player->getComponent<CAnimation>().animation.getSprite().getScale().x < 0 ? -1 : 1;
         m_player->getComponent<CAnimation>().animation = m_game->assets().getAnimation("MarioRun");
+        m_player->getComponent<CAnimation>().animation.getSprite().scale(sf::Vector2f(facingDirection,1.f));
     }
     else if (m_player->getComponent<CState>().state == "Standing" && m_player->getComponent<CAnimation>().animation.getName() != "MarioStand")
     {
+        // negative is left, positive is right
+        float facingDirection =  m_player->getComponent<CAnimation>().animation.getSprite().getScale().x < 0 ? -1 : 1;
         m_player->getComponent<CAnimation>().animation = m_game->assets().getAnimation("MarioStand");
+        m_player->getComponent<CAnimation>().animation.getSprite().scale(sf::Vector2f(facingDirection,1.f));
     }
     else if (m_player->getComponent<CState>().state == "Jumping" && m_player->getComponent<CAnimation>().animation.getName() != "MarioAir")
     {
+        // negative is left, positive is right
+        float facingDirection =  m_player->getComponent<CAnimation>().animation.getSprite().getScale().x < 0 ? -1 : 1;
         m_player->getComponent<CAnimation>().animation = m_game->assets().getAnimation("MarioAir");
+        m_player->getComponent<CAnimation>().animation.getSprite().scale(sf::Vector2f(facingDirection,1.f));
     }
 
     if (m_player->getComponent<CInput>().left && m_player->getComponent<CAnimation>().animation.getSprite().getScale().x > 0)
