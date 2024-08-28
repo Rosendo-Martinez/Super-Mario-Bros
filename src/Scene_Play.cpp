@@ -120,10 +120,17 @@ void Scene_Play::update() // update EM, and cal systems
 {
     m_entityManager.update();
 
+    if (!m_player->isActive())
+    {
+        spawnPlayer();
+    }
+
     sAnimation();
     sMovement();
     sCollision();
     sRender();
+
+    std::cout << "Entity Count: " << m_entityManager.getEntities().size() << "\n";
 }
 
 void Scene_Play::sAnimation()
@@ -206,6 +213,12 @@ void Scene_Play::sMovement()
         {
             e->getComponent<CTransform>().prevPos = e->getComponent<CTransform>().pos;
             e->getComponent<CTransform>().pos += e->getComponent<CTransform>().velocity;
+        }
+
+        // Entity fell down hole
+        if (e->getComponent<CTransform>().pos.y + 64/2 > m_game->window().getSize().y)
+        {
+            e->destroy();
         }
     }
 }

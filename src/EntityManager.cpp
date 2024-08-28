@@ -3,8 +3,12 @@
 EntityManager::EntityManager()
 {
 }
-void EntityManager::update() // removes dead entities & adds entities in wait list, should be called at begging of next frame (delayed affect)
+void EntityManager::update()
 {
+    // Be careful of iterator invalidation!
+    // Modifying a list while iterating through it will invalidate the iterator.
+    // This is why special care is needed when removing and adding entities.
+
     // add entities on wait list
     for (auto e : m_toAdd)
     {
@@ -13,7 +17,16 @@ void EntityManager::update() // removes dead entities & adds entities in wait li
     }
     m_toAdd.clear();
 
-    // TODO: remove dead entities
+    // Remove dead entities from entity list
+    EntityVec::iterator it = std::remove_if(m_entities.begin(), m_entities.end(), [](const std::shared_ptr<Entity> e){ return !e->isActive(); });
+    m_entities.erase(it, m_entities.end());
+
+    // Remove dead entities from entity map
+    for (auto& p : m_entityMap)
+    {
+        EntityVec::iterator it = std::remove_if(p.second.begin(), p.second.end(), [](const std::shared_ptr<Entity> e){ return !e->isActive(); });
+        p.second.erase(it, p.second.end());
+    }
 }
 
 std::shared_ptr<Entity> EntityManager::addEntity(const std::string& tag)
