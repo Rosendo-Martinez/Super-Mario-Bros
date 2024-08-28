@@ -155,7 +155,7 @@ void Scene_Play::sMovement()
     float gravity = 1.f;
     m_player->getComponent<CTransform>().velocity = Vec2(0,m_player->getComponent<CTransform>().velocity.y + gravity);
 
-
+    // Player run left
     if (m_player->getComponent<CInput>().left)
     {
         m_player->getComponent<CTransform>().velocity.x -= speed;
@@ -167,6 +167,7 @@ void Scene_Play::sMovement()
         }
     }
 
+    // Player run right
     if (m_player->getComponent<CInput>().right)
     {
         m_player->getComponent<CTransform>().velocity.x += speed;
@@ -178,22 +179,27 @@ void Scene_Play::sMovement()
         }
     }
 
-    if (m_player->getComponent<CInput>().up && (m_player->getComponent<CState>().state == "Standing" || m_player->getComponent<CState>().state == "Running"))
+    // Player jump
+    if (m_player->getComponent<CInput>().up && m_player->getComponent<CInput>().canJump)
     {
         m_player->getComponent<CTransform>().velocity.y -= initialJumpSpeed;
         m_player->getComponent<CState>().state = "Jumping";
+        m_player->getComponent<CInput>().canJump = false;
     }
 
+    // Player move down
     if (m_player->getComponent<CInput>().down)
     {
         m_player->getComponent<CTransform>().velocity.y += speed;
     }
 
+    // Player jump strength
     if (!m_player->getComponent<CInput>().up && m_player->getComponent<CState>().state == "Jumping" && m_player->getComponent<CTransform>().velocity.y < 0)
     {
         m_player->getComponent<CTransform>().velocity.y = 0;
     }
 
+    // Use velocity to move the entities positions
     for (auto e : m_entityManager.getEntities())
     {
         if (e->hasComponent<CTransform>())
@@ -241,34 +247,8 @@ void Scene_Play::sCollision()
                     m_player->getComponent<CTransform>().pos.x += overlap.x;
                 }
             }
-            // vertical collision
-            else if (prevOverlap.x > 0)
-            {
-                // came from top
-                if (m_player->getComponent<CTransform>().prevPos.y < e->getComponent<CTransform>().prevPos.y)
-                {
-                    // push up
-                    m_player->getComponent<CTransform>().pos.y -= overlap.y;
-                    
-                    if (m_player->getComponent<CInput>().left || m_player->getComponent<CInput>().right)
-                    {
-                        m_player->getComponent<CState>().state = "Running";
-                    }
-                    else
-                    {
-                        m_player->getComponent<CState>().state = "Standing";
-                    }
-                }
-                // came from bottom
-                else
-                {
-                    // push down
-                    m_player->getComponent<CTransform>().pos.y += overlap.y;
-                }
-
-                m_player->getComponent<CTransform>().velocity.y = 0;
-            }
-            // diagonal collision 
+            // vertical collision (prevOverlap.x > 0),
+            // or diagonal collision (prevOverlap.x < 0)
             else
             {
                 // came from top
@@ -285,6 +265,8 @@ void Scene_Play::sCollision()
                     {
                         m_player->getComponent<CState>().state = "Standing";
                     }
+
+                    m_player->getComponent<CInput>().canJump = true;
                 }
                 // came from bottom
                 else
