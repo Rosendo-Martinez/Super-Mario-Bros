@@ -128,36 +128,18 @@ void Scene_Play::update() // update EM, and cal systems
 
 void Scene_Play::sAnimation()
 {
+    // Set Mario's animation to match his current state
     if (m_player->getComponent<CState>().state == "Running" && m_player->getComponent<CAnimation>().animation.getName() != "MarioRun")
     {
-        // negative is left, positive is right
-        float facingDirection =  m_player->getComponent<CAnimation>().animation.getSprite().getScale().x < 0 ? -1 : 1;
         m_player->getComponent<CAnimation>().animation = m_game->assets().getAnimation("MarioRun");
-        m_player->getComponent<CAnimation>().animation.getSprite().scale(sf::Vector2f(facingDirection,1.f));
     }
     else if (m_player->getComponent<CState>().state == "Standing" && m_player->getComponent<CAnimation>().animation.getName() != "MarioStand")
     {
-        // negative is left, positive is right
-        float facingDirection =  m_player->getComponent<CAnimation>().animation.getSprite().getScale().x < 0 ? -1 : 1;
         m_player->getComponent<CAnimation>().animation = m_game->assets().getAnimation("MarioStand");
-        m_player->getComponent<CAnimation>().animation.getSprite().scale(sf::Vector2f(facingDirection,1.f));
     }
     else if (m_player->getComponent<CState>().state == "Jumping" && m_player->getComponent<CAnimation>().animation.getName() != "MarioAir")
     {
-        // negative is left, positive is right
-        float facingDirection =  m_player->getComponent<CAnimation>().animation.getSprite().getScale().x < 0 ? -1 : 1;
         m_player->getComponent<CAnimation>().animation = m_game->assets().getAnimation("MarioAir");
-        m_player->getComponent<CAnimation>().animation.getSprite().scale(sf::Vector2f(facingDirection,1.f));
-    }
-
-    if (m_player->getComponent<CInput>().left && m_player->getComponent<CAnimation>().animation.getSprite().getScale().x > 0)
-    {
-        m_player->getComponent<CAnimation>().animation.getSprite().scale(sf::Vector2f(-1.f,1.f));
-    }
-    
-    if (m_player->getComponent<CInput>().right && m_player->getComponent<CAnimation>().animation.getSprite().getScale().x < 0)
-    {
-        m_player->getComponent<CAnimation>().animation.getSprite().scale(sf::Vector2f(-1.f,1.f));
     }
 
     for (auto e: m_entityManager.getEntities())
@@ -177,11 +159,23 @@ void Scene_Play::sMovement()
     if (m_player->getComponent<CInput>().left)
     {
         m_player->getComponent<CTransform>().velocity.x -= speed;
+        
+        // make player face left
+        if (m_player->getComponent<CTransform>().scale.x > 0)
+        {
+            m_player->getComponent<CTransform>().scale.x *= -1;
+        }
     }
 
     if (m_player->getComponent<CInput>().right)
     {
         m_player->getComponent<CTransform>().velocity.x += speed;
+
+        // make player face right
+        if (m_player->getComponent<CTransform>().scale.x < 0)
+        {
+            m_player->getComponent<CTransform>().scale.x *= -1;   
+        }
     }
 
     if (m_player->getComponent<CInput>().up && (m_player->getComponent<CState>().state == "Standing" || m_player->getComponent<CState>().state == "Running"))
@@ -320,30 +314,40 @@ void Scene_Play::sRender()
     // Draw entities
     if (m_drawTextures)
     {
+        // Why multiply scale by 4?
+        // The assets are 16x16, but I prefer them to be scaled up to 64x64.
+        // 16 * 4 = 64
+
         for (auto e : m_entityManager.getEntities("Decoration"))
         {
             Vec2 pos = e->getComponent<CTransform>().pos;
+            Vec2 scale = e->getComponent<CTransform>().scale;
             sf::Sprite & sprite = e->getComponent<CAnimation>().animation.getSprite();
 
             sprite.setPosition(sf::Vector2f(pos.x,pos.y));
+            sprite.setScale(sf::Vector2f(scale.x * 4, scale.y * 4));
             window.draw(sprite);
         }
 
         for (auto e : m_entityManager.getEntities("Tile"))
         {
             Vec2 pos = e->getComponent<CTransform>().pos;
+            Vec2 scale = e->getComponent<CTransform>().scale;
             sf::Sprite & sprite = e->getComponent<CAnimation>().animation.getSprite();
 
             sprite.setPosition(sf::Vector2f(pos.x,pos.y));
+            sprite.setScale(sf::Vector2f(scale.x * 4, scale.y * 4));
             window.draw(sprite);
         }
 
         for (auto e : m_entityManager.getEntities("Player"))
         {
             Vec2 pos = e->getComponent<CTransform>().pos;
+            Vec2 scale = e->getComponent<CTransform>().scale;
             sf::Sprite & sprite = e->getComponent<CAnimation>().animation.getSprite();
 
             sprite.setPosition(sf::Vector2f(pos.x,pos.y));
+            sprite.setScale(sf::Vector2f(scale.x * 4, scale.y * 4));
             window.draw(sprite);
         }
     }
