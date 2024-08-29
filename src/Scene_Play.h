@@ -24,6 +24,7 @@ private:
     bool m_drawGrid = false;
     const Vec2 m_gridSize = { 64, 64 };
     sf::Text m_gridText;
+    Vec2 m_cameraPosition; // relative to game map
 
     void init(const std::string & levelPath); // register actions, font/text, loadlevel(path)
     Vec2 gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity);

@@ -306,6 +306,15 @@ void Scene_Play::sRender()
     sf::RenderWindow & window = m_game->window();
     window.clear(sf::Color(97, 126, 248)); 
 
+    // Make camera follow player
+    m_cameraPosition.x = m_player->getComponent<CTransform>().pos.x - window.getSize().x/2;
+    // Make sure camera does not go out of left bound
+    if (m_cameraPosition.x < 0)
+    {
+        m_cameraPosition.x = 0;
+    }
+    // Make sure to render entities with positions relative to camera
+
     // Draw entities
     if (m_drawTextures)
     {
@@ -315,7 +324,7 @@ void Scene_Play::sRender()
 
         for (auto e : m_entityManager.getEntities("Decoration"))
         {
-            Vec2 pos = e->getComponent<CTransform>().pos;
+            Vec2 pos = e->getComponent<CTransform>().pos - m_cameraPosition;
             Vec2 scale = e->getComponent<CTransform>().scale;
             sf::Sprite & sprite = e->getComponent<CAnimation>().animation.getSprite();
 
@@ -326,7 +335,7 @@ void Scene_Play::sRender()
 
         for (auto e : m_entityManager.getEntities("Tile"))
         {
-            Vec2 pos = e->getComponent<CTransform>().pos;
+            Vec2 pos = e->getComponent<CTransform>().pos - m_cameraPosition;
             Vec2 scale = e->getComponent<CTransform>().scale;
             sf::Sprite & sprite = e->getComponent<CAnimation>().animation.getSprite();
 
@@ -337,7 +346,7 @@ void Scene_Play::sRender()
 
         for (auto e : m_entityManager.getEntities("Player"))
         {
-            Vec2 pos = e->getComponent<CTransform>().pos;
+            Vec2 pos = e->getComponent<CTransform>().pos - m_cameraPosition;
             Vec2 scale = e->getComponent<CTransform>().scale;
             sf::Sprite & sprite = e->getComponent<CAnimation>().animation.getSprite();
 
@@ -352,7 +361,7 @@ void Scene_Play::sRender()
     {
         for (auto e : m_entityManager.getEntities())
         {
-            Vec2 pos = e->getComponent<CTransform>().pos;
+            Vec2 pos = e->getComponent<CTransform>().pos - m_cameraPosition;
             Vec2 size = e->getComponent<CBoundingBox>().size;
             sf::RectangleShape bb(sf::Vector2f(size.x,size.y));
 
