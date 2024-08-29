@@ -24,5 +24,7 @@ Tile Ground 15 2
 Tile Brick 2 5
 Tile Brick 4 5
 Tile QuestionMarkBlink 3 5
+Decoration BigMountain 0 2
+Decoration SmallMountain 13 2
 Decoration BigCloud 4 7
 Player 1 2 5 5
