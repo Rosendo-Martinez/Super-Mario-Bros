@@ -14,6 +14,13 @@ Tile Ground 8 1
 Tile Ground 8 0
 Tile Ground 9 1
 Tile Ground 9 0
+Tile Ground 13 1
+Tile Ground 13 0
+Tile Ground 14 1
+Tile Ground 14 0
+Tile Ground 15 0
+Tile Ground 15 1
+Tile Ground 15 2
 Tile Brick 2 5
 Tile Brick 4 5
 Tile QuestionMarkBlink 3 5

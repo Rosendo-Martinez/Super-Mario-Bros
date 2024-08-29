@@ -380,13 +380,13 @@ void Scene_Play::sRender()
         const int widthWindow = window.getSize().x;
         const int heightCell = m_gridSize.y;
         const int widthCell = m_gridSize.x;
-
+        const int MAP_WIDTH_BLOCKS = 400;
 
         // Draw grid vertical lines
         const int verticalLines = ceil((float) widthWindow / widthCell);
-        for (int i = 0; i < verticalLines; i++) 
+        for (int i = 0; i < MAP_WIDTH_BLOCKS; i++) 
         {
-            int x = widthCell * (i + 1);
+            int x = widthCell * (i + 1) - m_cameraPosition.x;
             sf::VertexArray line(sf::Lines, 2);
 
             line[0].position = sf::Vector2f(x, 0);
@@ -413,7 +413,7 @@ void Scene_Play::sRender()
         }
 
         // Draw grid coordinates
-        for (int gx = 0; gx < verticalLines; gx++)
+        for (int gx = 0; gx < MAP_WIDTH_BLOCKS; gx++)
         {
             for (int gy = 0; gy < horizontalLines; gy++)
             {
@@ -422,7 +422,7 @@ void Scene_Play::sRender()
                 m_gridText.setString(oss.str());
 
                 // relative to top left of window
-                int x = widthCell * gx;
+                int x = widthCell * gx - m_cameraPosition.x;
                 int y = heightWindow - (heightCell * (gy + 1));
                 m_gridText.setPosition(sf::Vector2f(x, y));
                 
