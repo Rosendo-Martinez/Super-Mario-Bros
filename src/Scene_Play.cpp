@@ -227,6 +227,82 @@ void Scene_Play::sEnemySpawn()
 {
 }
 
+enum class CollisionDirection 
+{
+    DIAGONAL_TOP_LEFT,
+    DIAGONAL_TOP_RIGHT,
+    DIAGONAL_BOTTOM_LEFT,
+    DIAGONAL_BOTTOM_RIGHT,
+    TOP,
+    BOTTOM,
+    LEFT,
+    RIGHT
+};
+
+// Returns the direction player came from relative to block.
+CollisionDirection getCollisionDirection(Vec2 prevOverlap, Vec2 prevPosPlayer, Vec2 prevPosBlock)
+{
+    // Horizontal direction
+    if (prevOverlap.y > 0) {
+        // came from left
+        if (prevPosPlayer.x < prevPosBlock.x)
+        {
+            return CollisionDirection::LEFT;
+        }
+        // came from right
+        else
+        {
+            return CollisionDirection::RIGHT;
+        }
+    }
+    // Vertical direction
+    else if (prevOverlap.x > 0)
+    {
+        // came from top
+        if (prevPosPlayer.y < prevPosBlock.y)
+        {
+            return CollisionDirection::TOP;
+        }
+        // came from bottom
+        else
+        {
+            return CollisionDirection::BOTTOM;
+        }
+    }
+    // Diagonal direction
+    else
+    {
+        // came from top
+        if (prevPosPlayer.y > prevPosBlock.y)
+        {
+            // came from left
+            if (prevPosPlayer.x < prevPosBlock.x)
+            {
+                return CollisionDirection::DIAGONAL_TOP_LEFT;
+            }
+            // came from right
+            else
+            {
+                return CollisionDirection::DIAGONAL_TOP_RIGHT;
+            }
+        }
+        // came from bottom
+        else
+        {
+            // came from left
+            if (prevPosPlayer.x < prevPosBlock.x)
+            {
+                return CollisionDirection::DIAGONAL_BOTTOM_LEFT;
+            }
+            // came from right
+            else
+            {
+                return CollisionDirection::DIAGONAL_BOTTOM_RIGHT;
+            }   
+        }
+    }
+}
+
 void Scene_Play::sCollision()
 {
     int collisionCount = 0;
@@ -244,50 +320,39 @@ void Scene_Play::sCollision()
         // collision
         if (overlap.x > 0 && overlap.y > 0)
         {
-            // horizontal collision
-            if (prevOverlap.y > 0)
+            CollisionDirection cd = getCollisionDirection(prevOverlap, m_player->getComponent<CTransform>().prevPos, e->getComponent<CTransform>().prevPos);
+
+            if (cd == CollisionDirection::LEFT)
             {
-                // came from left
-                if (m_player->getComponent<CTransform>().prevPos.x < e->getComponent<CTransform>().prevPos.x)
-                {
-                    // push left
-                    m_player->getComponent<CTransform>().pos.x -= overlap.x;
-                }
-                // came from right
-                else
-                {
-                    // push right
-                    m_player->getComponent<CTransform>().pos.x += overlap.x;
-                }
+                // push left
+                m_player->getComponent<CTransform>().pos.x -= overlap.x;
             }
-            // vertical collision (prevOverlap.x > 0),
-            // or diagonal collision (prevOverlap.x < 0)
-            else
+            else if (cd == CollisionDirection::RIGHT)
             {
-                // came from top
-                if (m_player->getComponent<CTransform>().prevPos.y < e->getComponent<CTransform>().prevPos.y)
+                // push right
+                m_player->getComponent<CTransform>().pos.x += overlap.x;
+            }
+            else if (cd == CollisionDirection::TOP || cd == CollisionDirection::DIAGONAL_TOP_LEFT || cd == CollisionDirection::DIAGONAL_TOP_RIGHT)
+            {
+                // push up
+                m_player->getComponent<CTransform>().pos.y -= overlap.y;
+
+                if (m_player->getComponent<CInput>().left || m_player->getComponent<CInput>().right)
                 {
-                    // push up
-                    m_player->getComponent<CTransform>().pos.y -= overlap.y;
-
-                    if (m_player->getComponent<CInput>().left || m_player->getComponent<CInput>().right)
-                    {
-                        m_player->getComponent<CState>().state = "Running";
-                    }
-                    else
-                    {
-                        m_player->getComponent<CState>().state = "Standing";
-                    }
-
-                    m_player->getComponent<CInput>().canJump = true;
+                    m_player->getComponent<CState>().state = "Running";
                 }
-                // came from bottom
                 else
                 {
-                    // push down
-                    m_player->getComponent<CTransform>().pos.y += overlap.y;
+                    m_player->getComponent<CState>().state = "Standing";
                 }
 
+                m_player->getComponent<CInput>().canJump = true;
+                m_player->getComponent<CTransform>().velocity.y = 0;
+            }
+            else if (cd == CollisionDirection::BOTTOM || cd == CollisionDirection::DIAGONAL_BOTTOM_LEFT || cd == CollisionDirection::DIAGONAL_BOTTOM_RIGHT)
+            {
+                // push down
+                m_player->getComponent<CTransform>().pos.y += overlap.y;
                 m_player->getComponent<CTransform>().velocity.y = 0;
             }
 
