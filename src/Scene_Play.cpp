@@ -363,6 +363,7 @@ void Scene_Play::sCollision()
     if (collisionCount == 0)
     {
         m_player->getComponent<CState>().state = "Jumping";
+        m_player->getComponent<CInput>().canJump = false;
     }
 }
 
