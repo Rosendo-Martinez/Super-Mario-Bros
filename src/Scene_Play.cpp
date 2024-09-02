@@ -221,6 +221,61 @@ void Scene_Play::sMovement()
             e->destroy();
         }
     }
+
+    // ----------------------------------------------------------------------
+
+    // Lists:
+    // downwardCol
+    // leftCol
+    // rightCol
+    // upwardCol
+    // diagonalTLCol
+    // diagonalTRCol
+
+    // First, get blocks that player collides with.
+    // for each block
+        // if block collides w/ player
+            // collisionDir = getCollisionDirection(block,player)
+            // switch (collisionDir)
+                // case downward:
+                    // downwardCol.add(block)
+                // case left or right:
+                    // leftRightCol.add(block)
+                // case upward:
+                    // upwardCol.add(block)
+                // case diagonal:
+                    // diagonal.add(block)
+                // default:
+                    // ERROR
+    
+    // Handle downward collisions.
+    // for each block in downwardCol
+        // if player still collides with block:
+            // push player up
+
+    // Handle left collisions.
+    // Sort the blocks in leftCol from highest from the ground to lowest
+    // for each block in leftCol
+        // if player still collides with block:
+            // if diagonalTLCol.len == 0 & 
+
+    // Handle right collisions.
+    // for each block in rightCol
+        // if player still collides with block:
+            // push player right
+
+    // Handle upward collisions.
+
+    // Handle diagonal TL collisions.
+    // for each block in diagonalTLCol
+        // if player still collides with block:
+            // if player is 20% from top of block:
+                // push player up to top of block.
+            // else:
+                // push player left
+    
+
+
 }
 
 void Scene_Play::sEnemySpawn()
