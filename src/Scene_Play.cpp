@@ -224,58 +224,89 @@ void Scene_Play::sMovement()
 
     // ----------------------------------------------------------------------
 
-    // Lists:
-    // downwardCol
-    // leftCol
-    // rightCol
-    // upwardCol
-    // diagonalTLCol
-    // diagonalTRCol
+    // Only for player-block collisions:
+    // Basic idea behind collisions is that the player only needs to resolve collisions for at most one block in each direction.
+    // For example, if the player collides with 2 blocks and both collisions are from the left, then the player really only needs to do
+    // collisions resolution for one since fixing one should also fix the other.
+    // (Note: mario can only ever be colliding with 1 block in any diagonal direction.)
 
-    // First, get blocks that player collides with.
-    // for each block
-        // if block collides w/ player
-            // collisionDir = getCollisionDirection(block,player)
-            // switch (collisionDir)
-                // case downward:
-                    // downwardCol.add(block)
-                // case left or right:
-                    // leftRightCol.add(block)
-                // case upward:
-                    // upwardCol.add(block)
-                // case diagonal:
-                    // diagonal.add(block)
-                // default:
-                    // ERROR
+    // upColDirBlock = null
+    // ...
+
+    // FIND BLOCKS THAT MARIO COLLIDES WITH
+    // for each block in Tiles
+        // if player collides with block
+            // collisionDir = getCollisionDirection(player, block)
+
+            // if collisionDir == up
+                // if upColDirBlock == null OR current block has greater x-overlap:
+                    // upColDirBlock = block
+            // if collisionDir == left
+                // if leftColDirBlock == null OR current block is higher up from the ground:
+                    // leftColDirBlock = block
+            // if collisionDir == right
+                // if rightColDirBlock == null OR current block is higher up from the ground:
+                    // rightColDirBlock = block
+            // if collisionDir == down
+                // if downColDirBlock == null OR current block has a greater x-overlap:
+                    // downColDirBlock = block
+
+            // if collisionDir == diagonalTL
+                // diagonalTLColDirBlock = block
+            // if collisionDir == diagonalTR
+                // diagonalTRColDirBlock = block
+            // if collisionDir == diagonalBL
+                // diagonalBLColDirBlock = block
+            // if collisionDir == diagonalBR
+                // diagonalBRColDirBlock = block
+
+    // Do CR for up collision.
+    // if upColDirBlock != null
+        // push player down
+        // give player zero y-dir velocity
+
+        // Handle CR for special blocks:
+            // ? block
+            // Brick block
+
+    // Do CR for left collision.
+    // if leftColDirBlock != null
+        // Todo: figure out pull up mechanic for mario.
+
+        // push left
+
+        // No special blocks to do CR for.
     
-    // Handle downward collisions.
-    // for each block in downwardCol
-        // if player still collides with block:
-            // push player up
+    // Do CR for right collision.
+    // if rightColDirBlock != null
+        // Todo: figure out pull up mechanic for mario.
 
-    // Handle left collisions.
-    // Sort the blocks in leftCol from highest from the ground to lowest
-    // for each block in leftCol
-        // if player still collides with block:
-            // if diagonalTLCol.len == 0 & 
+        // push right
 
-    // Handle right collisions.
-    // for each block in rightCol
-        // if player still collides with block:
-            // push player right
+        // No special blocks to do CR for.
 
-    // Handle upward collisions.
+    // Do CR for down collision.
+    // if downColDirBlock != null
+        // push up
 
-    // Handle diagonal TL collisions.
-    // for each block in diagonalTLCol
-        // if player still collides with block:
-            // if player is 20% from top of block:
-                // push player up to top of block.
-            // else:
-                // push player left
+        // No special blocks to do CR for.
     
+    // Do CR for diagonal TL collision.
+    // if their was DTL col:
+        // push left
+
+    // Do CR for diagonal TR collision.
+    // if their was DTR col:
+        // push right
+
+    // Do CR for diagonal BL collision.
+    // if their was DBL col:
+        // push left
 
 
+    // Do CR for diagonal BR collision.
+    // if their was DBR col:
+        // push right
 }
 
 void Scene_Play::sEnemySpawn()
