@@ -313,82 +313,6 @@ void Scene_Play::sEnemySpawn()
 {
 }
 
-enum class CollisionDirection 
-{
-    DIAGONAL_TOP_LEFT,
-    DIAGONAL_TOP_RIGHT,
-    DIAGONAL_BOTTOM_LEFT,
-    DIAGONAL_BOTTOM_RIGHT,
-    TOP,
-    BOTTOM,
-    LEFT,
-    RIGHT
-};
-
-// Returns the direction player came from relative to block.
-CollisionDirection getCollisionDirection(Vec2 prevOverlap, Vec2 prevPosPlayer, Vec2 prevPosBlock)
-{
-    // Horizontal direction
-    if (prevOverlap.y > 0) {
-        // came from left
-        if (prevPosPlayer.x < prevPosBlock.x)
-        {
-            return CollisionDirection::LEFT;
-        }
-        // came from right
-        else
-        {
-            return CollisionDirection::RIGHT;
-        }
-    }
-    // Vertical direction
-    else if (prevOverlap.x > 0)
-    {
-        // came from top
-        if (prevPosPlayer.y < prevPosBlock.y)
-        {
-            return CollisionDirection::TOP;
-        }
-        // came from bottom
-        else
-        {
-            return CollisionDirection::BOTTOM;
-        }
-    }
-    // Diagonal direction
-    else
-    {
-        // came from top
-        if (prevPosPlayer.y > prevPosBlock.y)
-        {
-            // came from left
-            if (prevPosPlayer.x < prevPosBlock.x)
-            {
-                return CollisionDirection::DIAGONAL_TOP_LEFT;
-            }
-            // came from right
-            else
-            {
-                return CollisionDirection::DIAGONAL_TOP_RIGHT;
-            }
-        }
-        // came from bottom
-        else
-        {
-            // came from left
-            if (prevPosPlayer.x < prevPosBlock.x)
-            {
-                return CollisionDirection::DIAGONAL_BOTTOM_LEFT;
-            }
-            // came from right
-            else
-            {
-                return CollisionDirection::DIAGONAL_BOTTOM_RIGHT;
-            }   
-        }
-    }
-}
-
 void Scene_Play::sCollision()
 {
     int collisionCount = 0;
@@ -404,9 +328,9 @@ void Scene_Play::sCollision()
         Vec2 prevOverlap = Physics::GetPreviousOverlap(m_player, e);
 
         // collision
-        if (overlap.x > 0 && overlap.y > 0)
+        if (Physics::IsCollision(overlap))
         {
-            CollisionDirection cd = getCollisionDirection(prevOverlap, m_player->getComponent<CTransform>().prevPos, e->getComponent<CTransform>().prevPos);
+            CollisionDirection cd = Physics::GetCollisionDirection(prevOverlap, m_player->getComponent<CTransform>().prevPos, e->getComponent<CTransform>().prevPos);
 
             if (cd == CollisionDirection::LEFT)
             {

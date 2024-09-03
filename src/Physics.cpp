@@ -30,3 +30,71 @@ Vec2 Physics::GetPreviousOverlap(std::shared_ptr<Entity> a, std::shared_ptr<Enti
 
     return getOverLap(aCT.prevPos, bCT.prevPos, aCB.halfSize, bCB.halfSize);
 }
+
+bool Physics::IsCollision(const Vec2 & overlap)
+{
+    return (overlap.x > 0) && (overlap.y > 0);
+}
+
+CollisionDirection Physics::GetCollisionDirection(Vec2 prevOverlap, Vec2 prevPosPlayer, Vec2 prevPosBlock)
+{
+    // Horizontal direction
+    if (prevOverlap.y > 0) {
+        // came from left
+        if (prevPosPlayer.x < prevPosBlock.x)
+        {
+            return CollisionDirection::LEFT;
+        }
+        // came from right
+        else
+        {
+            return CollisionDirection::RIGHT;
+        }
+    }
+    // Vertical direction
+    else if (prevOverlap.x > 0)
+    {
+        // came from top
+        if (prevPosPlayer.y < prevPosBlock.y)
+        {
+            return CollisionDirection::TOP;
+        }
+        // came from bottom
+        else
+        {
+            return CollisionDirection::BOTTOM;
+        }
+    }
+    // Diagonal direction
+    else
+    {
+        // came from top
+        if (prevPosPlayer.y > prevPosBlock.y)
+        {
+            // came from left
+            if (prevPosPlayer.x < prevPosBlock.x)
+            {
+                return CollisionDirection::DIAGONAL_TOP_LEFT;
+            }
+            // came from right
+            else
+            {
+                return CollisionDirection::DIAGONAL_TOP_RIGHT;
+            }
+        }
+        // came from bottom
+        else
+        {
+            // came from left
+            if (prevPosPlayer.x < prevPosBlock.x)
+            {
+                return CollisionDirection::DIAGONAL_BOTTOM_LEFT;
+            }
+            // came from right
+            else
+            {
+                return CollisionDirection::DIAGONAL_BOTTOM_RIGHT;
+            }   
+        }
+    }
+}
