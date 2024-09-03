@@ -221,6 +221,74 @@ void Scene_Play::sMovement()
             e->destroy();
         }
     }
+}
+
+void Scene_Play::sEnemySpawn()
+{
+}
+
+void Scene_Play::sCollision()
+{
+    int collisionCount = 0;
+    // player-block collisions
+    for (auto e : m_entityManager.getEntities())
+    {
+        if (m_player->id() == e->id() || !e->hasComponent<CBoundingBox>())
+        {
+            continue;
+        }
+        
+        Vec2 overlap = Physics::GetOverlap(m_player, e);
+        Vec2 prevOverlap = Physics::GetPreviousOverlap(m_player, e);
+
+        // collision
+        if (Physics::IsCollision(overlap))
+        {
+            CollisionDirection cd = Physics::GetCollisionDirection(prevOverlap, m_player->getComponent<CTransform>().prevPos, e->getComponent<CTransform>().prevPos);
+
+            if (cd == CollisionDirection::LEFT)
+            {
+                // push left
+                m_player->getComponent<CTransform>().pos.x -= overlap.x;
+            }
+            else if (cd == CollisionDirection::RIGHT)
+            {
+                // push right
+                m_player->getComponent<CTransform>().pos.x += overlap.x;
+            }
+            else if (cd == CollisionDirection::TOP || cd == CollisionDirection::DIAGONAL_TOP_LEFT || cd == CollisionDirection::DIAGONAL_TOP_RIGHT)
+            {
+                // push up
+                m_player->getComponent<CTransform>().pos.y -= overlap.y;
+
+                if (m_player->getComponent<CInput>().left || m_player->getComponent<CInput>().right)
+                {
+                    m_player->getComponent<CState>().state = "Running";
+                }
+                else
+                {
+                    m_player->getComponent<CState>().state = "Standing";
+                }
+
+                m_player->getComponent<CInput>().canJump = true;
+                m_player->getComponent<CTransform>().velocity.y = 0;
+            }
+            else if (cd == CollisionDirection::BOTTOM || cd == CollisionDirection::DIAGONAL_BOTTOM_LEFT || cd == CollisionDirection::DIAGONAL_BOTTOM_RIGHT)
+            {
+                // push down
+                m_player->getComponent<CTransform>().pos.y += overlap.y;
+                m_player->getComponent<CTransform>().velocity.y = 0;
+            }
+
+            collisionCount++;
+        }
+    }
+
+    if (collisionCount == 0)
+    {
+        m_player->getComponent<CState>().state = "Jumping";
+        m_player->getComponent<CInput>().canJump = false;
+    }
 
     // ----------------------------------------------------------------------
 
@@ -307,74 +375,6 @@ void Scene_Play::sMovement()
     // Do CR for diagonal BR collision.
     // if their was DBR col:
         // push right
-}
-
-void Scene_Play::sEnemySpawn()
-{
-}
-
-void Scene_Play::sCollision()
-{
-    int collisionCount = 0;
-    // player-block collisions
-    for (auto e : m_entityManager.getEntities())
-    {
-        if (m_player->id() == e->id() || !e->hasComponent<CBoundingBox>())
-        {
-            continue;
-        }
-        
-        Vec2 overlap = Physics::GetOverlap(m_player, e);
-        Vec2 prevOverlap = Physics::GetPreviousOverlap(m_player, e);
-
-        // collision
-        if (Physics::IsCollision(overlap))
-        {
-            CollisionDirection cd = Physics::GetCollisionDirection(prevOverlap, m_player->getComponent<CTransform>().prevPos, e->getComponent<CTransform>().prevPos);
-
-            if (cd == CollisionDirection::LEFT)
-            {
-                // push left
-                m_player->getComponent<CTransform>().pos.x -= overlap.x;
-            }
-            else if (cd == CollisionDirection::RIGHT)
-            {
-                // push right
-                m_player->getComponent<CTransform>().pos.x += overlap.x;
-            }
-            else if (cd == CollisionDirection::TOP || cd == CollisionDirection::DIAGONAL_TOP_LEFT || cd == CollisionDirection::DIAGONAL_TOP_RIGHT)
-            {
-                // push up
-                m_player->getComponent<CTransform>().pos.y -= overlap.y;
-
-                if (m_player->getComponent<CInput>().left || m_player->getComponent<CInput>().right)
-                {
-                    m_player->getComponent<CState>().state = "Running";
-                }
-                else
-                {
-                    m_player->getComponent<CState>().state = "Standing";
-                }
-
-                m_player->getComponent<CInput>().canJump = true;
-                m_player->getComponent<CTransform>().velocity.y = 0;
-            }
-            else if (cd == CollisionDirection::BOTTOM || cd == CollisionDirection::DIAGONAL_BOTTOM_LEFT || cd == CollisionDirection::DIAGONAL_BOTTOM_RIGHT)
-            {
-                // push down
-                m_player->getComponent<CTransform>().pos.y += overlap.y;
-                m_player->getComponent<CTransform>().velocity.y = 0;
-            }
-
-            collisionCount++;
-        }
-    }
-
-    if (collisionCount == 0)
-    {
-        m_player->getComponent<CState>().state = "Jumping";
-        m_player->getComponent<CInput>().canJump = false;
-    }
 }
 
 void Scene_Play::sRender()
