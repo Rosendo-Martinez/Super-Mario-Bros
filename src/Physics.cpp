@@ -36,6 +36,7 @@ bool Physics::IsCollision(const Vec2 & overlap)
     return (overlap.x > 0) && (overlap.y > 0);
 }
 
+// Direction that player came from relative to block.
 CollisionDirection Physics::GetCollisionDirection(Vec2 prevOverlap, Vec2 prevPosPlayer, Vec2 prevPosBlock)
 {
     // Horizontal direction
@@ -69,7 +70,7 @@ CollisionDirection Physics::GetCollisionDirection(Vec2 prevOverlap, Vec2 prevPos
     else
     {
         // came from top
-        if (prevPosPlayer.y > prevPosBlock.y)
+        if (prevPosPlayer.y < prevPosBlock.y)
         {
             // came from left
             if (prevPosPlayer.x < prevPosBlock.x)
