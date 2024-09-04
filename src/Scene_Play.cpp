@@ -354,6 +354,16 @@ void Scene_Play::sCollision()
         {
             m_player->getComponent<CTransform>().pos.y -= overlap.y;
             m_player->getComponent<CTransform>().velocity.y = 0;
+            m_player->getComponent<CInput>().canJump = true;
+
+            if (m_player->getComponent<CInput>().left || m_player->getComponent<CInput>().right)
+            {
+                m_player->getComponent<CState>().state = "Running";
+            }
+            else
+            {
+                m_player->getComponent<CState>().state = "Standing";
+            }
         }
     }
     if (topLeftCornerHitBlock != nullptr)
@@ -391,6 +401,23 @@ void Scene_Play::sCollision()
         {
             m_player->getComponent<CTransform>().pos.x += overlap.x;
         }
+    }
+
+    // Mario is colliding with NO blocks.
+    if 
+    (
+        bottomHitBlock == nullptr &&
+        leftHitBlock == nullptr &&
+        rightHitBlock == nullptr &&
+        topHitBlock == nullptr &&
+        topLeftCornerHitBlock == nullptr &&
+        topRightCornerHitBlock == nullptr &&
+        bottomLeftCornerHitBlock == nullptr &&
+        bottomRightCornerHitBlock == nullptr
+    )
+    {
+        m_player->getComponent<CState>().state = "Jumping";
+        m_player->getComponent<CInput>().canJump = false;   
     }
 }
 
