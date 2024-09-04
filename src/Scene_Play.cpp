@@ -322,7 +322,20 @@ void Scene_Play::sCollision()
         m_player->getComponent<CTransform>().pos.y += overlap.y;
         m_player->getComponent<CTransform>().velocity.y = 0;
 
-        // TODO: handle special blocks
+        // Special blocks collision
+        if (bottomHitBlock->getComponent<CAnimation>().animation.getName() == "QuestionMarkBlink")
+        {
+            auto hitQuestionBlock = m_entityManager.addEntity("Tile");
+            hitQuestionBlock->addComponent<CAnimation>(m_game->assets().getAnimation("QuestionMarkBlockHit"), true);
+            hitQuestionBlock->addComponent<CTransform>(bottomHitBlock->getComponent<CTransform>().pos);
+            hitQuestionBlock->addComponent<CBoundingBox>(Vec2(64, 64));
+
+            bottomHitBlock->destroy();
+        }
+        else if (bottomHitBlock->getComponent<CAnimation>().animation.getName() == "Brick")
+        {
+            bottomHitBlock->destroy();
+        }
     }
     if (leftHitBlock != nullptr) 
     {
