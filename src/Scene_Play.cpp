@@ -229,152 +229,169 @@ void Scene_Play::sEnemySpawn()
 
 void Scene_Play::sCollision()
 {
-    int collisionCount = 0;
-    // player-block collisions
-    for (auto e : m_entityManager.getEntities())
-    {
-        if (m_player->id() == e->id() || !e->hasComponent<CBoundingBox>())
-        {
-            continue;
-        }
-        
-        Vec2 overlap = Physics::GetOverlap(m_player, e);
-        Vec2 prevOverlap = Physics::GetPreviousOverlap(m_player, e);
-
-        // collision
-        if (Physics::IsCollision(overlap))
-        {
-            CollisionDirection cd = Physics::GetCollisionDirection(prevOverlap, m_player->getComponent<CTransform>().prevPos, e->getComponent<CTransform>().prevPos);
-
-            if (cd == CollisionDirection::LEFT)
-            {
-                // push left
-                m_player->getComponent<CTransform>().pos.x -= overlap.x;
-            }
-            else if (cd == CollisionDirection::RIGHT)
-            {
-                // push right
-                m_player->getComponent<CTransform>().pos.x += overlap.x;
-            }
-            else if (cd == CollisionDirection::TOP || cd == CollisionDirection::DIAGONAL_TOP_LEFT || cd == CollisionDirection::DIAGONAL_TOP_RIGHT)
-            {
-                // push up
-                m_player->getComponent<CTransform>().pos.y -= overlap.y;
-
-                if (m_player->getComponent<CInput>().left || m_player->getComponent<CInput>().right)
-                {
-                    m_player->getComponent<CState>().state = "Running";
-                }
-                else
-                {
-                    m_player->getComponent<CState>().state = "Standing";
-                }
-
-                m_player->getComponent<CInput>().canJump = true;
-                m_player->getComponent<CTransform>().velocity.y = 0;
-            }
-            else if (cd == CollisionDirection::BOTTOM || cd == CollisionDirection::DIAGONAL_BOTTOM_LEFT || cd == CollisionDirection::DIAGONAL_BOTTOM_RIGHT)
-            {
-                // push down
-                m_player->getComponent<CTransform>().pos.y += overlap.y;
-                m_player->getComponent<CTransform>().velocity.y = 0;
-            }
-
-            collisionCount++;
-        }
-    }
-
-    if (collisionCount == 0)
-    {
-        m_player->getComponent<CState>().state = "Jumping";
-        m_player->getComponent<CInput>().canJump = false;
-    }
-
-    // ----------------------------------------------------------------------
-
-    // Only for player-block collisions:
-    // Basic idea behind collisions is that the player only needs to resolve collisions for at most one block in each direction.
+    // Basic idea behind player-block collisions is that the player only needs to resolve collisions for at most one block in each collision direction.
     // For example, if the player collides with 2 blocks and both collisions are from the left, then the player really only needs to do
     // collisions resolution for one since fixing one should also fix the other.
-    // (Note: mario can only ever be colliding with 1 block in any diagonal direction.)
+    // Mario can collide with at most 2 blocks in collisions where mario came from the left, right, top, or bottom relative to the block.
+    // However, mario can only collide with 1 block diagonally at at time.
 
-    // upColDirBlock = null
-    // ...
+    std::shared_ptr<Entity> upwardCollidedBlock = nullptr;
+    std::shared_ptr<Entity> leftCollidedBlock = nullptr;
+    std::shared_ptr<Entity> rightCollidedBlock = nullptr;
+    std::shared_ptr<Entity> downCollidedBlock = nullptr;
+    std::shared_ptr<Entity> diagonalTopLeftCollidedBlock = nullptr;
+    std::shared_ptr<Entity> diagonalTopRightCollidedBlock = nullptr;
+    std::shared_ptr<Entity> diagonalBottomLeftCollidedBlock = nullptr;
+    std::shared_ptr<Entity> diagonalBottomRightCollidedBlock = nullptr;
 
-    // FIND BLOCKS THAT MARIO COLLIDES WITH
-    // for each block in Tiles
+    // COLLISION DETECTION for player-block collisions
+    for (auto currentBlock : m_entityManager.getEntities("Tile"))
+    {
+        Vec2 overlap = Physics::GetOverlap(m_player, currentBlock);
+        Vec2 prevOverlap = Physics::GetPreviousOverlap(m_player, currentBlock);
         // if player collides with block
-            // collisionDir = getCollisionDirection(player, block)
+        if (Physics::IsCollision(overlap))
+        {
+            // Collision direction is the direction which mario came from relative to block.
+            CollisionDirection collisionDir = Physics::GetCollisionDirection(prevOverlap, m_player->getComponent<CTransform>().prevPos, currentBlock->getComponent<CTransform>().pos);
 
-            // if collisionDir == up
-                // if upColDirBlock == null OR current block has greater x-overlap:
-                    // upColDirBlock = block
-            // if collisionDir == left
-                // if leftColDirBlock == null OR current block is higher up from the ground:
-                    // leftColDirBlock = block
-            // if collisionDir == right
-                // if rightColDirBlock == null OR current block is higher up from the ground:
-                    // rightColDirBlock = block
-            // if collisionDir == down
-                // if downColDirBlock == null OR current block has a greater x-overlap:
-                    // downColDirBlock = block
+            // Mario hit the bottom of the block.
+            if (collisionDir == CollisionDirection::BOTTOM)
+            {
+                if (upwardCollidedBlock == nullptr || overlap.x > Physics::GetOverlap(m_player, upwardCollidedBlock).x)
+            {
+                    upwardCollidedBlock = currentBlock;
+                }
+            }
+            // Mario hit the left side of the block.
+            else if (collisionDir == CollisionDirection::LEFT)
+            {
+                if (leftCollidedBlock == nullptr || currentBlock->getComponent<CTransform>().pos.y < leftCollidedBlock->getComponent<CTransform>().pos.y)
+                {
+                    leftCollidedBlock = currentBlock;
+                }
+            }
+            // Mario hit the right side of the block.
+            else if (collisionDir == CollisionDirection::RIGHT)
+            {
+                if (rightCollidedBlock == nullptr || currentBlock->getComponent<CTransform>().pos.y < rightCollidedBlock->getComponent<CTransform>().pos.y)
+    {
+                    rightCollidedBlock = currentBlock;
+    }
+            }
+            // Mario hit the top of the block.
+            else if (collisionDir == CollisionDirection::TOP)
+            {
+                if (downCollidedBlock == nullptr || overlap.x > Physics::GetOverlap(m_player, downCollidedBlock).x)
+                {
+                    downCollidedBlock = currentBlock;
+                }
+            }
+            // Mario hit the top left corner of the block.
+            else if (collisionDir == CollisionDirection::DIAGONAL_TOP_LEFT)
+            {
+                diagonalTopLeftCollidedBlock = currentBlock;
+            }
+            // Mario hit the top right corner of the block.
+            else if (collisionDir == CollisionDirection::DIAGONAL_TOP_RIGHT)
+            {
+                diagonalTopRightCollidedBlock = currentBlock;
+            }
+            // Mario hit the bottom left corner of the block.
+            else if (collisionDir == CollisionDirection::DIAGONAL_BOTTOM_LEFT)
+            {
+                diagonalBottomLeftCollidedBlock = currentBlock;
+            }
+            // Mario hit the bottom right corner of the block.
+            else if (collisionDir == CollisionDirection::DIAGONAL_BOTTOM_RIGHT)
+            {
+                diagonalBottomRightCollidedBlock = currentBlock;
+            }
+            else
+            {
+                std::cout << "Error: unsupported collision direction: (int) " << (int) collisionDir << "\n";
+            }
+        }
+    }
 
-            // if collisionDir == diagonalTL
-                // diagonalTLColDirBlock = block
-            // if collisionDir == diagonalTR
-                // diagonalTRColDirBlock = block
-            // if collisionDir == diagonalBL
-                // diagonalBLColDirBlock = block
-            // if collisionDir == diagonalBR
-                // diagonalBRColDirBlock = block
+    // COLLISION RESOLUTION for player-block collisions
+    if (upwardCollidedBlock != nullptr)
+    {
+        Vec2 overlap = Physics::GetOverlap(m_player, upwardCollidedBlock);
 
-    // Do CR for up collision.
-    // if upColDirBlock != null
-        // push player down
-        // give player zero y-dir velocity
+        m_player->getComponent<CTransform>().pos.y += overlap.y;
+        m_player->getComponent<CTransform>().velocity.y = 0;
 
-        // Handle CR for special blocks:
-            // ? block
-            // Brick block
+        // TODO: handle special blocks
+    }
+    if (leftCollidedBlock != nullptr) 
+    {
+        // TODO: Pull up mechanic for mario
 
-    // Do CR for left collision.
-    // if leftColDirBlock != null
-        // Todo: figure out pull up mechanic for mario.
+        Vec2 overlap = Physics::GetOverlap(m_player, leftCollidedBlock);
 
-        // push left
+        if (Physics::IsCollision(overlap))
+        {
+            m_player->getComponent<CTransform>().pos.x -= overlap.x;
+        }
+    }
+    if (rightCollidedBlock != nullptr)
+    {
+        // TODO: Pull up mechanic for mario
 
-        // No special blocks to do CR for.
-    
-    // Do CR for right collision.
-    // if rightColDirBlock != null
-        // Todo: figure out pull up mechanic for mario.
+        Vec2 overlap = Physics::GetOverlap(m_player, rightCollidedBlock);
 
-        // push right
+        if (Physics::IsCollision(overlap))
+        {
+            m_player->getComponent<CTransform>().pos.x += overlap.x;
+        }
+    }
+    if (downCollidedBlock != nullptr)
+    {
+        Vec2 overlap = Physics::GetOverlap(m_player, downCollidedBlock);
 
-        // No special blocks to do CR for.
+        if (Physics::IsCollision(overlap))
+        {
+            m_player->getComponent<CTransform>().pos.y -= overlap.y;
+            m_player->getComponent<CTransform>().velocity.y = 0;
+        }
+    }
+    if (diagonalTopLeftCollidedBlock != nullptr)
+    {
+        Vec2 overlap = Physics::GetOverlap(m_player, diagonalTopLeftCollidedBlock);
 
-    // Do CR for down collision.
-    // if downColDirBlock != null
-        // push up
+        if (Physics::IsCollision(overlap))
+        {
+            m_player->getComponent<CTransform>().pos.x -= overlap.x;
+        }
+    }
+    if (diagonalTopRightCollidedBlock != nullptr)
+    {
+        Vec2 overlap = Physics::GetOverlap(m_player, diagonalTopRightCollidedBlock);
 
-        // No special blocks to do CR for.
-    
-    // Do CR for diagonal TL collision.
-    // if their was DTL col:
-        // push left
+        if (Physics::IsCollision(overlap))
+        {
+            m_player->getComponent<CTransform>().pos.x += overlap.x;
+        }
+    }
+    if (diagonalBottomLeftCollidedBlock != nullptr)
+    {
+        Vec2 overlap = Physics::GetOverlap(m_player, diagonalBottomLeftCollidedBlock);
 
-    // Do CR for diagonal TR collision.
-    // if their was DTR col:
-        // push right
+        if (Physics::IsCollision(overlap))
+        {
+            m_player->getComponent<CTransform>().pos.x -= overlap.x;
+        }
+    }
+    if (diagonalBottomRightCollidedBlock != nullptr)
+    {
+        Vec2 overlap = Physics::GetOverlap(m_player, diagonalBottomRightCollidedBlock);
 
-    // Do CR for diagonal BL collision.
-    // if their was DBL col:
-        // push left
-
-
-    // Do CR for diagonal BR collision.
-    // if their was DBR col:
-        // push right
+        if (Physics::IsCollision(overlap))
+        {
+            m_player->getComponent<CTransform>().pos.x += overlap.x;
+        }
+    }
 }
 
 void Scene_Play::sRender()
