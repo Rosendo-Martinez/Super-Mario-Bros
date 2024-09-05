@@ -45,7 +45,7 @@ void GameEngine::init(const std::string & assetSpecFilePath) // load in all asse
 
                 assetsFile >> name >> textureName >> frameCount >> speed;
 
-                m_assets.addAnimation(name, Animation(name, m_assets.getTexture(textureName), frameCount, speed, 4.f, 4.f));
+                m_assets.addAnimation(name, Animation(name, m_assets.getTexture(textureName), frameCount, speed));
             }
             else if (type == "Font")
             {

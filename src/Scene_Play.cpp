@@ -451,10 +451,6 @@ void Scene_Play::sRender()
     // Draw entities
     if (m_drawTextures)
     {
-        // Why multiply scale by 4?
-        // The assets are 16x16, but I prefer them to be scaled up to 64x64.
-        // 16 * 4 = 64
-
         for (auto e : m_entityManager.getEntities("Decoration"))
         {
             Vec2 pos = e->getComponent<CTransform>().pos - m_cameraPosition;
@@ -462,7 +458,7 @@ void Scene_Play::sRender()
             sf::Sprite & sprite = e->getComponent<CAnimation>().animation.getSprite();
 
             sprite.setPosition(sf::Vector2f(pos.x,pos.y));
-            sprite.setScale(sf::Vector2f(scale.x * 4, scale.y * 4));
+            sprite.setScale(sf::Vector2f(scale.x, scale.y));
             window.draw(sprite);
         }
 
@@ -473,7 +469,7 @@ void Scene_Play::sRender()
             sf::Sprite & sprite = e->getComponent<CAnimation>().animation.getSprite();
 
             sprite.setPosition(sf::Vector2f(pos.x,pos.y));
-            sprite.setScale(sf::Vector2f(scale.x * 4, scale.y * 4));
+            sprite.setScale(sf::Vector2f(scale.x, scale.y));
             window.draw(sprite);
         }
 
@@ -484,7 +480,7 @@ void Scene_Play::sRender()
             sf::Sprite & sprite = e->getComponent<CAnimation>().animation.getSprite();
 
             sprite.setPosition(sf::Vector2f(pos.x,pos.y));
-            sprite.setScale(sf::Vector2f(scale.x * 4, scale.y * 4));
+            sprite.setScale(sf::Vector2f(scale.x, scale.y));
             window.draw(sprite);
         }
     }

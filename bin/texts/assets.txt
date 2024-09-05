@@ -1,16 +1,16 @@
 Font Grid bin/fonts/Roboto-Regular.ttf
-Texture BigCloud bin/images/mario/BigCloud16.png
-Texture Block bin/images/mario/Block16.png
-Texture Brick bin/images/mario/Brick16.png
-Texture Ground bin/images/mario/Ground16.png
-Texture MarioStand bin/images/mario/MarioStand16.png
-Texture MarioAir bin/images/mario/MarioAir16.png
-Texture MarioRun bin/images/mario/MarioRun16.png
-Texture QuestionBlock bin/images/mario/QuestionMarkBlock16.png
-Texture QuestionMarkBlink bin/images/mario/QuestionMarkBlink16.png
-Texture QuestionMarkBlockHit bin/images/mario/QuestionMarkBlockHit16.png
-Texture SmallMountain bin/images/mario/SmallMountain16.png
-Texture BigMountain bin/images/mario/BigMountain16.png
+Texture BigCloud bin/images/mario/BigCloud64.png
+Texture Block bin/images/mario/Block64.png
+Texture Brick bin/images/mario/Brick64.png
+Texture Ground bin/images/mario/Ground64.png
+Texture MarioStand bin/images/mario/MarioStand64.png
+Texture MarioAir bin/images/mario/MarioAir64.png
+Texture MarioRun bin/images/mario/MarioRun64.png
+Texture QuestionBlock bin/images/mario/QuestionMarkBlock64.png
+Texture QuestionMarkBlink bin/images/mario/QuestionMarkBlink64.png
+Texture QuestionMarkBlockHit bin/images/mario/QuestionMarkBlockHit64.png
+Texture SmallMountain bin/images/mario/SmallMountain64.png
+Texture BigMountain bin/images/mario/BigMountain64.png
 Animation BigMountain BigMountain 1 0
 Animation SmallMountain SmallMountain 1 0
 Animation Ground Ground 1 0
