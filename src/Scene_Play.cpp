@@ -221,6 +221,38 @@ void Scene_Play::sMovement()
             e->destroy();
         }
     }
+
+
+    // PESDOCODE for acceleration based movement.
+    ///------------------------------------------------------------------
+    // ACCELERATION
+
+    // Overview:
+    // Figure out acceleration for current frame
+    // Use acceleration to calculate velocity
+    // Apply speed limits if needed
+    // Use velocity to calculate player position
+    
+    // if player is trying to walk to the right AND player is not currently walking left
+        // player acceleration = a_walk
+    // if player is trying to walk left AND player is not currently walking right
+        // player acceleration = -a_walk
+    // if player is trying to come to a stop AND is moving
+        // if player is walking left:
+            // player acceleration = d
+        // else player is walking right:
+            // player acceleration = -d
+    // if player is NOT moving OR reached max speed:
+        // player acceleration = 0
+
+    // vel.x += acceleration
+
+    // if player went above max speed:
+        // set player speed to max speed
+    // if player went bellow min speed:
+        // set player speed to 0
+
+    // pos.x += vel.x
 }
 
 void Scene_Play::sEnemySpawn()
