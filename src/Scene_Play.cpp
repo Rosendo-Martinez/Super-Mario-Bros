@@ -167,48 +167,32 @@ void Scene_Play::sMovement()
 
     bool isPressingLeft                 = m_player->getComponent<CInput>().left;
     bool isPressingRight                = m_player->getComponent<CInput>().right;
-    bool isPressingNoDirectionButton    = (!isPressingLeft && !isPressingRight);
-    bool isPressingBothDirectionButtons = (isPressingLeft && isPressingRight);
+    bool isPressingBothOrNeither        = (!isPressingLeft && !isPressingRight) || (isPressingLeft && isPressingRight); // pressing both left and right or pressing neither
     bool isStandingStill                = m_player->getComponent<CTransform>().velocity.x == 0;
     bool isMovingRight                  = m_player->getComponent<CTransform>().velocity.x > 0;
-    bool isMovingLeft                   = m_player->getComponent<CTransform>().velocity.x > 0;
+    bool isMovingLeft                   = m_player->getComponent<CTransform>().velocity.x < 0;
     bool isAtMaxWalkSpeed               = m_player->getComponent<CTransform>().velocity.x == v_max || m_player->getComponent<CTransform>().velocity.x == -v_max;
 
 
     // Figure out acceleration for current frame
-    if (isPressingNoDirectionButton || isPressingBothDirectionButtons)
+    if (isMovingLeft && (isPressingBothOrNeither || isPressingRight))
     {
-        if (isStandingStill)
-        {
-            // Player is not moving
-            m_player->getComponent<CTransform>().acc_x = 0;
-        }
-        else
-        {
-            // Player is decelerating
-            if (isMovingRight) 
-            {
-                m_player->getComponent<CTransform>().acc_x = -d_release;
-            }
-            else
-            {
-                m_player->getComponent<CTransform>().acc_x = d_release;
-            }
-        }
+        m_player->getComponent<CTransform>().acc_x = d_release;
     }
-    else if (isAtMaxWalkSpeed)
+    else if (isMovingRight && (isPressingBothOrNeither || isPressingLeft))
     {
-        // Player reached max speed
+        m_player->getComponent<CTransform>().acc_x = -d_release;
+    }
+    else if (isAtMaxWalkSpeed || (isStandingStill && isPressingBothOrNeither))
+    {
         m_player->getComponent<CTransform>().acc_x = 0;
     }
     else if (isPressingRight && (isStandingStill || isMovingRight))
     {
-        // Player is accelerating to the right
         m_player->getComponent<CTransform>().acc_x = a_walk;
     }
     else if (isPressingLeft && (isMovingLeft || isStandingStill))
     {
-        // Player is accelerating to the left
         m_player->getComponent<CTransform>().acc_x = -a_walk;
     }
 
