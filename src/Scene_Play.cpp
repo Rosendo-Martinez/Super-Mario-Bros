@@ -127,7 +127,7 @@ void Scene_Play::update() // update EM, and cal systems
 
     sAnimation();
     sMovement();
-    // sCollision();
+    sCollision();
     sRender();
 }
 
@@ -159,6 +159,10 @@ void Scene_Play::sMovement()
     double v_max = 1.5625 * 4;
     double a_walk = 0.037109375 * 4;
     double d_release = 0.05078125 * 4;
+    float  g = 1.f;
+
+    // Gravity
+    m_player->getComponent<CTransform>().velocity.y += g;
 
     // Figure out acceleration for current frame
     if ((!m_player->getComponent<CInput>().left && !m_player->getComponent<CInput>().right) || (m_player->getComponent<CInput>().left && m_player->getComponent<CInput>().right))
@@ -230,7 +234,14 @@ void Scene_Play::sMovement()
     }
 
     // Use velocity to calculate player position
+    m_player->getComponent<CTransform>().prevPos =  m_player->getComponent<CTransform>().pos;
     m_player->getComponent<CTransform>().pos += m_player->getComponent<CTransform>().velocity;
+
+    // Player fell off the map
+    if (m_player->getComponent<CTransform>().pos.y - 64/2 > m_game->window().getSize().y)
+    {
+        m_player->destroy();
+    }
 }
 
 void Scene_Play::sEnemySpawn()
