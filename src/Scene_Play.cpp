@@ -127,10 +127,8 @@ void Scene_Play::update() // update EM, and cal systems
 
     sAnimation();
     sMovement();
-    sCollision();
+    // sCollision();
     sRender();
-
-    std::cout << "Entity Count: " << m_entityManager.getEntities().size() << "\n";
 }
 
 void Scene_Play::sAnimation()
@@ -157,102 +155,73 @@ void Scene_Play::sAnimation()
 
 void Scene_Play::sMovement()
 {
-    float speed = 6.f;
-    float initialJumpSpeed = 24.f;
-    float gravity = 1.f;
-    m_player->getComponent<CTransform>().velocity = Vec2(0,m_player->getComponent<CTransform>().velocity.y + gravity);
+    double v_min = 0.07421875 * 4;
+    double v_max = 1.5625 * 4;
+    double a_walk = 0.037109375 * 4;
+    double d_release = 0.05078125 * 4;
 
-    // Player run left
-    if (m_player->getComponent<CInput>().left)
-    {
-        m_player->getComponent<CTransform>().velocity.x -= speed;
-        
-        // make player face left
-        if (m_player->getComponent<CTransform>().scale.x > 0)
-        {
-            m_player->getComponent<CTransform>().scale.x *= -1;
-        }
-    }
-
-    // Player run right
-    if (m_player->getComponent<CInput>().right)
-    {
-        m_player->getComponent<CTransform>().velocity.x += speed;
-
-        // make player face right
-        if (m_player->getComponent<CTransform>().scale.x < 0)
-        {
-            m_player->getComponent<CTransform>().scale.x *= -1;   
-        }
-    }
-
-    // Player jump
-    if (m_player->getComponent<CInput>().up && m_player->getComponent<CInput>().canJump)
-    {
-        m_player->getComponent<CTransform>().velocity.y -= initialJumpSpeed;
-        m_player->getComponent<CState>().state = "Jumping";
-        m_player->getComponent<CInput>().canJump = false;
-    }
-
-    // Player move down
-    if (m_player->getComponent<CInput>().down)
-    {
-        m_player->getComponent<CTransform>().velocity.y += speed;
-    }
-
-    // Player jump strength
-    if (!m_player->getComponent<CInput>().up && m_player->getComponent<CState>().state == "Jumping" && m_player->getComponent<CTransform>().velocity.y < 0)
-    {
-        m_player->getComponent<CTransform>().velocity.y = 0;
-    }
-
-    // Use velocity to move the entities positions
-    for (auto e : m_entityManager.getEntities())
-    {
-        if (e->hasComponent<CTransform>())
-        {
-            e->getComponent<CTransform>().prevPos = e->getComponent<CTransform>().pos;
-            e->getComponent<CTransform>().pos += e->getComponent<CTransform>().velocity;
-        }
-
-        // Entity fell down hole
-        if (e->getComponent<CTransform>().pos.y + 64/2 > m_game->window().getSize().y)
-        {
-            e->destroy();
-        }
-    }
-
-
-    // PESDOCODE for acceleration based movement.
-    ///------------------------------------------------------------------
-    // ACCELERATION
-
-    // Overview:
     // Figure out acceleration for current frame
+    if ((!m_player->getComponent<CInput>().left && !m_player->getComponent<CInput>().right) || (m_player->getComponent<CInput>().left && m_player->getComponent<CInput>().right))
+    {
+        if (m_player->getComponent<CTransform>().velocity.x == 0)
+        {
+            m_player->getComponent<CTransform>().acc_x = 0;
+        }
+        else
+        {
+            if (m_player->getComponent<CTransform>().velocity.x > 0) 
+            {
+                m_player->getComponent<CTransform>().acc_x = -d_release;
+            }
+            else
+            {
+                m_player->getComponent<CTransform>().acc_x = d_release;
+            }
+        }
+    }
+    else if (m_player->getComponent<CTransform>().velocity.x == v_max || m_player->getComponent<CTransform>().velocity.x == -v_max)
+    {
+        m_player->getComponent<CTransform>().acc_x = 0;
+    }
+    else if (m_player->getComponent<CInput>().right && m_player->getComponent<CTransform>().velocity.x >= 0)
+    {
+        m_player->getComponent<CTransform>().acc_x = a_walk;
+    }
+    else if (m_player->getComponent<CInput>().left && m_player->getComponent<CTransform>().velocity.x <= 0)
+    {
+        m_player->getComponent<CTransform>().acc_x = -a_walk;
+    }
+
     // Use acceleration to calculate velocity
+    m_player->getComponent<CTransform>().velocity.x += m_player->getComponent<CTransform>().acc_x;
+
     // Apply speed limits if needed
+    if (m_player->getComponent<CTransform>().velocity.x > v_max)
+    {
+        m_player->getComponent<CTransform>().velocity.x = v_max;
+    }
+    else if (m_player->getComponent<CTransform>().velocity.x < -v_max)
+    {
+        m_player->getComponent<CTransform>().velocity.x = -v_max;
+    }
+    else if (m_player->getComponent<CTransform>().velocity.x < v_min && m_player->getComponent<CTransform>().velocity.x > -v_min)
+    {
+        if (m_player->getComponent<CTransform>().acc_x == a_walk)
+        {
+            m_player->getComponent<CTransform>().velocity.x = v_min;
+        }
+        else if (m_player->getComponent<CTransform>().acc_x == -a_walk)
+        {
+            m_player->getComponent<CTransform>().velocity.x = -v_min;
+        }
+        else
+        {
+            m_player->getComponent<CTransform>().velocity.x = 0;
+        }
+    }
+
     // Use velocity to calculate player position
-    
-    // if player is trying to walk to the right AND player is not currently walking left
-        // player acceleration = a_walk
-    // if player is trying to walk left AND player is not currently walking right
-        // player acceleration = -a_walk
-    // if player is trying to come to a stop AND is moving
-        // if player is walking left:
-            // player acceleration = d
-        // else player is walking right:
-            // player acceleration = -d
-    // if player is NOT moving OR reached max speed:
-        // player acceleration = 0
-
-    // vel.x += acceleration
-
-    // if player went above max speed:
-        // set player speed to max speed
-    // if player went bellow min speed:
-        // set player speed to 0
-
-    // pos.x += vel.x
+    m_player->getComponent<CTransform>().pos += m_player->getComponent<CTransform>().velocity;
 }
 
 void Scene_Play::sEnemySpawn()
