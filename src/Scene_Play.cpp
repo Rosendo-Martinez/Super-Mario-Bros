@@ -165,10 +165,12 @@ void Scene_Play::sMovement()
     {
         if (m_player->getComponent<CTransform>().velocity.x == 0)
         {
+            // Player is not moving
             m_player->getComponent<CTransform>().acc_x = 0;
         }
         else
         {
+            // Player is decelerating
             if (m_player->getComponent<CTransform>().velocity.x > 0) 
             {
                 m_player->getComponent<CTransform>().acc_x = -d_release;
@@ -181,14 +183,17 @@ void Scene_Play::sMovement()
     }
     else if (m_player->getComponent<CTransform>().velocity.x == v_max || m_player->getComponent<CTransform>().velocity.x == -v_max)
     {
+        // Player reached max speed
         m_player->getComponent<CTransform>().acc_x = 0;
     }
     else if (m_player->getComponent<CInput>().right && m_player->getComponent<CTransform>().velocity.x >= 0)
     {
+        // Player is accelerating to the right
         m_player->getComponent<CTransform>().acc_x = a_walk;
     }
     else if (m_player->getComponent<CInput>().left && m_player->getComponent<CTransform>().velocity.x <= 0)
     {
+        // Player is accelerating to the left
         m_player->getComponent<CTransform>().acc_x = -a_walk;
     }
 
@@ -198,14 +203,17 @@ void Scene_Play::sMovement()
     // Apply speed limits if needed
     if (m_player->getComponent<CTransform>().velocity.x > v_max)
     {
+        // Player exceeded max speed
         m_player->getComponent<CTransform>().velocity.x = v_max;
     }
     else if (m_player->getComponent<CTransform>().velocity.x < -v_max)
     {
+        // Player exceeded max speed
         m_player->getComponent<CTransform>().velocity.x = -v_max;
     }
     else if (m_player->getComponent<CTransform>().velocity.x < v_min && m_player->getComponent<CTransform>().velocity.x > -v_min)
     {
+        // Player can not be bellow min speed while accelerating
         if (m_player->getComponent<CTransform>().acc_x == a_walk)
         {
             m_player->getComponent<CTransform>().velocity.x = v_min;
@@ -214,6 +222,7 @@ void Scene_Play::sMovement()
         {
             m_player->getComponent<CTransform>().velocity.x = -v_min;
         }
+        // Player is decelerating and went bellow min speed
         else
         {
             m_player->getComponent<CTransform>().velocity.x = 0;
