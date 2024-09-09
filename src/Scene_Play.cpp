@@ -16,6 +16,7 @@ void Scene_Play::init(const std::string & levelPath) // register actions, font/t
     registerAction(sf::Keyboard::S, "DOWN");
     registerAction(sf::Keyboard::A, "LEFT");
     registerAction(sf::Keyboard::D, "RIGHT");
+    registerAction(sf::Keyboard::B, "RUN");
 }
 
 Vec2 Scene_Play::gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity)
@@ -623,6 +624,11 @@ void Scene_Play::sDoAction(const Action & action) // do the action
         {
             m_player->getComponent<CInput>().right = true;
         }
+
+        if (action.name() == "RUN")
+        {
+            m_player->getComponent<CInput>().run = true;
+        }
     }
     else if (action.type() == "END")
     {
@@ -644,6 +650,11 @@ void Scene_Play::sDoAction(const Action & action) // do the action
         if (action.name() == "RIGHT")
         {
             m_player->getComponent<CInput>().right = false;
+        }
+
+        if (action.name() == "RUN")
+        {
+            m_player->getComponent<CInput>().run = false;
         }
     }
 }

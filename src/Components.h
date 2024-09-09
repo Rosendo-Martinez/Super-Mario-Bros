@@ -47,6 +47,7 @@ public:
     bool left       = false;
     bool right      = false;
     bool shoot      = false;
+    bool run        = false;
     bool canShoot   = false;
     bool canJump    = false;
 
