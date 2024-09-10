@@ -157,8 +157,10 @@ void Scene_Play::sAnimation()
 void Scene_Play::sMovement()
 {
     double v_min = 0.07421875 * 4;
-    double v_max = 1.5625 * 4;
+    double v_max_walk = 1.5625 * 4;
+    double v_max_run = 2.5625 * 4;
     double a_walk = 0.037109375 * 4;
+    double a_run = 0.0556640625 * 4;
     double d_release = 0.05078125 * 4;
     float  g = 1.f;
 
@@ -167,18 +169,21 @@ void Scene_Play::sMovement()
 
     bool isPressingLeft                 = m_player->getComponent<CInput>().left;
     bool isPressingRight                = m_player->getComponent<CInput>().right;
+    bool isRunning                      = m_player->getComponent<CInput>().run;
     bool isPressingBothOrNeither        = (!isPressingLeft && !isPressingRight) || (isPressingLeft && isPressingRight); // pressing both left and right or pressing neither
     bool isStandingStill                = m_player->getComponent<CTransform>().velocity.x == 0;
     bool isMovingRight                  = m_player->getComponent<CTransform>().velocity.x > 0;
     bool isMovingLeft                   = m_player->getComponent<CTransform>().velocity.x < 0;
-    bool isAtMaxWalkSpeed               = m_player->getComponent<CTransform>().velocity.x == v_max || m_player->getComponent<CTransform>().velocity.x == -v_max;
+    bool isAtMaxWalkSpeed               = m_player->getComponent<CTransform>().velocity.x == v_max_walk || m_player->getComponent<CTransform>().velocity.x == -v_max_walk;
+    bool isAtMaxRunSpeed                = m_player->getComponent<CTransform>().velocity.x == v_max_run || m_player->getComponent<CTransform>().velocity.x == -v_max_run;
+    bool isWalkingButPastMaxWalkSpeed   = (m_player->getComponent<CTransform>().velocity.x > v_max_walk || m_player->getComponent<CTransform>().velocity.x < -v_max_walk) && !isRunning;
 
     // Decelerating: moving to a speed of zero
     // Accelerating: moving to a speed (+ or -) away from zero
-    bool isDeceleratingLeft = isMovingRight && (isPressingBothOrNeither || isPressingLeft);
-    bool isDeceleratingRight = isMovingLeft && (isPressingBothOrNeither || isPressingRight);
-    bool isAcceleratingLeft = isPressingLeft && !isPressingRight && (isMovingLeft || isStandingStill) && !isAtMaxWalkSpeed;
-    bool isAcceleratingRight = isPressingRight && !isPressingLeft && (isStandingStill || isMovingRight) && !isAtMaxWalkSpeed;
+    bool isDeceleratingLeft = (isMovingRight && ((isPressingBothOrNeither || isPressingLeft) || isWalkingButPastMaxWalkSpeed));
+    bool isDeceleratingRight = (isMovingLeft && ((isPressingBothOrNeither || isPressingRight) || isWalkingButPastMaxWalkSpeed));
+    bool isAcceleratingLeft = isPressingLeft && !isPressingRight && (isMovingLeft || isStandingStill) && (!isAtMaxWalkSpeed || isRunning) && !isAtMaxRunSpeed;
+    bool isAcceleratingRight = isPressingRight && !isPressingLeft && (isStandingStill || isMovingRight) && (!isAtMaxWalkSpeed || isRunning) && !isAtMaxRunSpeed;
     bool isNotAcceleratingOrDecelerating = !isDeceleratingLeft && !isDeceleratingRight && !isAcceleratingLeft && !isAcceleratingRight;
 
     // Figure out acceleration for current frame
@@ -196,27 +201,50 @@ void Scene_Play::sMovement()
     }
     else if (isAcceleratingRight)
     {
-        m_player->getComponent<CTransform>().acc_x = a_walk;
+        if (isRunning)
+        {
+            m_player->getComponent<CTransform>().acc_x = a_run;
+        }
+        else 
+        {
+            m_player->getComponent<CTransform>().acc_x = a_walk;
+        }
     }
     else if (isAcceleratingLeft)
     {
-        m_player->getComponent<CTransform>().acc_x = -a_walk;
+        if (isRunning)
+        {
+            m_player->getComponent<CTransform>().acc_x = -a_run;
+        }
+        else
+        {
+            m_player->getComponent<CTransform>().acc_x = -a_walk;
+        }
     }
 
     // Use acceleration to calculate velocity
     m_player->getComponent<CTransform>().velocity.x += m_player->getComponent<CTransform>().acc_x;
 
-    bool isPastMaxWalkSpeed   = m_player->getComponent<CTransform>().velocity.x > v_max || m_player->getComponent<CTransform>().velocity.x < -v_max;
+    bool isPastMaxWalkSpeed   = m_player->getComponent<CTransform>().velocity.x > v_max_walk || m_player->getComponent<CTransform>().velocity.x < -v_max_walk;
+    bool isPastMaxRunSpeed = m_player->getComponent<CTransform>().velocity.x > v_max_run || m_player->getComponent<CTransform>().velocity.x < -v_max_run;
     bool isBellowMinWalkSpeed = m_player->getComponent<CTransform>().velocity.x < v_min && m_player->getComponent<CTransform>().velocity.x > -v_min;
 
     // Apply speed limits if needed
-    if (isPastMaxWalkSpeed && isAcceleratingRight)
+    if (isPastMaxWalkSpeed && isAcceleratingRight && !isRunning)
     {
-        m_player->getComponent<CTransform>().velocity.x = v_max;
+        m_player->getComponent<CTransform>().velocity.x = v_max_walk;
     }
-    else if (isPastMaxWalkSpeed && isAcceleratingLeft)
+    else if (isPastMaxWalkSpeed && isAcceleratingLeft && !isRunning)
     {
-        m_player->getComponent<CTransform>().velocity.x = -v_max;
+        m_player->getComponent<CTransform>().velocity.x = -v_max_walk;
+    }
+    else if (isPastMaxRunSpeed && isAcceleratingRight && isRunning)
+    {
+        m_player->getComponent<CTransform>().velocity.x = v_max_run;   
+    }
+    else if (isPastMaxRunSpeed && isAcceleratingLeft && isRunning)
+    {
+        m_player->getComponent<CTransform>().velocity.x = -v_max_run;   
     }
     else if (isBellowMinWalkSpeed && isAcceleratingRight)
     {
