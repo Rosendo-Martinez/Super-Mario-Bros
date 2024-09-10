@@ -179,6 +179,7 @@ void Scene_Play::sMovement()
     bool isAtMaxWalkSpeed               = m_player->getComponent<CTransform>().velocity.x == v_max_walk || m_player->getComponent<CTransform>().velocity.x == -v_max_walk;
     bool isAtMaxRunSpeed                = m_player->getComponent<CTransform>().velocity.x == v_max_run || m_player->getComponent<CTransform>().velocity.x == -v_max_run;
     bool isWalkingButPastMaxWalkSpeed   = (m_player->getComponent<CTransform>().velocity.x > v_max_walk || m_player->getComponent<CTransform>().velocity.x < -v_max_walk) && !isRunning;
+    bool isSkiddingInPreviousFrame      = (m_player->getComponent<CTransform>().acc_x == d_skid || m_player->getComponent<CTransform>().acc_x == -d_skid);
 
     // Decelerating: moving to a speed of zero
     // Accelerating: moving to a speed (+ or -) away from zero
@@ -187,12 +188,12 @@ void Scene_Play::sMovement()
     bool isAcceleratingLeft = isPressingLeft && !isPressingRight && (isMovingLeft || isStandingStill) && (!isAtMaxWalkSpeed || isRunning) && !isAtMaxRunSpeed && !isWalkingButPastMaxWalkSpeed;
     bool isAcceleratingRight = isPressingRight && !isPressingLeft && (isStandingStill || isMovingRight) && (!isAtMaxWalkSpeed || isRunning) && !isAtMaxRunSpeed && !isWalkingButPastMaxWalkSpeed;
     bool isNotAcceleratingOrDecelerating = !isDeceleratingLeft && !isDeceleratingRight && !isAcceleratingLeft && !isAcceleratingRight;
-    bool isSkidding = ((isMovingRight && isPressingLeft && !isPressingRight) || (isMovingLeft && isPressingRight && !isPressingLeft));
+    bool isSkidding = ((isMovingRight && isPressingLeft && !isPressingRight) || (isMovingLeft && isPressingRight && !isPressingLeft)) || ((isDeceleratingLeft || isDeceleratingRight) && isSkiddingInPreviousFrame);
 
     // Figure out acceleration for current frame
     if (isDeceleratingRight)
     {
-        if (isSkidding || m_player->getComponent<CTransform>().acc_x == d_skid) 
+        if (isSkidding) 
         {
             m_player->getComponent<CTransform>().acc_x = d_skid;
         }
