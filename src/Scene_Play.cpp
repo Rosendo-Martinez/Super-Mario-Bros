@@ -192,7 +192,7 @@ void Scene_Play::sMovement()
     // Figure out acceleration for current frame
     if (isDeceleratingRight)
     {
-        if (isSkidding) 
+        if (isSkidding || m_player->getComponent<CTransform>().acc_x == d_skid) 
         {
             m_player->getComponent<CTransform>().acc_x = d_skid;
         }
@@ -203,7 +203,7 @@ void Scene_Play::sMovement()
     }
     else if (isDeceleratingLeft)
     {
-        if (isSkidding) 
+        if (isSkidding || m_player->getComponent<CTransform>().acc_x == -d_skid) 
         {
             m_player->getComponent<CTransform>().acc_x = -d_skid;
         }
