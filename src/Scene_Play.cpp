@@ -291,58 +291,48 @@ void Scene_Play::sMovement()
     double maxVerticalSpeed = 4.5 * 4; // 18
     double resetVerticalSpeed = 4 * 4; // 16
 
-    // Figure out Y acceleration
-    if (m_player->getComponent<CInput>().canJump && m_player->getComponent<CInput>().A)
-    {
-        double xSpeed = m_player->getComponent<CTransform>().velocity.x;
+    double xSpeed = m_player->getComponent<CTransform>().velocity.x;
+    bool canJump = m_player->getComponent<CInput>().canJump;
+    bool isPressingJump = m_player->getComponent<CInput>().A;
+    bool isAtSmallHorizontalSpeed = (smallHorizontalSpeeds[0] <= xSpeed && smallHorizontalSpeeds[1] > xSpeed) || (-smallHorizontalSpeeds[0] >= xSpeed && -smallHorizontalSpeeds[1] < xSpeed);
+    bool isAtMediumHorizontalSpeed = (mediumHorizontalSpeeds[0] <= xSpeed && mediumHorizontalSpeeds[1] >= xSpeed) || (-mediumHorizontalSpeeds[0] >= xSpeed && -mediumHorizontalSpeeds[1] <= xSpeed);
+    bool hasReducedGravity = (m_player->getComponent<CTransform>().acc_y == reducedGravityForSHS || m_player->getComponent<CTransform>().acc_y == reducedGravityForMHS);
+    bool isFalling = m_player->getComponent<CTransform>().velocity.y >= 0;
 
-        if ((smallHorizontalSpeeds[0] <= xSpeed && smallHorizontalSpeeds[1] > xSpeed) ||
-            (-smallHorizontalSpeeds[0] >= xSpeed && -smallHorizontalSpeeds[1] < xSpeed)
-        )
+    // Figure out Y acceleration
+    if (canJump && isPressingJump)
+    {
+        if (isAtSmallHorizontalSpeed)
         {
             m_player->getComponent<CTransform>().acc_y = reducedGravityForSHS;
         }
-        else if ((mediumHorizontalSpeeds[0] <= xSpeed && mediumHorizontalSpeeds[1] >= xSpeed) ||
-            (-mediumHorizontalSpeeds[0] >= xSpeed && -mediumHorizontalSpeeds[1] <= xSpeed)
-        )
+        else if (isAtMediumHorizontalSpeed || true)
         {
             m_player->getComponent<CTransform>().acc_y = reducedGravityForMHS;
         }
     }
-    if 
-    (
-        (!(m_player->getComponent<CInput>().A) && (m_player->getComponent<CTransform>().acc_y == reducedGravityForSHS || m_player->getComponent<CTransform>().acc_y == reducedGravityForMHS)) ||
-        (m_player->getComponent<CTransform>().velocity.y >= 0 && (m_player->getComponent<CTransform>().acc_y == reducedGravityForSHS || m_player->getComponent<CTransform>().acc_y == reducedGravityForMHS) && !m_player->getComponent<CInput>().canJump)
-    )
+    else if (hasReducedGravity && (!isPressingJump || isFalling))
     {
         if (m_player->getComponent<CTransform>().acc_y == reducedGravityForSHS)
         {
             m_player->getComponent<CTransform>().acc_y = gravityForSHS;
         }
-        else if (m_player->getComponent<CTransform>().acc_y == reducedGravityForMHS)
+        else if (m_player->getComponent<CTransform>().acc_y == reducedGravityForMHS || true)
         {
             m_player->getComponent<CTransform>().acc_y = gravityForMHS;
         }
     }
 
     m_player->getComponent<CTransform>().velocity.y += m_player->getComponent<CTransform>().acc_y;
-    // std::cout << "A_y: " << m_player->getComponent<CTransform>().acc_y << "\n";
-
 
     // Apply exceptions to vertical speed
-    if (m_player->getComponent<CInput>().canJump && m_player->getComponent<CInput>().A)
+    if (canJump && isPressingJump)
     {
-        double xSpeed = m_player->getComponent<CTransform>().velocity.x;
-
-        if ((smallHorizontalSpeeds[0] <= xSpeed && smallHorizontalSpeeds[1] > xSpeed) ||
-            (-smallHorizontalSpeeds[0] >= xSpeed && -smallHorizontalSpeeds[1] < xSpeed)
-        )
+        if (isAtSmallHorizontalSpeed)
         {
             m_player->getComponent<CTransform>().velocity.y = -initialJumpSpeedForSHS;
         }
-        else if ((mediumHorizontalSpeeds[0] <= xSpeed && mediumHorizontalSpeeds[1] >= xSpeed) ||
-            (-mediumHorizontalSpeeds[0] >= xSpeed && -mediumHorizontalSpeeds[1] <= xSpeed)
-        )
+        else if (isAtMediumHorizontalSpeed || true)
         {
             m_player->getComponent<CTransform>().velocity.y = -initialJumpSpeedForMHS;
         }
@@ -353,6 +343,9 @@ void Scene_Play::sMovement()
     {
         m_player->getComponent<CTransform>().velocity.y = resetVerticalSpeed;
     }
+
+    // std::cout << "A_y: " << m_player->getComponent<CTransform>().acc_y << "\n";
+    // std::cout << "V_y: " << m_player->getComponent<CTransform>().velocity.y << "\n";
 
     // Use velocity to calculate player position
     m_player->getComponent<CTransform>().prevPos =  m_player->getComponent<CTransform>().pos;
