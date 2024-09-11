@@ -46,8 +46,8 @@ public:
     bool down       = false;
     bool left       = false;
     bool right      = false;
-    bool shoot      = false;
-    bool run        = false;
+    bool A          = false; // Jump & Swim
+    bool B          = false; // Accelerate & Shoot
     bool canShoot   = false;
     bool canJump    = false;
 

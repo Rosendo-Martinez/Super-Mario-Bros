@@ -17,6 +17,7 @@ void Scene_Play::init(const std::string & levelPath) // register actions, font/t
     registerAction(sf::Keyboard::A, "LEFT");
     registerAction(sf::Keyboard::D, "RIGHT");
     registerAction(sf::Keyboard::B, "RUN");
+    registerAction(sf::Keyboard::V, "JUMP");
 }
 
 Vec2 Scene_Play::gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity)
@@ -171,7 +172,7 @@ void Scene_Play::sMovement()
 
     bool isPressingLeft                 = m_player->getComponent<CInput>().left;
     bool isPressingRight                = m_player->getComponent<CInput>().right;
-    bool isRunning                      = m_player->getComponent<CInput>().run;
+    bool isRunning                      = m_player->getComponent<CInput>().B;
     bool isPressingBothOrNeither        = (!isPressingLeft && !isPressingRight) || (isPressingLeft && isPressingRight); // pressing both left and right or pressing neither
     bool isStandingStill                = m_player->getComponent<CTransform>().velocity.x == 0;
     bool isMovingRight                  = m_player->getComponent<CTransform>().velocity.x > 0;
@@ -674,7 +675,12 @@ void Scene_Play::sDoAction(const Action & action) // do the action
 
         if (action.name() == "RUN")
         {
-            m_player->getComponent<CInput>().run = true;
+            m_player->getComponent<CInput>().B = true;
+        }
+
+        if (action.name() == "JUMP")
+        {
+            m_player->getComponent<CInput>().A = true;
         }
     }
     else if (action.type() == "END")
@@ -701,7 +707,12 @@ void Scene_Play::sDoAction(const Action & action) // do the action
 
         if (action.name() == "RUN")
         {
-            m_player->getComponent<CInput>().run = false;
+            m_player->getComponent<CInput>().B = false;
+        }
+
+        if (action.name() == "JUMP")
+        {
+            m_player->getComponent<CInput>().A = false;
         }
     }
 }
