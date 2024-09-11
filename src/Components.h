@@ -21,6 +21,7 @@ public:
     Vec2  velocity   = { 0.0, 0.0 };
     float angle      = 0;
     double acc_x     = 0;
+    double acc_y     = 0;
 
     CTransform() {}
     CTransform(const Vec2 & p)
