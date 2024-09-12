@@ -146,7 +146,7 @@ void Scene_Play::sAnimation()
     {
         m_player->getComponent<CAnimation>().animation = m_game->assets().getAnimation("MarioStand");
     }
-    else if (m_player->getComponent<CState>().state == "Jumping" && m_player->getComponent<CAnimation>().animation.getName() != "MarioAir")
+    else if ((m_player->getComponent<CState>().state == "Jumping" || m_player->getComponent<CState>().state == "Falling") && m_player->getComponent<CAnimation>().animation.getName() != "MarioAir")
     {
         m_player->getComponent<CAnimation>().animation = m_game->assets().getAnimation("MarioAir");
     }
@@ -338,6 +338,8 @@ void Scene_Play::sMovement()
         }
 
         m_player->getComponent<CInput>().canJump = false;
+        m_player->getComponent<CState>().initialJumpXSpeed = m_player->getComponent<CTransform>().velocity.x;
+        m_player->getComponent<CState>().state = "Jumping";
     }
     if (m_player->getComponent<CTransform>().velocity.y > maxVerticalSpeed)
     {
@@ -561,11 +563,14 @@ void Scene_Play::sCollision()
         topLeftCornerHitBlock == nullptr &&
         topRightCornerHitBlock == nullptr &&
         bottomLeftCornerHitBlock == nullptr &&
-        bottomRightCornerHitBlock == nullptr
+        bottomRightCornerHitBlock == nullptr &&
+        (m_player->getComponent<CState>().state == "Running" ||
+        m_player->getComponent<CState>().state == "Standing") 
     )
     {
-        m_player->getComponent<CState>().state = "Jumping";
-        m_player->getComponent<CInput>().canJump = false;   
+        m_player->getComponent<CState>().state = "Falling";
+        m_player->getComponent<CState>().initialJumpXSpeed = m_player->getComponent<CTransform>().velocity.x;
+        m_player->getComponent<CInput>().canJump = false;
     }
 }
 
