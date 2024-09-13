@@ -188,93 +188,191 @@ void Scene_Play::sMovement()
     bool isAcceleratingRight = isPressingRight && !isPressingLeft && (isStandingStill || isMovingRight) && (!isAtMaxWalkSpeed || isRunning) && !isAtMaxRunSpeed && !isWalkingButPastMaxWalkSpeed;
     bool isNotAcceleratingOrDecelerating = !isDeceleratingLeft && !isDeceleratingRight && !isAcceleratingLeft && !isAcceleratingRight;
     bool isSkidding = ((isMovingRight && isPressingLeft && !isPressingRight) || (isMovingLeft && isPressingRight && !isPressingLeft)) || ((isDeceleratingLeft || isDeceleratingRight) && isSkiddingInPreviousFrame);
+    bool isAirborne = m_player->getComponent<CState>().state == "Jumping" || m_player->getComponent<CState>().state == "Falling"; 
+    
+    // Step 1: Figure out X acceleration for current frame
+    if (!isAirborne)
+    {
+        // std::cout << "Grounded Acc, ";
+        if (isDeceleratingRight)
+        {
+            if (isSkidding) 
+            {
+                m_player->getComponent<CTransform>().acc_x = d_skid;
+            }
+            else
+            {
+                m_player->getComponent<CTransform>().acc_x = d_release;
+            }
+        }
+        else if (isDeceleratingLeft)
+        {
+            if (isSkidding || m_player->getComponent<CTransform>().acc_x == -d_skid) 
+            {
+                m_player->getComponent<CTransform>().acc_x = -d_skid;
+            }
+            else
+            {
+                m_player->getComponent<CTransform>().acc_x = -d_release;
+            }
+        }
+        else if (isNotAcceleratingOrDecelerating)
+        {
+            m_player->getComponent<CTransform>().acc_x = 0;
+        }
+        else if (isAcceleratingRight)
+        {
+            if (isRunning)
+            {
+                m_player->getComponent<CTransform>().acc_x = a_run;
+            }
+            else 
+            {
+                m_player->getComponent<CTransform>().acc_x = a_walk;
+            }
+        }
+        else if (isAcceleratingLeft)
+        {
+            if (isRunning)
+            {
+                m_player->getComponent<CTransform>().acc_x = -a_run;
+            }
+            else
+            {
+                m_player->getComponent<CTransform>().acc_x = -a_walk;
+            }
+        }
+    }
+    // Mario is airborne
+    else
+    {
+        // std::cout << "Airborne Acc, ";
+        double currentSpeed = 1.5625 * 4;
+        double startingJumpSpeed = 1.8125 * 4;
+        double smallAcceleration = 0.037109375 * 4; // 0x00098
+        double largeAcceleration = 0.0556640625 * 4; // 0x000E4
+        double largeDeceleration = 0.0556640625 * 4; // 0x000E4
+        double mediumDeceleration = 0.05078125 * 4; // 0x000D0
+        double smallDeceleration = 0.037109375 * 4; // 0x00098
 
-    // Figure out acceleration for current frame
-    if (isDeceleratingRight)
-    {
-        if (isSkidding) 
+        if (isAcceleratingLeft)
         {
-            m_player->getComponent<CTransform>().acc_x = d_skid;
+            if (m_player->getComponent<CTransform>().velocity.x <= -currentSpeed)
+            {
+                m_player->getComponent<CTransform>().acc_x = -largeAcceleration;
+            }
+            else
+            {
+                m_player->getComponent<CTransform>().acc_x = -smallAcceleration;
+            }
         }
+        else if (isAcceleratingRight)
+        {
+            if (m_player->getComponent<CTransform>().velocity.x >= currentSpeed)
+            {
+                m_player->getComponent<CTransform>().acc_x = largeAcceleration;
+            }
+            else
+            {
+                m_player->getComponent<CTransform>().acc_x = smallAcceleration;
+            }
+        }
+        else if (isDeceleratingLeft)
+        {
+            if (m_player->getComponent<CTransform>().velocity.x >= currentSpeed)
+            {
+                m_player->getComponent<CTransform>().acc_x = -largeDeceleration;
+            }
+            else if (m_player->getComponent<CState>().initialJumpXSpeed >= startingJumpSpeed)
+            {
+                m_player->getComponent<CTransform>().acc_x = -mediumDeceleration;
+            }
+            else
+            {
+                m_player->getComponent<CTransform>().acc_x = -smallDeceleration;
+            }
+        }
+        else if (isDeceleratingRight)
+        {
+            if (m_player->getComponent<CTransform>().velocity.x <= -currentSpeed)
+            {
+                m_player->getComponent<CTransform>().acc_x = largeDeceleration;
+            }
+            else if (m_player->getComponent<CState>().initialJumpXSpeed <= -startingJumpSpeed)
+            {
+                m_player->getComponent<CTransform>().acc_x = mediumDeceleration;
+            }
+            else
+            {
+                m_player->getComponent<CTransform>().acc_x = smallDeceleration;
+            }
+        }
+        // Player is not accelerating
         else
         {
-            m_player->getComponent<CTransform>().acc_x = d_release;
-        }
-    }
-    else if (isDeceleratingLeft)
-    {
-        if (isSkidding || m_player->getComponent<CTransform>().acc_x == -d_skid) 
-        {
-            m_player->getComponent<CTransform>().acc_x = -d_skid;
-        }
-        else
-        {
-            m_player->getComponent<CTransform>().acc_x = -d_release;
-        }
-    }
-    else if (isNotAcceleratingOrDecelerating)
-    {
-        m_player->getComponent<CTransform>().acc_x = 0;
-    }
-    else if (isAcceleratingRight)
-    {
-        if (isRunning)
-        {
-            m_player->getComponent<CTransform>().acc_x = a_run;
-        }
-        else 
-        {
-            m_player->getComponent<CTransform>().acc_x = a_walk;
-        }
-    }
-    else if (isAcceleratingLeft)
-    {
-        if (isRunning)
-        {
-            m_player->getComponent<CTransform>().acc_x = -a_run;
-        }
-        else
-        {
-            m_player->getComponent<CTransform>().acc_x = -a_walk;
+            m_player->getComponent<CTransform>().acc_x = 0;
         }
     }
 
-    // Use acceleration to calculate velocity
+
+    // Step 2: Use X acceleration to calculate X velocity
     m_player->getComponent<CTransform>().velocity.x += m_player->getComponent<CTransform>().acc_x;
 
-    bool isPastMaxWalkSpeed   = m_player->getComponent<CTransform>().velocity.x > v_max_walk || m_player->getComponent<CTransform>().velocity.x < -v_max_walk;
-    bool isPastMaxRunSpeed = m_player->getComponent<CTransform>().velocity.x > v_max_run || m_player->getComponent<CTransform>().velocity.x < -v_max_run;
-    bool isBellowMinWalkSpeed = m_player->getComponent<CTransform>().velocity.x < v_min && m_player->getComponent<CTransform>().velocity.x > -v_min;
-    bool isBellowTurnAroundSpeed = m_player->getComponent<CTransform>().velocity.x < v_turnaround && m_player->getComponent<CTransform>().velocity.x > -v_turnaround;
+    // Step 3: Apply speed limits or exception for X velocity
+    if (!isAirborne)
+    {
+        // std::cout << "Grounded Vel.\n";
+        bool isPastMaxWalkSpeed   = m_player->getComponent<CTransform>().velocity.x > v_max_walk || m_player->getComponent<CTransform>().velocity.x < -v_max_walk;
+        bool isPastMaxRunSpeed = m_player->getComponent<CTransform>().velocity.x > v_max_run || m_player->getComponent<CTransform>().velocity.x < -v_max_run;
+        bool isBellowMinWalkSpeed = m_player->getComponent<CTransform>().velocity.x < v_min && m_player->getComponent<CTransform>().velocity.x > -v_min;
+        bool isBellowTurnAroundSpeed = m_player->getComponent<CTransform>().velocity.x < v_turnaround && m_player->getComponent<CTransform>().velocity.x > -v_turnaround;
 
-    // Apply speed limits if needed
-    if (isPastMaxWalkSpeed && isAcceleratingRight && !isRunning)
-    {
-        m_player->getComponent<CTransform>().velocity.x = v_max_walk;
+        // Apply speed limits if needed
+        if (isPastMaxWalkSpeed && isAcceleratingRight && !isRunning)
+        {
+            m_player->getComponent<CTransform>().velocity.x = v_max_walk;
+        }
+        else if (isPastMaxWalkSpeed && isAcceleratingLeft && !isRunning)
+        {
+            m_player->getComponent<CTransform>().velocity.x = -v_max_walk;
+        }
+        else if (isPastMaxRunSpeed && isAcceleratingRight && isRunning)
+        {
+            m_player->getComponent<CTransform>().velocity.x = v_max_run;   
+        }
+        else if (isPastMaxRunSpeed && isAcceleratingLeft && isRunning)
+        {
+            m_player->getComponent<CTransform>().velocity.x = -v_max_run;   
+        }
+        else if (isBellowMinWalkSpeed && isAcceleratingRight)
+        {
+            m_player->getComponent<CTransform>().velocity.x = v_min;
+        }
+        else if (isBellowMinWalkSpeed && isAcceleratingLeft)
+        {
+            m_player->getComponent<CTransform>().velocity.x = -v_min;
+        }
+        else if ((isBellowMinWalkSpeed || (isBellowTurnAroundSpeed && isSkidding)) && (isDeceleratingLeft || isDeceleratingRight))
+        {
+            m_player->getComponent<CTransform>().velocity.x = 0;
+        }
     }
-    else if (isPastMaxWalkSpeed && isAcceleratingLeft && !isRunning)
+    // Mario is airborne
+    else
     {
-        m_player->getComponent<CTransform>().velocity.x = -v_max_walk;
-    }
-    else if (isPastMaxRunSpeed && isAcceleratingRight && isRunning)
-    {
-        m_player->getComponent<CTransform>().velocity.x = v_max_run;   
-    }
-    else if (isPastMaxRunSpeed && isAcceleratingLeft && isRunning)
-    {
-        m_player->getComponent<CTransform>().velocity.x = -v_max_run;   
-    }
-    else if (isBellowMinWalkSpeed && isAcceleratingRight)
-    {
-        m_player->getComponent<CTransform>().velocity.x = v_min;
-    }
-    else if (isBellowMinWalkSpeed && isAcceleratingLeft)
-    {
-        m_player->getComponent<CTransform>().velocity.x = -v_min;
-    }
-    else if ((isBellowMinWalkSpeed || (isBellowTurnAroundSpeed && isSkidding)) && (isDeceleratingLeft || isDeceleratingRight))
-    {
-        m_player->getComponent<CTransform>().velocity.x = 0;
+        // std::cout << "Airborne Vel.\n";
+        double startingJumpSpeed = 1.8125 * 4;
+        double smallMomentumLimit = 1.5625 * 4;
+        double largeMomentumLimit = 2.5625 * 4;
+
+        if (m_player->getComponent<CState>().initialJumpXSpeed < startingJumpSpeed && m_player->getComponent<CTransform>().velocity.x > smallMomentumLimit)
+        {
+            m_player->getComponent<CTransform>().velocity.x = smallMomentumLimit;
+        } 
+        else if (m_player->getComponent<CTransform>().velocity.x > largeMomentumLimit)
+        {
+             m_player->getComponent<CTransform>().velocity.x = largeMomentumLimit;
+        }
     }
 
     // std::cout << "Vel.x: " << m_player->getComponent<CTransform>().velocity.x << "\n";
@@ -299,7 +397,7 @@ void Scene_Play::sMovement()
     bool hasReducedGravity = (m_player->getComponent<CTransform>().acc_y == reducedGravityForSHS || m_player->getComponent<CTransform>().acc_y == reducedGravityForMHS);
     bool isFalling = m_player->getComponent<CTransform>().velocity.y >= 0;
 
-    // Figure out Y acceleration
+    // Step 4: Figure out Y acceleration
     if (canJump && isPressingJump)
     {
         if (isAtSmallHorizontalSpeed)
@@ -325,7 +423,7 @@ void Scene_Play::sMovement()
 
     m_player->getComponent<CTransform>().velocity.y += m_player->getComponent<CTransform>().acc_y;
 
-    // Apply exceptions to vertical speed
+    // Step 5: Apply speed limits or exception for Y velocity
     if (canJump && isPressingJump)
     {
         if (isAtSmallHorizontalSpeed)
@@ -349,7 +447,7 @@ void Scene_Play::sMovement()
     // std::cout << "A_y: " << m_player->getComponent<CTransform>().acc_y << "\n";
     // std::cout << "V_y: " << m_player->getComponent<CTransform>().velocity.y << "\n";
 
-    // Use velocity to calculate player position
+    // Step 6: Use velocity to calculate player position
     m_player->getComponent<CTransform>().prevPos =  m_player->getComponent<CTransform>().pos;
     m_player->getComponent<CTransform>().pos += m_player->getComponent<CTransform>().velocity;
 
