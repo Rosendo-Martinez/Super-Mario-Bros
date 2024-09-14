@@ -22,8 +22,8 @@ class Scene_Play : public Scene
     };
 
     struct AIRBORNE_HORIZONTAL_KINEMATICS {
-        const double CURRENT_SPEED_THRESHOLD = 1.5625 * 4; // CST
-        const double INITIAL_SPEED_THRESHOLD = 1.8125 * 4; // IST
+        const double CURRENT_SPEED_THRESHOLD_FOR_ACC = 1.5625 * 4; // CST
+        const double INITIAL_SPEED_THRESHOLD_FOR_ACC = 1.8125 * 4; // IST
 
         const double BELOW_CST_ACC = 0.037109375 * 4; // Acceleration when current speed < CST
         const double ABOVE_CST_ACC = 0.0556640625 * 4; // Acceleration when current speed >= CST
@@ -32,8 +32,9 @@ class Scene_Play : public Scene
         const double ABOVE_IST_DEC = 0.05078125 * 4; // Deceleration when IST <= current speed < CST
         const double BELOW_IST_DEC = 0.037109375 * 4; // Deceleration when current speed < IST
 
-        const double LOWER_SPEED_LIMIT = 1.5625 * 4; // Speed limit if mario started airborne at x speed bellow CST
-        const double HIGHER_SPEED_LIMIT = 2.5625 * 4; // Speed limit if mario started airborne at x speed above CST
+        const double INITIAL_SPEED_THRESHOLD_FOR_VEL = 1.5625 * 4;
+        const double BELLOW_ISP_SPEED_LIMIT_VEL = 1.5625 * 4; // Speed limit if mario started airborne at x speed bellow CST
+        const double ABOVE_IST_SPEED_LIMIT_VEL = 2.5625 * 4; // Speed limit if mario started airborne at x speed above CST
     };
 
     struct AIRBORNE_VERTICAL_KINEMATICS {
