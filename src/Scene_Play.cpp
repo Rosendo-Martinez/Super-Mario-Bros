@@ -166,7 +166,7 @@ void Scene_Play::sMovement()
     bool isPressingLeft                 = cInput.left;
     bool isPressingRight                = cInput.right;
     bool isRunning                      = cInput.B;
-    bool isPressingBothOrNeither        = (!isPressingLeft && !isPressingRight) || (isPressingLeft && isPressingRight); // pressing both left and right or pressing neither
+    bool isPressingBothOrNeither        = (!cInput.left && !cInput.right) || (cInput.left && cInput.right); // pressing both left and right or pressing neither
     bool isStandingStill                = cTransform.velocity.x == 0;
     bool isMovingRight                  = cTransform.velocity.x > 0;
     bool isMovingLeft                   = cTransform.velocity.x < 0;
@@ -174,11 +174,12 @@ void Scene_Play::sMovement()
     bool isAtMaxRunSpeed                = cTransform.velocity.x == m_groundedHK.MAX_RUN_SPEED || cTransform.velocity.x == -m_groundedHK.MAX_RUN_SPEED;
     bool isWalkingButPastMaxWalkSpeed   = (cTransform.velocity.x > m_groundedHK.MAX_WALK_SPEED || cTransform.velocity.x < -m_groundedHK.MAX_WALK_SPEED) && !isRunning;
     bool isSkiddingInPreviousFrame      = (cTransform.acc_x == m_groundedHK.SKID_DEC || cTransform.acc_x == -m_groundedHK.SKID_DEC);
+    bool isChangingMovementDirection = (isMovingLeft && (isPressingRight || !isPressingLeft)) || (isMovingRight && (isPressingLeft || !isPressingRight));
 
     // Decelerating: moving to a speed of zero
     // Accelerating: moving to a speed (+ or -) away from zero
-    bool isDeceleratingLeft = (isMovingRight && ((isPressingBothOrNeither || isPressingLeft) || isWalkingButPastMaxWalkSpeed));
-    bool isDeceleratingRight = (isMovingLeft && ((isPressingBothOrNeither || isPressingRight) || isWalkingButPastMaxWalkSpeed));
+    bool isDeceleratingLeft = (isMovingRight && (isChangingMovementDirection || isWalkingButPastMaxWalkSpeed));
+    bool isDeceleratingRight = (isMovingLeft && (isChangingMovementDirection || isWalkingButPastMaxWalkSpeed));
     bool isAcceleratingLeft = isPressingLeft && !isPressingRight && (isMovingLeft || isStandingStill) && (!isAtMaxWalkSpeed || isRunning) && !isAtMaxRunSpeed && !isWalkingButPastMaxWalkSpeed;
     bool isAcceleratingRight = isPressingRight && !isPressingLeft && (isStandingStill || isMovingRight) && (!isAtMaxWalkSpeed || isRunning) && !isAtMaxRunSpeed && !isWalkingButPastMaxWalkSpeed;
     bool isNotAcceleratingOrDecelerating = !isDeceleratingLeft && !isDeceleratingRight && !isAcceleratingLeft && !isAcceleratingRight;
