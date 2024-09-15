@@ -159,9 +159,9 @@ void Scene_Play::sAnimation()
 
 void Scene_Play::sAirBorneMovement()
 {
-    CInput& cInput = m_player->getComponent<CInput>();
-    CTransform& cTransform = m_player->getComponent<CTransform>();
-    CState& cState = m_player->getComponent<CState>();
+    CInput& cInput          = m_player->getComponent<CInput>();
+    CTransform& cTransform  = m_player->getComponent<CTransform>();
+    CState& cState          = m_player->getComponent<CState>();
 
     bool isPressingLeft                 = cInput.left;
     bool isPressingRight                = cInput.right;
@@ -178,13 +178,13 @@ void Scene_Play::sAirBorneMovement()
 
     // Decelerating: moving to a speed of zero
     // Accelerating: moving to a speed (+ or -) away from zero
-    bool isDeceleratingLeft = (isMovingRight && (isChangingMovementDirection || isWalkingButPastMaxWalkSpeed));
-    bool isDeceleratingRight = (isMovingLeft && (isChangingMovementDirection || isWalkingButPastMaxWalkSpeed));
-    bool isAcceleratingLeft = isPressingLeft && !isPressingRight && (isMovingLeft || isStandingStill) && (!isAtMaxWalkSpeed || isRunning) && !isAtMaxRunSpeed && !isWalkingButPastMaxWalkSpeed;
-    bool isAcceleratingRight = isPressingRight && !isPressingLeft && (isStandingStill || isMovingRight) && (!isAtMaxWalkSpeed || isRunning) && !isAtMaxRunSpeed && !isWalkingButPastMaxWalkSpeed;
+    bool isDeceleratingLeft              = (isMovingRight && (isChangingMovementDirection || isWalkingButPastMaxWalkSpeed));
+    bool isDeceleratingRight             = (isMovingLeft && (isChangingMovementDirection || isWalkingButPastMaxWalkSpeed));
+    bool isAcceleratingLeft              = (isPressingLeft && !isPressingRight) && (isMovingLeft || isStandingStill) && (!isAtMaxWalkSpeed || isRunning) && !isAtMaxRunSpeed && !isWalkingButPastMaxWalkSpeed;
+    bool isAcceleratingRight             = isPressingRight && !isPressingLeft && (isStandingStill || isMovingRight) && (!isAtMaxWalkSpeed || isRunning) && !isAtMaxRunSpeed && !isWalkingButPastMaxWalkSpeed;
     bool isNotAcceleratingOrDecelerating = !isDeceleratingLeft && !isDeceleratingRight && !isAcceleratingLeft && !isAcceleratingRight;
-    bool isSkidding = ((isMovingRight && isPressingLeft && !isPressingRight) || (isMovingLeft && isPressingRight && !isPressingLeft)) || ((isDeceleratingLeft || isDeceleratingRight) && isSkiddingInPreviousFrame);
-    bool isAirborne = cState.state == "Jumping" || cState.state == "Falling";
+    bool isSkidding                      = ((isMovingRight && isPressingLeft && !isPressingRight) || (isMovingLeft && isPressingRight && !isPressingLeft)) || ((isDeceleratingLeft || isDeceleratingRight) && isSkiddingInPreviousFrame);
+    bool isAirborne                      = cState.state == "Jumping" || cState.state == "Falling";
 
     bool isAboveCurrentSpeedThreshold = (cTransform.velocity.x <= -m_airborneHK.CURRENT_SPEED_THRESHOLD_FOR_ACC || cTransform.velocity.x >= m_airborneHK.CURRENT_SPEED_THRESHOLD_FOR_ACC);
     bool isAboveInitialSpeedThreshold = (cState.initialJumpXSpeed <= -m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_ACC || cState.initialJumpXSpeed >= m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_ACC);
@@ -275,15 +275,15 @@ void Scene_Play::sAirBorneMovement()
             cTransform.velocity.x = -m_airborneHK.BELLOW_ISP_SPEED_LIMIT_VEL;
         }
     }
-
-    double xSpeed = cTransform.velocity.x;
-    bool canJump = cInput.canJump;
-    bool isPressingJump = cInput.A;
-    bool isAtSmallHorizontalSpeed = m_jumpVK.SMALL_SPEED_THRESHOLD > xSpeed && -m_jumpVK.SMALL_SPEED_THRESHOLD < xSpeed;
-    bool isAtMediumHorizontalSpeed = m_jumpVK.MEDIUM_SPEED_THRESHOLD >= xSpeed && -m_jumpVK.MEDIUM_SPEED_THRESHOLD <= xSpeed && !isAtSmallHorizontalSpeed;
-    bool hadReducedGravity = (cTransform.acc_y == m_jumpVK.REDUCED_GRAVITY_S || cTransform.acc_y == m_jumpVK.REDUCED_GRAVITY_M);
-    bool isFalling = cTransform.velocity.y >= 0;
-    bool isJustStartingJump = canJump && isPressingJump;
+    
+    double xSpeed                               = cTransform.velocity.x;
+    bool canJump                                = cInput.canJump;
+    bool isPressingJump                         = cInput.A;
+    bool isAtSmallHorizontalSpeed               = (m_jumpVK.SMALL_SPEED_THRESHOLD > xSpeed) && (-m_jumpVK.SMALL_SPEED_THRESHOLD < xSpeed);
+    bool isAtMediumHorizontalSpeed              = (m_jumpVK.MEDIUM_SPEED_THRESHOLD >= xSpeed) && (-m_jumpVK.MEDIUM_SPEED_THRESHOLD <= xSpeed) && (!isAtSmallHorizontalSpeed);
+    bool hadReducedGravity                      = (cTransform.acc_y == m_jumpVK.REDUCED_GRAVITY_S) || (cTransform.acc_y == m_jumpVK.REDUCED_GRAVITY_M);
+    bool isFalling                              = (cTransform.velocity.y >= 0);
+    bool isJustStartingJump                     = canJump && isPressingJump;
     bool isJustStartingNormalGravityPhaseOfJump = hadReducedGravity && (!isPressingJump || isFalling);
 
     // Step 4: Figure out Y acceleration
