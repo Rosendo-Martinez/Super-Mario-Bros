@@ -471,11 +471,16 @@ void Scene_Play::sMovement()
     if (isAirborne)
     {
         sAirBorneMovement();
+        // std::cout << "Airborne\n";
     }
     else
     {
         sGroundedMovement();
+        // std::cout << "Grounded\n";
     }
+
+    // std::cout << "A = (" << cTransform.acc_x << ", " << cTransform.acc_y << ")\n";
+    // std::cout << "V = (" << cTransform.velocity.x << ", " << cTransform.velocity.y << ")\n";
 
     // Player fell off the map
     if (cTransform.pos.y - 64/2 > m_game->window().getSize().y)
