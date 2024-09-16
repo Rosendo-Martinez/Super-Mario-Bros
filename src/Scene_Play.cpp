@@ -278,9 +278,13 @@ void Scene_Play::sAirBorneMovement()
         {
             cTransform.acc_y = m_jumpVK.GRAVITY_S;
         }
-        else
+        else if (cTransform.acc_y == m_jumpVK.REDUCED_GRAVITY_M)
         {
             cTransform.acc_y = m_jumpVK.GRAVITY_M;
+        }
+        else
+        {
+            cTransform.acc_y = m_jumpVK.GRAVITY_L;
         }
     }
 
@@ -430,9 +434,13 @@ void Scene_Play::sGroundedMovement()
         {
             cTransform.acc_y = m_jumpVK.REDUCED_GRAVITY_S;
         }
-        else
+        else if (isAtMediumHorizontalSpeed)
         {
             cTransform.acc_y = m_jumpVK.REDUCED_GRAVITY_M;
+        }
+        else
+        {
+            cTransform.acc_y = m_jumpVK.REDUCED_GRAVITY_L;
         }
     }
 
@@ -445,9 +453,13 @@ void Scene_Play::sGroundedMovement()
         {
             cTransform.velocity.y = -m_jumpVK.INITIAL_VELOCITY_S;
         }
-        else
+        else if (isAtMediumHorizontalSpeed)
         {
             cTransform.velocity.y = -m_jumpVK.INITIAL_VELOCITY_M;
+        }
+        else
+        {
+            cTransform.velocity.y = -m_jumpVK.INITIAL_VELOCITY_L;
         }
 
         cInput.canJump = false;
