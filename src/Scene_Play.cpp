@@ -137,19 +137,7 @@ void Scene_Play::update() // update EM, and cal systems
 
 void Scene_Play::sAnimation()
 {
-    // Set Mario's animation to match his current state
-    if (m_player->getComponent<CState>().state == "Running" && m_player->getComponent<CAnimation>().animation.getName() != "MarioRun")
-    {
-        m_player->getComponent<CAnimation>().animation = m_game->assets().getAnimation("MarioRun");
-    }
-    else if (m_player->getComponent<CState>().state == "Standing" && m_player->getComponent<CAnimation>().animation.getName() != "MarioStand")
-    {
-        m_player->getComponent<CAnimation>().animation = m_game->assets().getAnimation("MarioStand");
-    }
-    else if ((m_player->getComponent<CState>().state == "Jumping" || m_player->getComponent<CState>().state == "Falling") && m_player->getComponent<CAnimation>().animation.getName() != "MarioAir")
-    {
-        m_player->getComponent<CAnimation>().animation = m_game->assets().getAnimation("MarioAir");
-    }
+    m_player->getComponent<CAnimation>().animation = m_game->assets().getAnimation("MarioStand"); // temporary
 
     for (auto e: m_entityManager.getEntities())
     {
@@ -453,7 +441,7 @@ void Scene_Play::sGroundedMovement()
 
         cInput.canJump = false;
         cState.initialJumpXSpeed = cTransform.velocity.x;
-        cState.state = "Jumping";
+        cState.isGrounded = false;
     }
 
     // Step 7: Use velocity to calculate player position
@@ -466,7 +454,7 @@ void Scene_Play::sMovement()
     CInput& cInput = m_player->getComponent<CInput>();
     CTransform& cTransform = m_player->getComponent<CTransform>();
     CState& cState = m_player->getComponent<CState>();
-    bool isAirborne = cState.state == "Jumping" || cState.state == "Falling";
+    bool isAirborne = !cState.isGrounded;
 
     if (isAirborne)
     {
@@ -634,15 +622,7 @@ void Scene_Play::sCollision()
             m_player->getComponent<CTransform>().pos.y -= overlap.y;
             m_player->getComponent<CTransform>().velocity.y = 0;
             m_player->getComponent<CInput>().canJump = true;
-
-            if (m_player->getComponent<CInput>().left || m_player->getComponent<CInput>().right)
-            {
-                m_player->getComponent<CState>().state = "Running";
-            }
-            else
-            {
-                m_player->getComponent<CState>().state = "Standing";
-            }
+            m_player->getComponent<CState>().isGrounded = true;
         }
     }
     if (topLeftCornerHitBlock != nullptr)
@@ -693,11 +673,10 @@ void Scene_Play::sCollision()
         topRightCornerHitBlock == nullptr &&
         bottomLeftCornerHitBlock == nullptr &&
         bottomRightCornerHitBlock == nullptr &&
-        (m_player->getComponent<CState>().state == "Running" ||
-        m_player->getComponent<CState>().state == "Standing") 
+        m_player->getComponent<CState>().isGrounded
     )
     {
-        m_player->getComponent<CState>().state = "Falling";
+        m_player->getComponent<CState>().isGrounded = false;
         m_player->getComponent<CState>().initialJumpXSpeed = m_player->getComponent<CTransform>().velocity.x;
         m_player->getComponent<CInput>().canJump = false;
     }
