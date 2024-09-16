@@ -174,25 +174,25 @@ void Scene_Play::sAirBorneMovement()
     bool isAtMaxRunSpeed                = cTransform.velocity.x == m_groundedHK.MAX_RUN_SPEED || cTransform.velocity.x == -m_groundedHK.MAX_RUN_SPEED;
     bool isWalkingButPastMaxWalkSpeed   = (cTransform.velocity.x > m_groundedHK.MAX_WALK_SPEED || cTransform.velocity.x < -m_groundedHK.MAX_WALK_SPEED) && !isRunning;
     bool isSkiddingInPreviousFrame      = (cTransform.acc_x == m_groundedHK.SKID_DEC || cTransform.acc_x == -m_groundedHK.SKID_DEC);
-    bool isChangingMovementDirection    = (isMovingLeft && (isPressingRight || !isPressingLeft)) || (isMovingRight && (isPressingLeft || !isPressingRight));
+    bool isChangingMovementDirection    = (isMovingLeft && (isPressingRight && !isPressingLeft)) || (isMovingRight && (isPressingLeft && !isPressingRight));
+    bool isAboveInitialSpeedThresholdForVel = (cState.initialJumpXSpeed <= -m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_VEL || cState.initialJumpXSpeed >= m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_VEL);
+    double maxXSpeed                    = isAboveInitialSpeedThresholdForVel ? m_airborneHK.ABOVE_IST_SPEED_LIMIT_VEL : m_airborneHK.BELLOW_ISP_SPEED_LIMIT_VEL;
+    bool isBellowMaxSpeed               = (cTransform.velocity.x < maxXSpeed) && (cTransform.velocity.x > -maxXSpeed);
 
     // Decelerating: moving to a speed of zero
     // Accelerating: moving to a speed (+ or -) away from zero
-    bool isDeceleratingLeft              = (isMovingRight && (isChangingMovementDirection || isWalkingButPastMaxWalkSpeed));
-    bool isDeceleratingRight             = (isMovingLeft && (isChangingMovementDirection || isWalkingButPastMaxWalkSpeed));
-    bool isAcceleratingLeft              = (isPressingLeft && !isPressingRight) && (isMovingLeft || isStandingStill) && (!isAtMaxWalkSpeed || isRunning) && !isAtMaxRunSpeed && !isWalkingButPastMaxWalkSpeed;
-    bool isAcceleratingRight             = isPressingRight && !isPressingLeft && (isStandingStill || isMovingRight) && (!isAtMaxWalkSpeed || isRunning) && !isAtMaxRunSpeed && !isWalkingButPastMaxWalkSpeed;
-    bool isNotAcceleratingOrDecelerating = !isDeceleratingLeft && !isDeceleratingRight && !isAcceleratingLeft && !isAcceleratingRight;
-    bool isSkidding                      = ((isMovingRight && isPressingLeft && !isPressingRight) || (isMovingLeft && isPressingRight && !isPressingLeft)) || ((isDeceleratingLeft || isDeceleratingRight) && isSkiddingInPreviousFrame);
-    bool isAirborne                      = cState.state == "Jumping" || cState.state == "Falling";
+    bool isDeceleratingLeft              = (isMovingRight && isChangingMovementDirection);
+    bool isDeceleratingRight             = (isMovingLeft && isChangingMovementDirection);
+    bool isAcceleratingLeft              = (isPressingLeft && !isPressingRight) && (isMovingLeft || isStandingStill) && isBellowMaxSpeed;
+    bool isAcceleratingRight             = isPressingRight && !isPressingLeft && (isStandingStill || isMovingRight) && isBellowMaxSpeed;
 
-    bool isAboveCurrentSpeedThreshold = (cTransform.velocity.x <= -m_airborneHK.CURRENT_SPEED_THRESHOLD_FOR_ACC || cTransform.velocity.x >= m_airborneHK.CURRENT_SPEED_THRESHOLD_FOR_ACC);
-    bool isAboveInitialSpeedThreshold = (cState.initialJumpXSpeed <= -m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_ACC || cState.initialJumpXSpeed >= m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_ACC);
+    bool isAboveCurrentSpeedThresholdForAcc = (cTransform.velocity.x <= -m_airborneHK.CURRENT_SPEED_THRESHOLD_FOR_ACC || cTransform.velocity.x >= m_airborneHK.CURRENT_SPEED_THRESHOLD_FOR_ACC);
+    bool isAboveInitialSpeedThresholdForAcc = (cState.initialJumpXSpeed <= -m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_ACC || cState.initialJumpXSpeed >= m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_ACC);
 
     // Step 1: Figure out X acceleration for current frame
     if (isAcceleratingLeft)
     {
-        if (isAboveCurrentSpeedThreshold)
+        if (isAboveCurrentSpeedThresholdForAcc)
         {
             cTransform.acc_x = -m_airborneHK.ABOVE_CST_ACC;
         }
@@ -203,7 +203,7 @@ void Scene_Play::sAirBorneMovement()
     }
     else if (isAcceleratingRight)
     {
-        if (isAboveCurrentSpeedThreshold)
+        if (isAboveCurrentSpeedThresholdForAcc)
         {
             cTransform.acc_x = m_airborneHK.ABOVE_CST_ACC;
         }
@@ -214,11 +214,11 @@ void Scene_Play::sAirBorneMovement()
     }
     else if (isDeceleratingLeft)
     {
-        if (isAboveCurrentSpeedThreshold)
+        if (isAboveCurrentSpeedThresholdForAcc)
         {
             cTransform.acc_x = -m_airborneHK.ABOVE_CST_DEC;
         }
-        else if (isAboveInitialSpeedThreshold)
+        else if (isAboveInitialSpeedThresholdForAcc)
         {
             cTransform.acc_x = -m_airborneHK.ABOVE_IST_DEC;
         }
@@ -229,11 +229,11 @@ void Scene_Play::sAirBorneMovement()
     }
     else if (isDeceleratingRight)
     {
-        if (isAboveCurrentSpeedThreshold)
+        if (isAboveCurrentSpeedThresholdForAcc)
         {
             cTransform.acc_x = m_airborneHK.ABOVE_CST_DEC;
         }
-        else if (isAboveInitialSpeedThreshold)
+        else if (isAboveInitialSpeedThresholdForAcc)
         {
             cTransform.acc_x = m_airborneHK.ABOVE_IST_DEC;
         }
@@ -249,8 +249,6 @@ void Scene_Play::sAirBorneMovement()
 
     // Step 2: Use X acceleration to calculate X velocity
     cTransform.velocity.x += cTransform.acc_x;
-
-    bool isAboveInitialSpeedThresholdForVel = (cState.initialJumpXSpeed <= -m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_VEL || cState.initialJumpXSpeed >= m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_VEL);
 
     // Step 3: Apply speed limits or exception for X velocity
     if (isAboveInitialSpeedThresholdForVel)
