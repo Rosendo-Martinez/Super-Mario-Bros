@@ -190,57 +190,44 @@ void Scene_Play::sAirBorneMovement()
     bool isAboveInitialSpeedThresholdForAcc = (cState.initialJumpXSpeed <= -m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_ACC || cState.initialJumpXSpeed >= m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_ACC);
 
     // Step 1: Figure out X acceleration for current frame
+    double accelerationX;
+    if (isAboveCurrentSpeedThresholdForAcc)
+    {
+        accelerationX = m_airborneHK.ABOVE_CST_ACC;
+    }
+    else
+    {
+        accelerationX = m_airborneHK.BELOW_CST_ACC;
+    }
+    double decelerationX;
+    if (isAboveCurrentSpeedThresholdForAcc)
+    {
+        decelerationX = m_airborneHK.ABOVE_CST_DEC;
+    }
+    else if (isAboveInitialSpeedThresholdForAcc)
+    {
+        decelerationX = m_airborneHK.ABOVE_IST_DEC;
+    }
+    else
+    {
+        decelerationX = m_airborneHK.BELOW_IST_DEC;
+    }
+
     if (isAcceleratingLeft)
     {
-        if (isAboveCurrentSpeedThresholdForAcc)
-        {
-            cTransform.acc_x = -m_airborneHK.ABOVE_CST_ACC;
-        }
-        else
-        {
-            cTransform.acc_x = -m_airborneHK.BELOW_CST_ACC;
-        }
+        cTransform.acc_x = -accelerationX;
     }
     else if (isAcceleratingRight)
     {
-        if (isAboveCurrentSpeedThresholdForAcc)
-        {
-            cTransform.acc_x = m_airborneHK.ABOVE_CST_ACC;
-        }
-        else
-        {
-            cTransform.acc_x = m_airborneHK.BELOW_CST_ACC;
-        }
+        cTransform.acc_x = accelerationX;
     }
     else if (isDeceleratingLeft)
     {
-        if (isAboveCurrentSpeedThresholdForAcc)
-        {
-            cTransform.acc_x = -m_airborneHK.ABOVE_CST_DEC;
-        }
-        else if (isAboveInitialSpeedThresholdForAcc)
-        {
-            cTransform.acc_x = -m_airborneHK.ABOVE_IST_DEC;
-        }
-        else
-        {
-            cTransform.acc_x = -m_airborneHK.BELOW_IST_DEC;
-        }
+        cTransform.acc_x = -decelerationX;
     }
     else if (isDeceleratingRight)
     {
-        if (isAboveCurrentSpeedThresholdForAcc)
-        {
-            cTransform.acc_x = m_airborneHK.ABOVE_CST_DEC;
-        }
-        else if (isAboveInitialSpeedThresholdForAcc)
-        {
-            cTransform.acc_x = m_airborneHK.ABOVE_IST_DEC;
-        }
-        else
-        {
-            cTransform.acc_x = m_airborneHK.BELOW_IST_DEC;
-        }
+        cTransform.acc_x = decelerationX;
     }
     else
     {
@@ -344,49 +331,40 @@ void Scene_Play::sGroundedMovement()
     bool isSkidding                      = ((isMovingRight && isPressingLeft && !isPressingRight) || (isMovingLeft && isPressingRight && !isPressingLeft)) || ((isDeceleratingLeft || isDeceleratingRight) && isSkiddingInPreviousFrame);
 
     // Step 1: Figure out X acceleration for current frame
+    double accelerationX;
+    if (isRunning)
+    {
+        accelerationX = m_groundedHK.RUN_ACC;
+    }
+    else
+    {
+        accelerationX = m_groundedHK.WALK_ACC;
+    }
+    double decelerationX;
+    if (isSkidding) 
+    {
+        decelerationX = m_groundedHK.SKID_DEC;
+    }
+    else
+    {
+        decelerationX = m_groundedHK.RELEASE_DEC;
+    }
+
     if (isDeceleratingRight)
     {
-        if (isSkidding) 
-        {
-            cTransform.acc_x = m_groundedHK.SKID_DEC;
-        }
-        else
-        {
-            cTransform.acc_x = m_groundedHK.RELEASE_DEC;
-        }
+        cTransform.acc_x = decelerationX;
     }
     else if (isDeceleratingLeft)
     {
-        if (isSkidding) 
-        {
-            cTransform.acc_x = -m_groundedHK.SKID_DEC;
-        }
-        else
-        {
-            cTransform.acc_x = -m_groundedHK.RELEASE_DEC;
-        }
+        cTransform.acc_x = -decelerationX;
     }
     else if (isAcceleratingRight)
     {
-        if (isRunning)
-        {
-            cTransform.acc_x = m_groundedHK.RUN_ACC;
-        }
-        else 
-        {
-            cTransform.acc_x = m_groundedHK.WALK_ACC;
-        }
+        cTransform.acc_x = accelerationX;
     }
     else if (isAcceleratingLeft)
     {
-        if (isRunning)
-        {
-            cTransform.acc_x = -m_groundedHK.RUN_ACC;
-        }
-        else
-        {
-            cTransform.acc_x = -m_groundedHK.WALK_ACC;
-        }
+        cTransform.acc_x = -accelerationX;
     }
     else
     {
