@@ -421,10 +421,7 @@ void Scene_Play::sGroundedMovement()
     bool isPressingJump                         = cInput.A;
     bool isAtSmallHorizontalSpeed               = (m_jumpVK.SMALL_SPEED_THRESHOLD > xSpeed) && (-m_jumpVK.SMALL_SPEED_THRESHOLD < xSpeed);
     bool isAtMediumHorizontalSpeed              = (m_jumpVK.MEDIUM_SPEED_THRESHOLD >= xSpeed) && (-m_jumpVK.MEDIUM_SPEED_THRESHOLD <= xSpeed) && (!isAtSmallHorizontalSpeed);
-    bool hadReducedGravity                      = (cTransform.acc_y == m_jumpVK.REDUCED_GRAVITY_S) || (cTransform.acc_y == m_jumpVK.REDUCED_GRAVITY_M);
-    bool isFalling                              = (cTransform.velocity.y >= 0);
     bool isJustStartingJump                     = canJump && isPressingJump;
-    bool isJustStartingNormalGravityPhaseOfJump = hadReducedGravity && (!isPressingJump || isFalling);
 
     // Step 4: Check if player is about to jump
     if (isJustStartingJump)
