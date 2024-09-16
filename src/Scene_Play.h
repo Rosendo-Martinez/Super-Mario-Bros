@@ -11,54 +11,54 @@
 class Scene_Play : public Scene
 {
     struct GROUNDED_HORIZONTAL_KINEMATICS {
-        const double MIN_WALK_SPEED           = 0.07421875 * 4;
-        const double MAX_WALK_SPEED           = 1.5625 * 4;
-        const double MAX_RUN_SPEED            = 2.5625 * 4;
-        const double SKID_TURNAROUND_SPEED    = 0.5625 * 4;
-        const double WALK_ACC                 = 0.037109375 * 4;
-        const double RUN_ACC                  = 0.0556640625 * 4;
-        const double RELEASE_DEC              = 0.05078125 * 4;
-        const double SKID_DEC                 = 0.1015625 * 4;
+        const double MIN_WALK_SPEED           = 0.296875;
+        const double MAX_WALK_SPEED           = 6.25;
+        const double MAX_RUN_SPEED            = 10.25;
+        const double SKID_TURNAROUND_SPEED    = 2.25;
+        const double WALK_ACC                 = 0.1484375;
+        const double RUN_ACC                  = 0.22265625;
+        const double RELEASE_DEC              = 0.203125;
+        const double SKID_DEC                 = 0.40625;
     };
 
     struct AIRBORNE_HORIZONTAL_KINEMATICS {
-        const double CURRENT_SPEED_THRESHOLD_FOR_ACC = 1.5625 * 4; // CST
-        const double INITIAL_SPEED_THRESHOLD_FOR_ACC = 1.8125 * 4; // IST
+        const double CURRENT_SPEED_THRESHOLD_FOR_ACC = 6.25; // CST
+        const double INITIAL_SPEED_THRESHOLD_FOR_ACC = 7.25; // IST
 
-        const double BELOW_CST_ACC = 0.037109375 * 4; // Acceleration when current speed < CST
-        const double ABOVE_CST_ACC = 0.0556640625 * 4; // Acceleration when current speed >= CST
+        const double BELOW_CST_ACC = 0.1484375; // Acceleration when current speed < CST
+        const double ABOVE_CST_ACC = 0.22265625; // Acceleration when current speed >= CST
 
-        const double ABOVE_CST_DEC = 0.0556640625 * 4;  // Deceleration when current speed >= CST
-        const double ABOVE_IST_DEC = 0.05078125 * 4; // Deceleration when IST <= current speed < CST
-        const double BELOW_IST_DEC = 0.037109375 * 4; // Deceleration when current speed < IST
+        const double ABOVE_CST_DEC = 0.22265625;  // Deceleration when current speed >= CST
+        const double ABOVE_IST_DEC = 0.203125; // Deceleration when IST <= current speed < CST
+        const double BELOW_IST_DEC = 0.1484375; // Deceleration when current speed < IST
 
-        const double INITIAL_SPEED_THRESHOLD_FOR_VEL = 1.5625 * 4;
-        const double BELLOW_ISP_SPEED_LIMIT_VEL = 1.5625 * 4; // Speed limit if mario started airborne at x speed bellow CST
-        const double ABOVE_IST_SPEED_LIMIT_VEL = 2.5625 * 4; // Speed limit if mario started airborne at x speed above CST
+        const double INITIAL_SPEED_THRESHOLD_FOR_VEL = 6.25;
+        const double BELLOW_ISP_SPEED_LIMIT_VEL = 6.25; // Speed limit if mario started airborne at x speed bellow CST
+        const double ABOVE_IST_SPEED_LIMIT_VEL = 10.25; // Speed limit if mario started airborne at x speed above CST
     };
 
     struct AIRBORNE_VERTICAL_KINEMATICS {
-        const double SMALL_SPEED_THRESHOLD = 1 * 4; // SST
-        const double MEDIUM_SPEED_THRESHOLD = 2.312255859375 * 4; // MST
-        const double LARGE_SPEED_THRESHOLD = 2.3125 * 4; // LST
+        const double SMALL_SPEED_THRESHOLD = 4; // SST
+        const double MEDIUM_SPEED_THRESHOLD = 9.2490234375; // MST
+        const double LARGE_SPEED_THRESHOLD = 9.25; // LST
 
         // < SST
-        const double INITIAL_VELOCITY_S = 4 * 4;
-        const double REDUCED_GRAVITY_S = 0.125 * 4;
-        const double GRAVITY_S = 0.4375 * 4;
+        const double INITIAL_VELOCITY_S = 16;
+        const double REDUCED_GRAVITY_S = 0.5;
+        const double GRAVITY_S = 1.75;
 
         // >= SST AND <= MST
-        const double INITIAL_VELOCITY_M = 4 * 4;
-        const double REDUCED_GRAVITY_M = 0.1171875 * 4;
-        const double GRAVITY_M = 0.375 * 4;
+        const double INITIAL_VELOCITY_M = 16;
+        const double REDUCED_GRAVITY_M = 0.46875;
+        const double GRAVITY_M = 1.5;
 
         // >= LST
-        const double INITIAL_VELOCITY_L = 5 * 4;
-        const double REDUCED_GRAVITY_L = 0.15625 * 4;
-        const double GRAVITY_L = 0.5625 * 4;
+        const double INITIAL_VELOCITY_L = 20;
+        const double REDUCED_GRAVITY_L = 0.625;
+        const double GRAVITY_L = 2.25;
 
-        const double MAX_Y_SPEED = 4.5 * 4; // Max Y speed
-        const double RESET_SPEED = 4 * 4; // Speed to reset to when max Y speed is exceeded
+        const double MAX_Y_SPEED = 18; // Max Y speed
+        const double RESET_SPEED = 16; // Speed to reset to when max Y speed is exceeded
     };
 
     struct PlayerConfig {
