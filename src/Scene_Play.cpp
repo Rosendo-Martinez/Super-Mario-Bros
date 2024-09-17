@@ -129,6 +129,7 @@ void Scene_Play::update() // update EM, and cal systems
         spawnPlayer();
     }
 
+    sState(); // Here?
     sAnimation();
     sMovement();
     sCollision();
@@ -142,6 +143,80 @@ void Scene_Play::sAnimation()
     for (auto e: m_entityManager.getEntities())
     {
         e->getComponent<CAnimation>().animation.update();
+    }
+}
+
+void Scene_Play::sState()
+{
+    CInput& cInput = m_player->getComponent<CInput>();
+    CTransform& cTransform = m_player->getComponent<CTransform>();
+    CState& cState = m_player->getComponent<CState>();
+    bool isAirborne = !cState.isGrounded;
+
+    bool isDeceleratingLeft  = false; 
+    bool isDeceleratingRight = false; 
+    bool isAcceleratingLeft  = false;
+    bool isAcceleratingRight = false;
+
+    // Move the state into its own sections (airbrone, grounded)
+    // Then, delete original code sections
+    // Then test
+    // Then commit
+    // Then afterwadds, refactfor.
+
+    if (isAirborne)
+    {
+        bool isPressingLeft                 = cInput.left;
+        bool isPressingRight                = cInput.right;
+        bool isStandingStill                = cTransform.velocity.x == 0;
+        bool isMovingRight                  = cTransform.velocity.x > 0;
+        bool isMovingLeft                   = cTransform.velocity.x < 0;
+        bool isChangingMovementDirection    = (isMovingLeft && (isPressingRight && !isPressingLeft)) || (isMovingRight && (isPressingLeft && !isPressingRight));
+        bool isAboveInitialSpeedThresholdForVel = (cState.initialJumpXSpeed <= -m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_VEL || cState.initialJumpXSpeed >= m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_VEL);
+        double maxXSpeed                    = isAboveInitialSpeedThresholdForVel ? m_airborneHK.ABOVE_IST_SPEED_LIMIT_VEL : m_airborneHK.BELLOW_ISP_SPEED_LIMIT_VEL;
+        bool isBellowMaxSpeed               = (cTransform.velocity.x < maxXSpeed) && (cTransform.velocity.x > -maxXSpeed);
+
+        // Decelerating: moving to a speed of zero
+        // Accelerating: moving to a speed (+ or -) away from zero
+        isDeceleratingLeft              = (isMovingRight && isChangingMovementDirection);
+        isDeceleratingRight             = (isMovingLeft && isChangingMovementDirection);
+        isAcceleratingLeft              = (isPressingLeft && !isPressingRight) && (isMovingLeft || isStandingStill) && isBellowMaxSpeed;
+        isAcceleratingRight             = isPressingRight && !isPressingLeft && (isStandingStill || isMovingRight) && isBellowMaxSpeed;
+    }
+    else
+    {
+        bool isPressingLeft                 = cInput.left;
+        bool isPressingRight                = cInput.right;
+        bool isRunning                      = cInput.B;
+        bool isWalking                      = !cInput.B;
+        bool isStandingStill                = cTransform.velocity.x == 0;
+        bool isMovingRight                  = cTransform.velocity.x > 0;
+        bool isMovingLeft                   = cTransform.velocity.x < 0;
+        bool isAtMaxWalkSpeed               = cTransform.velocity.x == m_groundedHK.MAX_WALK_SPEED || cTransform.velocity.x == -m_groundedHK.MAX_WALK_SPEED;
+        bool isAtMaxRunSpeed                = cTransform.velocity.x == m_groundedHK.MAX_RUN_SPEED || cTransform.velocity.x == -m_groundedHK.MAX_RUN_SPEED;
+        bool isWalkingButPastMaxWalkSpeed   = (cTransform.velocity.x > m_groundedHK.MAX_WALK_SPEED || cTransform.velocity.x < -m_groundedHK.MAX_WALK_SPEED) && !isRunning;
+        bool isSkiddingInPreviousFrame      = (cTransform.acc_x == m_groundedHK.SKID_DEC || cTransform.acc_x == -m_groundedHK.SKID_DEC);
+        bool isChangingMovementDirection    = (isMovingLeft && (isPressingRight || !isPressingLeft)) || (isMovingRight && (isPressingLeft || !isPressingRight)); // stopping, or turning
+
+        // Decelerating: moving to a speed of zero
+        // Accelerating: moving to a speed (+ or -) away from zero
+        isDeceleratingLeft              = (isMovingRight && (isChangingMovementDirection || isWalkingButPastMaxWalkSpeed));
+        isDeceleratingRight             = (isMovingLeft && (isChangingMovementDirection || isWalkingButPastMaxWalkSpeed));
+        isAcceleratingLeft              = (isPressingLeft && !isPressingRight) && (isMovingLeft || isStandingStill) && (!isAtMaxWalkSpeed || isRunning) && !isAtMaxRunSpeed && !isWalkingButPastMaxWalkSpeed;
+        isAcceleratingRight             = isPressingRight && !isPressingLeft && (isStandingStill || isMovingRight) && (!isAtMaxWalkSpeed || isRunning) && !isAtMaxRunSpeed && !isWalkingButPastMaxWalkSpeed;
+    }
+
+    if (isDeceleratingLeft || isDeceleratingRight)
+    {
+        cState.acceleration = Acceleration::DECELERATING;
+    }
+    else if (isAcceleratingLeft || isAcceleratingRight)
+    {
+        cState.acceleration = Acceleration::ACCELERATING;
+    }
+    else
+    {
+        cState.acceleration = Acceleration::ZERO;
     }
 }
 
@@ -163,10 +238,10 @@ void Scene_Play::sAirBorneMovement()
 
     // Decelerating: moving to a speed of zero
     // Accelerating: moving to a speed (+ or -) away from zero
-    bool isDeceleratingLeft              = (isMovingRight && isChangingMovementDirection);
-    bool isDeceleratingRight             = (isMovingLeft && isChangingMovementDirection);
-    bool isAcceleratingLeft              = (isPressingLeft && !isPressingRight) && (isMovingLeft || isStandingStill) && isBellowMaxSpeed;
-    bool isAcceleratingRight             = isPressingRight && !isPressingLeft && (isStandingStill || isMovingRight) && isBellowMaxSpeed;
+    bool isDeceleratingLeft              = (isMovingRight && cState.acceleration == Acceleration::DECELERATING);
+    bool isDeceleratingRight             = (isMovingLeft && cState.acceleration == Acceleration::DECELERATING);
+    bool isAcceleratingLeft              = (isPressingLeft && cState.acceleration == Acceleration::ACCELERATING);
+    bool isAcceleratingRight             = (isPressingRight && cState.acceleration == Acceleration::ACCELERATING);
 
     bool isAboveCurrentSpeedThresholdForAcc = (cTransform.velocity.x <= -m_airborneHK.CURRENT_SPEED_THRESHOLD_FOR_ACC || cTransform.velocity.x >= m_airborneHK.CURRENT_SPEED_THRESHOLD_FOR_ACC);
     bool isAboveInitialSpeedThresholdForAcc = (cState.initialJumpXSpeed <= -m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_ACC || cState.initialJumpXSpeed >= m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_ACC);
@@ -304,10 +379,10 @@ void Scene_Play::sGroundedMovement()
 
     // Decelerating: moving to a speed of zero
     // Accelerating: moving to a speed (+ or -) away from zero
-    bool isDeceleratingLeft              = (isMovingRight && (isChangingMovementDirection || isWalkingButPastMaxWalkSpeed));
-    bool isDeceleratingRight             = (isMovingLeft && (isChangingMovementDirection || isWalkingButPastMaxWalkSpeed));
-    bool isAcceleratingLeft              = (isPressingLeft && !isPressingRight) && (isMovingLeft || isStandingStill) && (!isAtMaxWalkSpeed || isRunning) && !isAtMaxRunSpeed && !isWalkingButPastMaxWalkSpeed;
-    bool isAcceleratingRight             = isPressingRight && !isPressingLeft && (isStandingStill || isMovingRight) && (!isAtMaxWalkSpeed || isRunning) && !isAtMaxRunSpeed && !isWalkingButPastMaxWalkSpeed;
+    bool isDeceleratingLeft              = (isMovingRight && cState.acceleration == Acceleration::DECELERATING);
+    bool isDeceleratingRight             = (isMovingLeft && cState.acceleration == Acceleration::DECELERATING);
+    bool isAcceleratingLeft              = (isPressingLeft && cState.acceleration == Acceleration::ACCELERATING);
+    bool isAcceleratingRight             = (isPressingRight && cState.acceleration == Acceleration::ACCELERATING);
     bool isSkidding                      = ((isMovingRight && isPressingLeft && !isPressingRight) || (isMovingLeft && isPressingRight && !isPressingLeft)) || ((isDeceleratingLeft || isDeceleratingRight) && isSkiddingInPreviousFrame);
 
     // Step 1: Figure out X acceleration for current frame

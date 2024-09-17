@@ -83,10 +83,16 @@ public:
     CGravity(float g) : gravity(g) {}
 };
 
+enum class Acceleration
+{
+    ACCELERATING, DECELERATING, ZERO
+};
+
 class CState : public Component
 {
 public:
     bool isGrounded = true;
+    Acceleration acceleration = Acceleration::ZERO;
     float initialJumpXSpeed = 0;
     CState() {}
 };

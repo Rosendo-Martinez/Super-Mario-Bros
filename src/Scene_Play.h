@@ -88,6 +88,7 @@ private:
     void spawnBullet(std::shared_ptr<Entity> entity);
     void sAirBorneMovement();
     void sGroundedMovement();
+    void sState();
 
 public:
     Scene_Play(GameEngine * gameEngine, const std::string & levelPath);
