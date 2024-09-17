@@ -216,8 +216,8 @@ void Scene_Play::sAirBorneMovement()
     const bool isMovingLeft                   = cTransform.velocity.x < 0;
     const bool isAboveInitialSpeedThresholdForVel = (cState.initialJumpXSpeed <= -m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_VEL || cState.initialJumpXSpeed >= m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_VEL);
 
-    // Decelerating: moving to a speed of zero
-    // Accelerating: moving to a speed (+ or -) away from zero
+    // Decelerating: speed is decreasing (going to zero)
+    // Accelerating: speed is increasing (going away from zero)
     const bool isDeceleratingLeft  = (isMovingRight && cState.acceleration == Acceleration::DECELERATING);
     const bool isDeceleratingRight = (isMovingLeft && cState.acceleration == Acceleration::DECELERATING);
     const bool isAcceleratingLeft  = (cInput.left && cState.acceleration == Acceleration::ACCELERATING);
@@ -344,29 +344,24 @@ void Scene_Play::sGroundedMovement()
     CTransform& cTransform = m_player->getComponent<CTransform>();
     CState& cState         = m_player->getComponent<CState>();
 
-    bool isPressingLeft                 = cInput.left;
-    bool isPressingRight                = cInput.right;
-    bool isRunning                      = cInput.B;
-    bool isWalking                      = !cInput.B;
-    bool isStandingStill                = cTransform.velocity.x == 0;
-    bool isMovingRight                  = cTransform.velocity.x > 0;
-    bool isMovingLeft                   = cTransform.velocity.x < 0;
-    bool isAtMaxWalkSpeed               = cTransform.velocity.x == m_groundedHK.MAX_WALK_SPEED || cTransform.velocity.x == -m_groundedHK.MAX_WALK_SPEED;
-    bool isAtMaxRunSpeed                = cTransform.velocity.x == m_groundedHK.MAX_RUN_SPEED || cTransform.velocity.x == -m_groundedHK.MAX_RUN_SPEED;
-    bool isWalkingButPastMaxWalkSpeed   = (cTransform.velocity.x > m_groundedHK.MAX_WALK_SPEED || cTransform.velocity.x < -m_groundedHK.MAX_WALK_SPEED) && !isRunning;
-    bool isSkiddingInPreviousFrame      = (cTransform.acc_x == m_groundedHK.SKID_DEC || cTransform.acc_x == -m_groundedHK.SKID_DEC);
-    bool isChangingMovementDirection    = (isMovingLeft && (isPressingRight || !isPressingLeft)) || (isMovingRight && (isPressingLeft || !isPressingRight)); // stopping, or turning
+    const bool isPressingLeft            = cInput.left;
+    const bool isPressingRight           = cInput.right;
+    const bool isRunning                 = cInput.B;
+    const bool isWalking                 = !cInput.B;
+    const bool isMovingRight             = cTransform.velocity.x > 0;
+    const bool isMovingLeft              = cTransform.velocity.x < 0;
+    const bool isSkiddingInPreviousFrame = (cTransform.acc_x == m_groundedHK.SKID_DEC || cTransform.acc_x == -m_groundedHK.SKID_DEC);
 
-    // Decelerating: moving to a speed of zero
-    // Accelerating: moving to a speed (+ or -) away from zero
-    bool isDeceleratingLeft              = (isMovingRight && cState.acceleration == Acceleration::DECELERATING);
-    bool isDeceleratingRight             = (isMovingLeft && cState.acceleration == Acceleration::DECELERATING);
-    bool isAcceleratingLeft              = (isPressingLeft && cState.acceleration == Acceleration::ACCELERATING);
-    bool isAcceleratingRight             = (isPressingRight && cState.acceleration == Acceleration::ACCELERATING);
-    bool isSkidding                      = ((isMovingRight && isPressingLeft && !isPressingRight) || (isMovingLeft && isPressingRight && !isPressingLeft)) || ((isDeceleratingLeft || isDeceleratingRight) && isSkiddingInPreviousFrame);
+    // Decelerating: speed is decreasing (going to zero)
+    // Accelerating: speed is increasing (going away from zero)
+    const bool isDeceleratingLeft  = (isMovingRight && cState.acceleration == Acceleration::DECELERATING);
+    const bool isDeceleratingRight = (isMovingLeft && cState.acceleration == Acceleration::DECELERATING);
+    const bool isAcceleratingLeft  = (isPressingLeft && cState.acceleration == Acceleration::ACCELERATING);
+    const bool isAcceleratingRight = (isPressingRight && cState.acceleration == Acceleration::ACCELERATING);
+    const bool isSkidding          = ((isMovingRight && isPressingLeft && !isPressingRight) || (isMovingLeft && isPressingRight && !isPressingLeft)) || ((isDeceleratingLeft || isDeceleratingRight) && isSkiddingInPreviousFrame);
 
     // Step 1: Figure out X acceleration for current frame
-    double accelerationX;
+    double accelerationX = 0;
     if (isRunning)
     {
         accelerationX = m_groundedHK.RUN_ACC;
@@ -375,7 +370,7 @@ void Scene_Play::sGroundedMovement()
     {
         accelerationX = m_groundedHK.WALK_ACC;
     }
-    double decelerationX;
+    double decelerationX = 0;
     if (isSkidding) 
     {
         decelerationX = m_groundedHK.SKID_DEC;
@@ -409,10 +404,10 @@ void Scene_Play::sGroundedMovement()
     // Step 2: Use X acceleration to calculate X velocity
     cTransform.velocity.x += cTransform.acc_x;
 
-    bool isPastMaxWalkSpeed         = cTransform.velocity.x > m_groundedHK.MAX_WALK_SPEED || cTransform.velocity.x < -m_groundedHK.MAX_WALK_SPEED;
-    bool isPastMaxRunSpeed          = cTransform.velocity.x > m_groundedHK.MAX_RUN_SPEED || cTransform.velocity.x < -m_groundedHK.MAX_RUN_SPEED;
-    bool isBellowMinWalkSpeed       = cTransform.velocity.x < m_groundedHK.MIN_WALK_SPEED && cTransform.velocity.x > -m_groundedHK.MIN_WALK_SPEED;
-    bool isBellowTurnAroundSpeed    = cTransform.velocity.x < m_groundedHK.SKID_TURNAROUND_SPEED && cTransform.velocity.x > -m_groundedHK.SKID_TURNAROUND_SPEED;
+    const bool isPastMaxWalkSpeed      = cTransform.velocity.x > m_groundedHK.MAX_WALK_SPEED || cTransform.velocity.x < -m_groundedHK.MAX_WALK_SPEED;
+    const bool isPastMaxRunSpeed       = cTransform.velocity.x > m_groundedHK.MAX_RUN_SPEED || cTransform.velocity.x < -m_groundedHK.MAX_RUN_SPEED;
+    const bool isBellowMinWalkSpeed    = cTransform.velocity.x < m_groundedHK.MIN_WALK_SPEED && cTransform.velocity.x > -m_groundedHK.MIN_WALK_SPEED;
+    const bool isBellowTurnAroundSpeed = cTransform.velocity.x < m_groundedHK.SKID_TURNAROUND_SPEED && cTransform.velocity.x > -m_groundedHK.SKID_TURNAROUND_SPEED;
 
     // Step 3: Apply speed limits or exception for X velocity
     // Mario is walking right and past max walk speed
@@ -451,12 +446,12 @@ void Scene_Play::sGroundedMovement()
         cTransform.velocity.x = 0;
     }
 
-    double xSpeed                               = cTransform.velocity.x;
-    bool canJump                                = cInput.canJump;
-    bool isPressingJump                         = cInput.A;
-    bool isAtSmallHorizontalSpeed               = (m_jumpVK.SMALL_SPEED_THRESHOLD > xSpeed) && (-m_jumpVK.SMALL_SPEED_THRESHOLD < xSpeed);
-    bool isAtMediumHorizontalSpeed              = (m_jumpVK.MEDIUM_SPEED_THRESHOLD >= xSpeed) && (-m_jumpVK.MEDIUM_SPEED_THRESHOLD <= xSpeed) && (!isAtSmallHorizontalSpeed);
-    bool isJustStartingJump                     = canJump && isPressingJump;
+    const double xSpeed                  = cTransform.velocity.x;
+    const bool canJump                   = cInput.canJump;
+    const bool isPressingJump            = cInput.A;
+    const bool isAtSmallHorizontalSpeed  = (m_jumpVK.SMALL_SPEED_THRESHOLD > xSpeed) && (-m_jumpVK.SMALL_SPEED_THRESHOLD < xSpeed);
+    const bool isAtMediumHorizontalSpeed = (m_jumpVK.MEDIUM_SPEED_THRESHOLD >= xSpeed) && (-m_jumpVK.MEDIUM_SPEED_THRESHOLD <= xSpeed) && (!isAtSmallHorizontalSpeed);
+    const bool isJustStartingJump        = canJump && isPressingJump;
 
     // Step 4: Check if player is about to jump
     if (isJustStartingJump)
