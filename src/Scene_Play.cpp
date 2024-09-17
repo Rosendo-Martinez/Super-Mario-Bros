@@ -138,26 +138,13 @@ void Scene_Play::update() // update EM, and cal systems
 
 void Scene_Play::sAnimation()
 {
-    CState& cState = m_player->getComponent<CState>();
-    CInput& cInput = m_player->getComponent<CInput>();
+    const CState& cState = m_player->getComponent<CState>();
     CTransform& cTransform = m_player->getComponent<CTransform>();
     CAnimation& cAnimation = m_player->getComponent<CAnimation>();
-
-    // m_player->getComponent<CAnimation>().animation = m_game->assets().getAnimation("MarioStand"); // temporary
-
-    // currentAnimation = ""
-    // isAirborne
-        // give mario MarioAir animation
-    // else he's grounded
-            // give mario MarioStanding
-        // else if mario is walking
-            // give mario MarioWalk
-        // else if mario is running
-            // set curAnimaiton to MarioRun
-        // else if mario is skidding
-            // set curAnimation to MarioSkid
     std::string nextAnimation = "";
-    if (cState.isGrounded)
+
+    // Figure out animation for the current frame
+    if (cState.isGrounded) // grounded
     {
         if (cState.acceleration == Acceleration::ZERO && cTransform.velocity.x == 0) // not moving
         {
@@ -176,29 +163,25 @@ void Scene_Play::sAnimation()
             nextAnimation = "MarioWalk";
         }
     }
-    else
+    else // airborne
     {
         nextAnimation = "MarioAir";
     }
     
-    // if currAniont != prevAnimaiton
-        // set mario animatoin for this frame to curreantion
-    // set the animation facing directoin by setting cTransform.scale.x
-        // if left
-            // then make scale.x is negative
-        // else
-            // make sure scale.x is postive
+    // Only change animations if previous animation is different from this frame animation
     if (cAnimation.animation.getName() != nextAnimation)
     {
         cAnimation.animation = m_game->assets().getAnimation(nextAnimation);
         cAnimation.repeat = true;
     }
 
+    // Make animation face same direction player is facing
     if ((cTransform.scale.x < 0 && cState.facingDir == Direction::RIGHT) || (cTransform.scale.x > 0 && cState.facingDir == Direction::LEFT))
     {
         cTransform.scale.x *= -1;
     }
 
+    // Update animations
     for (auto e: m_entityManager.getEntities())
     {
         e->getComponent<CAnimation>().animation.update();
