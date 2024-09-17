@@ -88,11 +88,17 @@ enum class Acceleration
     ACCELERATING_RIGHT, ACCELERATING_LEFT, DECELERATING_RIGHT, DECELERATING_LEFT, ZERO
 };
 
+enum class Direction 
+{
+    LEFT, RIGHT
+};
+
 class CState : public Component
 {
 public:
     bool isGrounded = true;
     bool isSkidding = false;
+    Direction facingDir = Direction::RIGHT;
     Acceleration acceleration = Acceleration::ZERO;
     float initialJumpXSpeed = 0;
     CState() {}

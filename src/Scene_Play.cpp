@@ -166,6 +166,7 @@ void Scene_Play::sState()
     bool isAcceleratingLeft  = false;
     bool isAcceleratingRight = false;
     bool isSkidding          = false;
+    Direction newFacingDirection = cState.facingDir;
 
     if (isAirborne)
     {
@@ -193,6 +194,26 @@ void Scene_Play::sState()
         isDeceleratingRight             = (isMovingLeft && (isChangingMovementDirection || isWalkingButPastMaxWalkSpeed));
         isAcceleratingLeft              = (isPressingLeft && !isPressingRight) && (isMovingLeft || isStandingStill) && (!isAtMaxWalkSpeed || isRunning) && !isAtMaxRunSpeed && !isWalkingButPastMaxWalkSpeed;
         isAcceleratingRight             = isPressingRight && !isPressingLeft && (isStandingStill || isMovingRight) && (!isAtMaxWalkSpeed || isRunning) && !isAtMaxRunSpeed && !isWalkingButPastMaxWalkSpeed;
+
+        if (isSkidding)
+        {
+            if (isDeceleratingLeft)
+            {
+                newFacingDirection = Direction::LEFT;
+            }
+            else // decelerating right
+            {
+                newFacingDirection = Direction::RIGHT;
+            }
+        }
+        else if (isAcceleratingLeft)
+        {
+            newFacingDirection = Direction::LEFT;
+        }
+        else if (isAcceleratingRight)
+        {
+            newFacingDirection = Direction::RIGHT;
+        }
     }
 
     if (isDeceleratingLeft)
@@ -217,6 +238,7 @@ void Scene_Play::sState()
     }
 
     cState.isSkidding = isSkidding;
+    cState.facingDir = newFacingDirection;
 }
 
 void Scene_Play::sAirBorneMovement()
