@@ -85,7 +85,7 @@ public:
 
 enum class Acceleration
 {
-    ACCELERATING, DECELERATING, ZERO
+    ACCELERATING_RIGHT, ACCELERATING_LEFT, DECELERATING_RIGHT, DECELERATING_LEFT, ZERO
 };
 
 class CState : public Component

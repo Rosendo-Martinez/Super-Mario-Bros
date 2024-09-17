@@ -192,13 +192,21 @@ void Scene_Play::sState()
         isAcceleratingRight             = isPressingRight && !isPressingLeft && (isStandingStill || isMovingRight) && (!isAtMaxWalkSpeed || isRunning) && !isAtMaxRunSpeed && !isWalkingButPastMaxWalkSpeed;
     }
 
-    if (isDeceleratingLeft || isDeceleratingRight)
+    if (isDeceleratingLeft)
     {
-        cState.acceleration = Acceleration::DECELERATING;
+        cState.acceleration = Acceleration::DECELERATING_LEFT;
     }
-    else if (isAcceleratingLeft || isAcceleratingRight)
+    else if (isDeceleratingRight)
     {
-        cState.acceleration = Acceleration::ACCELERATING;
+        cState.acceleration = Acceleration::DECELERATING_RIGHT;
+    }
+    else if (isAcceleratingLeft)
+    {
+        cState.acceleration = Acceleration::ACCELERATING_LEFT;
+    }
+    else if (isAcceleratingRight)
+    {
+        cState.acceleration = Acceleration::ACCELERATING_RIGHT;
     }
     else
     {
@@ -218,10 +226,10 @@ void Scene_Play::sAirBorneMovement()
 
     // Decelerating: speed is decreasing (going to zero)
     // Accelerating: speed is increasing (going away from zero)
-    const bool isDeceleratingLeft  = (isMovingRight && cState.acceleration == Acceleration::DECELERATING);
-    const bool isDeceleratingRight = (isMovingLeft && cState.acceleration == Acceleration::DECELERATING);
-    const bool isAcceleratingLeft  = (cInput.left && cState.acceleration == Acceleration::ACCELERATING);
-    const bool isAcceleratingRight = (cInput.right && cState.acceleration == Acceleration::ACCELERATING);
+    const bool isDeceleratingLeft  = (cState.acceleration == Acceleration::DECELERATING_LEFT);
+    const bool isDeceleratingRight = (cState.acceleration == Acceleration::DECELERATING_RIGHT);
+    const bool isAcceleratingLeft  = (cState.acceleration == Acceleration::ACCELERATING_LEFT);
+    const bool isAcceleratingRight = (cState.acceleration == Acceleration::ACCELERATING_RIGHT);
 
     const bool isAboveCurrentSpeedThresholdForAcc = (cTransform.velocity.x <= -m_airborneHK.CURRENT_SPEED_THRESHOLD_FOR_ACC || cTransform.velocity.x >= m_airborneHK.CURRENT_SPEED_THRESHOLD_FOR_ACC);
     const bool isAboveInitialSpeedThresholdForAcc = (cState.initialJumpXSpeed <= -m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_ACC || cState.initialJumpXSpeed >= m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_ACC);
@@ -354,10 +362,10 @@ void Scene_Play::sGroundedMovement()
 
     // Decelerating: speed is decreasing (going to zero)
     // Accelerating: speed is increasing (going away from zero)
-    const bool isDeceleratingLeft  = (isMovingRight && cState.acceleration == Acceleration::DECELERATING);
-    const bool isDeceleratingRight = (isMovingLeft && cState.acceleration == Acceleration::DECELERATING);
-    const bool isAcceleratingLeft  = (isPressingLeft && cState.acceleration == Acceleration::ACCELERATING);
-    const bool isAcceleratingRight = (isPressingRight && cState.acceleration == Acceleration::ACCELERATING);
+    const bool isDeceleratingLeft  = (cState.acceleration == Acceleration::DECELERATING_LEFT);
+    const bool isDeceleratingRight = (cState.acceleration == Acceleration::DECELERATING_RIGHT);
+    const bool isAcceleratingLeft  = (cState.acceleration == Acceleration::ACCELERATING_LEFT);
+    const bool isAcceleratingRight = (cState.acceleration == Acceleration::ACCELERATING_RIGHT);
     const bool isSkidding          = ((isMovingRight && isPressingLeft && !isPressingRight) || (isMovingLeft && isPressingRight && !isPressingLeft)) || ((isDeceleratingLeft || isDeceleratingRight) && isSkiddingInPreviousFrame);
 
     // Step 1: Figure out X acceleration for current frame
