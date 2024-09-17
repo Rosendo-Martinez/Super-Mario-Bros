@@ -208,32 +208,26 @@ void Scene_Play::sState()
 
 void Scene_Play::sAirBorneMovement()
 {
-    CInput& cInput          = m_player->getComponent<CInput>();
     CTransform& cTransform  = m_player->getComponent<CTransform>();
-    CState& cState          = m_player->getComponent<CState>();
+    const CInput& cInput          = m_player->getComponent<CInput>();
+    const CState& cState          = m_player->getComponent<CState>();
 
-    bool isPressingLeft                 = cInput.left;
-    bool isPressingRight                = cInput.right;
-    bool isStandingStill                = cTransform.velocity.x == 0;
-    bool isMovingRight                  = cTransform.velocity.x > 0;
-    bool isMovingLeft                   = cTransform.velocity.x < 0;
-    bool isChangingMovementDirection    = (isMovingLeft && (isPressingRight && !isPressingLeft)) || (isMovingRight && (isPressingLeft && !isPressingRight));
-    bool isAboveInitialSpeedThresholdForVel = (cState.initialJumpXSpeed <= -m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_VEL || cState.initialJumpXSpeed >= m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_VEL);
-    double maxXSpeed                    = isAboveInitialSpeedThresholdForVel ? m_airborneHK.ABOVE_IST_SPEED_LIMIT_VEL : m_airborneHK.BELLOW_ISP_SPEED_LIMIT_VEL;
-    bool isBellowMaxSpeed               = (cTransform.velocity.x < maxXSpeed) && (cTransform.velocity.x > -maxXSpeed);
+    const bool isMovingRight                  = cTransform.velocity.x > 0;
+    const bool isMovingLeft                   = cTransform.velocity.x < 0;
+    const bool isAboveInitialSpeedThresholdForVel = (cState.initialJumpXSpeed <= -m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_VEL || cState.initialJumpXSpeed >= m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_VEL);
 
     // Decelerating: moving to a speed of zero
     // Accelerating: moving to a speed (+ or -) away from zero
-    bool isDeceleratingLeft              = (isMovingRight && cState.acceleration == Acceleration::DECELERATING);
-    bool isDeceleratingRight             = (isMovingLeft && cState.acceleration == Acceleration::DECELERATING);
-    bool isAcceleratingLeft              = (isPressingLeft && cState.acceleration == Acceleration::ACCELERATING);
-    bool isAcceleratingRight             = (isPressingRight && cState.acceleration == Acceleration::ACCELERATING);
+    const bool isDeceleratingLeft  = (isMovingRight && cState.acceleration == Acceleration::DECELERATING);
+    const bool isDeceleratingRight = (isMovingLeft && cState.acceleration == Acceleration::DECELERATING);
+    const bool isAcceleratingLeft  = (cInput.left && cState.acceleration == Acceleration::ACCELERATING);
+    const bool isAcceleratingRight = (cInput.right && cState.acceleration == Acceleration::ACCELERATING);
 
-    bool isAboveCurrentSpeedThresholdForAcc = (cTransform.velocity.x <= -m_airborneHK.CURRENT_SPEED_THRESHOLD_FOR_ACC || cTransform.velocity.x >= m_airborneHK.CURRENT_SPEED_THRESHOLD_FOR_ACC);
-    bool isAboveInitialSpeedThresholdForAcc = (cState.initialJumpXSpeed <= -m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_ACC || cState.initialJumpXSpeed >= m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_ACC);
+    const bool isAboveCurrentSpeedThresholdForAcc = (cTransform.velocity.x <= -m_airborneHK.CURRENT_SPEED_THRESHOLD_FOR_ACC || cTransform.velocity.x >= m_airborneHK.CURRENT_SPEED_THRESHOLD_FOR_ACC);
+    const bool isAboveInitialSpeedThresholdForAcc = (cState.initialJumpXSpeed <= -m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_ACC || cState.initialJumpXSpeed >= m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_ACC);
 
     // Step 1: Figure out X acceleration for current frame
-    double accelerationX;
+    double accelerationX = 0;
     if (isAboveCurrentSpeedThresholdForAcc)
     {
         accelerationX = m_airborneHK.ABOVE_CST_ACC;
@@ -242,7 +236,7 @@ void Scene_Play::sAirBorneMovement()
     {
         accelerationX = m_airborneHK.BELOW_CST_ACC;
     }
-    double decelerationX;
+    double decelerationX = 0;
     if (isAboveCurrentSpeedThresholdForAcc)
     {
         decelerationX = m_airborneHK.ABOVE_CST_DEC;
@@ -304,10 +298,10 @@ void Scene_Play::sAirBorneMovement()
         }
     }
     
-    bool isPressingJump                         = cInput.A;
-    bool hadReducedGravity                      = (cTransform.acc_y == m_jumpVK.REDUCED_GRAVITY_S) || (cTransform.acc_y == m_jumpVK.REDUCED_GRAVITY_M);
-    bool isFalling                              = (cTransform.velocity.y >= 0);
-    bool isJustStartingNormalGravityPhaseOfJump = hadReducedGravity && (!isPressingJump || isFalling);
+    const bool isPressingJump                         = cInput.A;
+    const bool hadReducedGravity                      = (cTransform.acc_y == m_jumpVK.REDUCED_GRAVITY_S) || (cTransform.acc_y == m_jumpVK.REDUCED_GRAVITY_M);
+    const bool isFalling                              = (cTransform.velocity.y >= 0);
+    const bool isJustStartingNormalGravityPhaseOfJump = hadReducedGravity && (!isPressingJump || isFalling);
 
     // Step 4: Figure out Y acceleration
     if (isJustStartingNormalGravityPhaseOfJump)
