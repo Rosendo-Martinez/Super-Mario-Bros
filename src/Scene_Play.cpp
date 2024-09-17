@@ -220,17 +220,7 @@ void Scene_Play::sAirBorneMovement()
     const CInput& cInput          = m_player->getComponent<CInput>();
     const CState& cState          = m_player->getComponent<CState>();
 
-    const bool isMovingRight                  = cTransform.velocity.x > 0;
-    const bool isMovingLeft                   = cTransform.velocity.x < 0;
     const bool isAboveInitialSpeedThresholdForVel = (cState.initialJumpXSpeed <= -m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_VEL || cState.initialJumpXSpeed >= m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_VEL);
-
-    // Decelerating: speed is decreasing (going to zero)
-    // Accelerating: speed is increasing (going away from zero)
-    const bool isDeceleratingLeft  = (cState.acceleration == Acceleration::DECELERATING_LEFT);
-    const bool isDeceleratingRight = (cState.acceleration == Acceleration::DECELERATING_RIGHT);
-    const bool isAcceleratingLeft  = (cState.acceleration == Acceleration::ACCELERATING_LEFT);
-    const bool isAcceleratingRight = (cState.acceleration == Acceleration::ACCELERATING_RIGHT);
-
     const bool isAboveCurrentSpeedThresholdForAcc = (cTransform.velocity.x <= -m_airborneHK.CURRENT_SPEED_THRESHOLD_FOR_ACC || cTransform.velocity.x >= m_airborneHK.CURRENT_SPEED_THRESHOLD_FOR_ACC);
     const bool isAboveInitialSpeedThresholdForAcc = (cState.initialJumpXSpeed <= -m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_ACC || cState.initialJumpXSpeed >= m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_ACC);
 
@@ -258,19 +248,19 @@ void Scene_Play::sAirBorneMovement()
         decelerationX = m_airborneHK.BELOW_IST_DEC;
     }
 
-    if (isAcceleratingLeft)
+    if (cState.acceleration == Acceleration::ACCELERATING_LEFT)
     {
         cTransform.acc_x = -accelerationX;
     }
-    else if (isAcceleratingRight)
+    else if (cState.acceleration == Acceleration::ACCELERATING_RIGHT)
     {
         cTransform.acc_x = accelerationX;
     }
-    else if (isDeceleratingLeft)
+    else if (cState.acceleration == Acceleration::DECELERATING_LEFT)
     {
         cTransform.acc_x = -decelerationX;
     }
-    else if (isDeceleratingRight)
+    else if (cState.acceleration == Acceleration::DECELERATING_RIGHT)
     {
         cTransform.acc_x = decelerationX;
     }
