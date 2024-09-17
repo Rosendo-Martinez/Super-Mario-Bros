@@ -22,5 +22,6 @@ Animation QuestionMarkBlink QuestionMarkBlink 3 5
 Animation QuestionMarkBlockHit QuestionMarkBlockHit 1 0
 Animation MarioAir MarioAir 1 0
 Animation MarioRun MarioRun 3 4
+Animation MarioWalk MarioRun 3 6
 Animation MarioSkid MarioSkid 1 0
 Animation MarioStand MarioStand 1 0

@@ -138,7 +138,66 @@ void Scene_Play::update() // update EM, and cal systems
 
 void Scene_Play::sAnimation()
 {
-    m_player->getComponent<CAnimation>().animation = m_game->assets().getAnimation("MarioStand"); // temporary
+    CState& cState = m_player->getComponent<CState>();
+    CInput& cInput = m_player->getComponent<CInput>();
+    CTransform& cTransform = m_player->getComponent<CTransform>();
+    CAnimation& cAnimation = m_player->getComponent<CAnimation>();
+
+    // m_player->getComponent<CAnimation>().animation = m_game->assets().getAnimation("MarioStand"); // temporary
+
+    // currentAnimation = ""
+    // isAirborne
+        // give mario MarioAir animation
+    // else he's grounded
+            // give mario MarioStanding
+        // else if mario is walking
+            // give mario MarioWalk
+        // else if mario is running
+            // set curAnimaiton to MarioRun
+        // else if mario is skidding
+            // set curAnimation to MarioSkid
+    std::string nextAnimation = "";
+    if (cState.isGrounded)
+    {
+        if (cState.acceleration == Acceleration::ZERO && cTransform.velocity.x == 0) // not moving
+        {
+            nextAnimation = "MarioStand";
+        }
+        else if (cState.isSkidding) // skidding
+        {
+            nextAnimation = "MarioSkid";
+        }
+        else if (cTransform.velocity.x > m_groundedHK.MAX_WALK_SPEED || cTransform.velocity.x < -m_groundedHK.MAX_WALK_SPEED) // running
+        {
+            nextAnimation = "MarioRun";
+        }
+        else // walking
+        {
+            nextAnimation = "MarioWalk";
+        }
+    }
+    else
+    {
+        nextAnimation = "MarioAir";
+    }
+    
+    // if currAniont != prevAnimaiton
+        // set mario animatoin for this frame to curreantion
+    // set the animation facing directoin by setting cTransform.scale.x
+        // if left
+            // then make scale.x is negative
+        // else
+            // make sure scale.x is postive
+    if (cAnimation.animation.getName() != nextAnimation)
+    {
+        cAnimation.animation = m_game->assets().getAnimation(nextAnimation);
+        cAnimation.repeat = true;
+    }
+
+    if ((cTransform.scale.x < 0 && cState.facingDir == Direction::RIGHT) || (cTransform.scale.x > 0 && cState.facingDir == Direction::LEFT))
+    {
+        cTransform.scale.x *= -1;
+    }
 
     for (auto e: m_entityManager.getEntities())
     {
