@@ -148,58 +148,44 @@ void Scene_Play::sAnimation()
 
 void Scene_Play::sState()
 {
-    CInput& cInput = m_player->getComponent<CInput>();
-    CTransform& cTransform = m_player->getComponent<CTransform>();
     CState& cState = m_player->getComponent<CState>();
-    bool isAirborne = !cState.isGrounded;
+    const CInput& cInput = m_player->getComponent<CInput>();
+    const CTransform& cTransform = m_player->getComponent<CTransform>();
 
+    const bool isAirborne = !cState.isGrounded;
+    const bool isPressingLeft  = cInput.left;
+    const bool isPressingRight = cInput.right;
+    const bool isStandingStill = cTransform.velocity.x == 0;
+    const bool isMovingRight   = cTransform.velocity.x > 0;
+    const bool isMovingLeft    = cTransform.velocity.x < 0;
+
+    // Decelerating: speed is decreasing (going to zero)
+    // Accelerating: speed is increasing (going away from zero)
     bool isDeceleratingLeft  = false; 
     bool isDeceleratingRight = false; 
     bool isAcceleratingLeft  = false;
     bool isAcceleratingRight = false;
 
-    // Move the state into its own sections (airbrone, grounded)
-    // Then, delete original code sections
-    // Then test
-    // Then commit
-    // Then afterwadds, refactfor.
-
     if (isAirborne)
     {
-        bool isPressingLeft                 = cInput.left;
-        bool isPressingRight                = cInput.right;
-        bool isStandingStill                = cTransform.velocity.x == 0;
-        bool isMovingRight                  = cTransform.velocity.x > 0;
-        bool isMovingLeft                   = cTransform.velocity.x < 0;
-        bool isChangingMovementDirection    = (isMovingLeft && (isPressingRight && !isPressingLeft)) || (isMovingRight && (isPressingLeft && !isPressingRight));
-        bool isAboveInitialSpeedThresholdForVel = (cState.initialJumpXSpeed <= -m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_VEL || cState.initialJumpXSpeed >= m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_VEL);
-        double maxXSpeed                    = isAboveInitialSpeedThresholdForVel ? m_airborneHK.ABOVE_IST_SPEED_LIMIT_VEL : m_airborneHK.BELLOW_ISP_SPEED_LIMIT_VEL;
-        bool isBellowMaxSpeed               = (cTransform.velocity.x < maxXSpeed) && (cTransform.velocity.x > -maxXSpeed);
+        const bool isChangingMovementDirection    = (isMovingLeft && (isPressingRight && !isPressingLeft)) || (isMovingRight && (isPressingLeft && !isPressingRight)); // turning only, doesn't include stopping
+        const bool isAboveInitialSpeedThresholdForVel = (cState.initialJumpXSpeed <= -m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_VEL || cState.initialJumpXSpeed >= m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_VEL);
+        const double maxXSpeed                    = isAboveInitialSpeedThresholdForVel ? m_airborneHK.ABOVE_IST_SPEED_LIMIT_VEL : m_airborneHK.BELLOW_ISP_SPEED_LIMIT_VEL;
+        const bool isBellowMaxSpeed               = (cTransform.velocity.x < maxXSpeed) && (cTransform.velocity.x > -maxXSpeed);
 
-        // Decelerating: moving to a speed of zero
-        // Accelerating: moving to a speed (+ or -) away from zero
         isDeceleratingLeft              = (isMovingRight && isChangingMovementDirection);
         isDeceleratingRight             = (isMovingLeft && isChangingMovementDirection);
         isAcceleratingLeft              = (isPressingLeft && !isPressingRight) && (isMovingLeft || isStandingStill) && isBellowMaxSpeed;
         isAcceleratingRight             = isPressingRight && !isPressingLeft && (isStandingStill || isMovingRight) && isBellowMaxSpeed;
     }
-    else
+    else // grounded
     {
-        bool isPressingLeft                 = cInput.left;
-        bool isPressingRight                = cInput.right;
-        bool isRunning                      = cInput.B;
-        bool isWalking                      = !cInput.B;
-        bool isStandingStill                = cTransform.velocity.x == 0;
-        bool isMovingRight                  = cTransform.velocity.x > 0;
-        bool isMovingLeft                   = cTransform.velocity.x < 0;
-        bool isAtMaxWalkSpeed               = cTransform.velocity.x == m_groundedHK.MAX_WALK_SPEED || cTransform.velocity.x == -m_groundedHK.MAX_WALK_SPEED;
-        bool isAtMaxRunSpeed                = cTransform.velocity.x == m_groundedHK.MAX_RUN_SPEED || cTransform.velocity.x == -m_groundedHK.MAX_RUN_SPEED;
-        bool isWalkingButPastMaxWalkSpeed   = (cTransform.velocity.x > m_groundedHK.MAX_WALK_SPEED || cTransform.velocity.x < -m_groundedHK.MAX_WALK_SPEED) && !isRunning;
-        bool isSkiddingInPreviousFrame      = (cTransform.acc_x == m_groundedHK.SKID_DEC || cTransform.acc_x == -m_groundedHK.SKID_DEC);
-        bool isChangingMovementDirection    = (isMovingLeft && (isPressingRight || !isPressingLeft)) || (isMovingRight && (isPressingLeft || !isPressingRight)); // stopping, or turning
+        const bool isRunning                      = cInput.B;
+        const bool isAtMaxWalkSpeed               = cTransform.velocity.x == m_groundedHK.MAX_WALK_SPEED || cTransform.velocity.x == -m_groundedHK.MAX_WALK_SPEED;
+        const bool isAtMaxRunSpeed                = cTransform.velocity.x == m_groundedHK.MAX_RUN_SPEED || cTransform.velocity.x == -m_groundedHK.MAX_RUN_SPEED;
+        const bool isWalkingButPastMaxWalkSpeed   = (cTransform.velocity.x > m_groundedHK.MAX_WALK_SPEED || cTransform.velocity.x < -m_groundedHK.MAX_WALK_SPEED) && !isRunning;
+        const bool isChangingMovementDirection    = (isMovingLeft && (isPressingRight || !isPressingLeft)) || (isMovingRight && (isPressingLeft || !isPressingRight)); // stopping, or turning
 
-        // Decelerating: moving to a speed of zero
-        // Accelerating: moving to a speed (+ or -) away from zero
         isDeceleratingLeft              = (isMovingRight && (isChangingMovementDirection || isWalkingButPastMaxWalkSpeed));
         isDeceleratingRight             = (isMovingLeft && (isChangingMovementDirection || isWalkingButPastMaxWalkSpeed));
         isAcceleratingLeft              = (isPressingLeft && !isPressingRight) && (isMovingLeft || isStandingStill) && (!isAtMaxWalkSpeed || isRunning) && !isAtMaxRunSpeed && !isWalkingButPastMaxWalkSpeed;
