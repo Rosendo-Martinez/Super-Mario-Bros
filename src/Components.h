@@ -92,6 +92,7 @@ class CState : public Component
 {
 public:
     bool isGrounded = true;
+    bool isSkidding = false;
     Acceleration acceleration = Acceleration::ZERO;
     float initialJumpXSpeed = 0;
     CState() {}

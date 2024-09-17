@@ -165,6 +165,7 @@ void Scene_Play::sState()
     bool isDeceleratingRight = false; 
     bool isAcceleratingLeft  = false;
     bool isAcceleratingRight = false;
+    bool isSkidding          = false;
 
     if (isAirborne)
     {
@@ -185,7 +186,9 @@ void Scene_Play::sState()
         const bool isAtMaxRunSpeed                = cTransform.velocity.x == m_groundedHK.MAX_RUN_SPEED || cTransform.velocity.x == -m_groundedHK.MAX_RUN_SPEED;
         const bool isWalkingButPastMaxWalkSpeed   = (cTransform.velocity.x > m_groundedHK.MAX_WALK_SPEED || cTransform.velocity.x < -m_groundedHK.MAX_WALK_SPEED) && !isRunning;
         const bool isChangingMovementDirection    = (isMovingLeft && (isPressingRight || !isPressingLeft)) || (isMovingRight && (isPressingLeft || !isPressingRight)); // stopping, or turning
-
+        const bool isSkiddingInPreviousFrame      = (cTransform.acc_x == m_groundedHK.SKID_DEC || cTransform.acc_x == -m_groundedHK.SKID_DEC);
+        
+        isSkidding                      = ((isMovingRight && isPressingLeft && !isPressingRight) || (isMovingLeft && isPressingRight && !isPressingLeft)) || ((isDeceleratingLeft || isDeceleratingRight) && isSkiddingInPreviousFrame);
         isDeceleratingLeft              = (isMovingRight && (isChangingMovementDirection || isWalkingButPastMaxWalkSpeed));
         isDeceleratingRight             = (isMovingLeft && (isChangingMovementDirection || isWalkingButPastMaxWalkSpeed));
         isAcceleratingLeft              = (isPressingLeft && !isPressingRight) && (isMovingLeft || isStandingStill) && (!isAtMaxWalkSpeed || isRunning) && !isAtMaxRunSpeed && !isWalkingButPastMaxWalkSpeed;
@@ -212,6 +215,8 @@ void Scene_Play::sState()
     {
         cState.acceleration = Acceleration::ZERO;
     }
+
+    cState.isSkidding = isSkidding;
 }
 
 void Scene_Play::sAirBorneMovement()
@@ -356,7 +361,7 @@ void Scene_Play::sGroundedMovement()
     const bool isDeceleratingRight = (cState.acceleration == Acceleration::DECELERATING_RIGHT);
     const bool isAcceleratingLeft  = (cState.acceleration == Acceleration::ACCELERATING_LEFT);
     const bool isAcceleratingRight = (cState.acceleration == Acceleration::ACCELERATING_RIGHT);
-    const bool isSkidding          = ((isMovingRight && isPressingLeft && !isPressingRight) || (isMovingLeft && isPressingRight && !isPressingLeft)) || ((isDeceleratingLeft || isDeceleratingRight) && isSkiddingInPreviousFrame);
+    const bool isSkidding          = cState.isSkidding;
 
     // Step 1: Figure out X acceleration for current frame
     double accelerationX = 0;
