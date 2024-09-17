@@ -347,13 +347,13 @@ void Scene_Play::sGroundedMovement()
     CTransform& cTransform = m_player->getComponent<CTransform>();
     CState& cState         = m_player->getComponent<CState>();
 
-    const bool isPressingLeft            = cInput.left;
-    const bool isPressingRight           = cInput.right;
-    const bool isRunning                 = cInput.B;
-    const bool isWalking                 = !cInput.B;
-    const bool isMovingRight             = cTransform.velocity.x > 0;
-    const bool isMovingLeft              = cTransform.velocity.x < 0;
-    const bool isSkiddingInPreviousFrame = (cTransform.acc_x == m_groundedHK.SKID_DEC || cTransform.acc_x == -m_groundedHK.SKID_DEC);
+    const bool isPressingLeft  = cInput.left;
+    const bool isPressingRight = cInput.right;
+    const bool isRunning       = cInput.B;
+    const bool isWalking       = !cInput.B;
+    const bool isSkidding      = cState.isSkidding;
+    const bool isMovingRight   = cTransform.velocity.x > 0;
+    const bool isMovingLeft    = cTransform.velocity.x < 0;
 
     // Decelerating: speed is decreasing (going to zero)
     // Accelerating: speed is increasing (going away from zero)
@@ -361,7 +361,6 @@ void Scene_Play::sGroundedMovement()
     const bool isDeceleratingRight = (cState.acceleration == Acceleration::DECELERATING_RIGHT);
     const bool isAcceleratingLeft  = (cState.acceleration == Acceleration::ACCELERATING_LEFT);
     const bool isAcceleratingRight = (cState.acceleration == Acceleration::ACCELERATING_RIGHT);
-    const bool isSkidding          = cState.isSkidding;
 
     // Step 1: Figure out X acceleration for current frame
     double accelerationX = 0;
