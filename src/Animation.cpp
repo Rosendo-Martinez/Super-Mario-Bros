@@ -65,3 +65,23 @@ sf::Sprite & Animation::getSprite()
 {
     return m_sprite;
 }
+
+int Animation::getCurrentAnimationFrameIndex() const
+{
+    if (m_speed == 0)
+    {
+        return 0;
+    }
+
+    // zero-indexed frame count
+    int fullAnimationFramesPlayed = (int) floor(m_currentFrame / m_speed);
+    // zero-indexed animation frames
+    int currentAnimationFrame = fullAnimationFramesPlayed % m_frameCount;
+
+    return currentAnimationFrame;
+}
+
+void Animation::setCurrentAnimationFrame(int index)
+{
+    m_currentFrame = index * m_speed;
+}

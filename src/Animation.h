@@ -24,4 +24,6 @@ public:
     const std::string & getName() const;
     const Vec2 & getSize() const;
     sf::Sprite & getSprite();
+    int getCurrentAnimationFrameIndex() const;
+    void setCurrentAnimationFrame(int index);
 };
