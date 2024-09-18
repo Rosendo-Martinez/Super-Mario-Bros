@@ -41,10 +41,20 @@ TileRangeVertical N GX GY H
     Height of Range:     H (int, >0)
 
 Decoration Entity Specification:
-Dec N GX GY
+Decoration N GX GY
     Animation Name      N (string, asset name)
     GX Position         X (float)
     GY Position         Y (float)
+DecorationRangeHorizontal N GX GY W
+    Animation Name:     N (string, asset name)
+    Grid X Pos:         GX (float)
+    Grid Y Pos:         GY (float)
+    Width of Range:     W (int, >0)
+DecorationRangeVertical N GX GY H
+    Animation Name:     N (string, asset name)
+    Grid X Pos:         GX (float)
+    Grid Y Pos:         GY (float)
+    Height of Range:     H (int, >0)
 
 Player Specification:
 Player GX GY CW CH SX SY SM GY B
