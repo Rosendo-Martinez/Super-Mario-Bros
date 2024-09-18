@@ -69,6 +69,44 @@ void Scene_Play::loadLevel(const std::string & filename) // load/reset/reload le
                 e->addComponent<CTransform>(gridToMidPixel(gx,gy,e));
                 e->addComponent<CBoundingBox>(Vec2(64,64));
             }
+            else if (type == "TileRangeHorizontal")
+            {
+                std::string animationName;
+                float gx;
+                float gy;
+                int width;
+
+                levelSpec >> animationName >> gx >> gy >> width;
+
+                for (int i = 0; i < width; i++)
+                {
+                    int currentGx = gx + i;
+                    auto e = m_entityManager.addEntity("Tile");
+
+                    e->addComponent<CAnimation>(m_game->assets().getAnimation(animationName), true);
+                    e->addComponent<CTransform>(gridToMidPixel(currentGx,gy,e));
+                    e->addComponent<CBoundingBox>(Vec2(64,64));
+                }
+            }
+            else if (type == "TileRangeVertical")
+            {
+                std::string animationName;
+                float gx;
+                float gy;
+                int height;
+
+                levelSpec >> animationName >> gx >> gy >> height;
+
+                for (int i = 0; i < height; i++)
+                {
+                    int currentGy = gy + i;
+                    auto e = m_entityManager.addEntity("Tile");
+
+                    e->addComponent<CAnimation>(m_game->assets().getAnimation(animationName), true);
+                    e->addComponent<CTransform>(gridToMidPixel(gx,currentGy,e));
+                    e->addComponent<CBoundingBox>(Vec2(64,64));
+                }
+            }
             else if (type == "Decoration")
             {
                 auto e = m_entityManager.addEntity(type);

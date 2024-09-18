@@ -29,6 +29,16 @@ Tile N GX GY
     Animation Name:     N (string, asset name)
     GX Grid X Pos:      GX (float)
     GY Grid Y Pos:      GY (float)
+TileRangeHorizontal N GX GY W
+    Animation Name:     N (string, asset name)
+    Grid X Pos:         GX (float)
+    Grid Y Pos:         GY (float)
+    Width of Range:     W (int, >0)
+TileRangeVertical N GX GY H
+    Animation Name:     N (string, asset name)
+    Grid X Pos:         GX (float)
+    Grid Y Pos:         GY (float)
+    Height of Range:     H (int, >0)
 
 Decoration Entity Specification:
 Dec N GX GY
