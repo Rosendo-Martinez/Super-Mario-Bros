@@ -8,6 +8,42 @@ Texture MarioRun bin/images/mario/MarioRun64.png
 Texture QuestionMarkBlink bin/images/mario/QuestionMarkBlink64.png
 Texture QuestionMarkBlockHit bin/images/mario/QuestionMarkBlockHit64.png
 Texture MarioSkid bin/images/mario/MarioSkid64.png
+Texture FlagTop bin/images/mario/FlagTop64.png
+Texture FlagPole bin/images/mario/FlagPole64.png
+Texture BigMountain bin/images/mario/BigMountain64.png
+Texture SmallMountain bin/images/mario/SmallMountain64.png
+Texture SmallCastle bin/images/mario/SmallCastle64.png
+Texture PipeTopLeft bin/images/mario/PipeTopLeft64.png
+Texture PipeTopRight bin/images/mario/PipeTopRight64.png
+Texture PipeLeft bin/images/mario/PipeLeft64.png
+Texture PipeRight bin/images/mario/PipeRight64.png
+Texture BushFront bin/images/mario/BushFront64.png
+Texture BushMiddle bin/images/mario/BushMiddle64.png
+Texture BushEnd bin/images/mario/BushEnd64.png
+Texture CloudFrontTop bin/images/mario/CloudFrontTop64.png
+Texture CloudMiddleTop bin/images/mario/CloudMiddleTop64.png
+Texture CloudEndTop bin/images/mario/CloudEndTop64.png
+Texture CloudFrontBottom bin/images/mario/CloudFrontBottom64.png
+Texture CloudMiddleBottom bin/images/mario/CloudMiddleBottom64.png
+Texture CloudEndBottom bin/images/mario/CloudEndBottom64.png
+Animation FlagTop FlagTop 1 0
+Animation FlagPole FlagPole 1 0
+Animation BigMountain BigMountain 1 0
+Animation SmallMountain SmallMountain 1 0
+Animation SmallCastle SmallCastle 1 0
+Animation PipeTopLeft PipeTopLeft 1 0
+Animation PipeTopRight PipeTopRight 1 0
+Animation PipeLeft PipeLeft 1 0
+Animation PipeRight PipeRight 1 0
+Animation BushFront BushFront 1 0
+Animation BushMiddle BushMiddle 1 0
+Animation BushEnd BushEnd 1 0
+Animation CloudFrontTop CloudFrontTop 1 0
+Animation CloudMiddleTop CloudMiddleTop 1 0
+Animation CloudEndTop CloudEndTop 1 0
+Animation CloudFrontBottom CloudFrontBottom 1 0
+Animation CloudMiddleBottom CloudMiddleBottom 1 0
+Animation CloudEndBottom CloudEndBottom 1 0
 Animation Ground Ground 1 0
 Animation Brick Brick 1 0
 Animation QuestionMarkBlink QuestionMarkBlink 3 5
