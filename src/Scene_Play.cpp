@@ -247,7 +247,6 @@ void Scene_Play::sState()
 
         if (isSkidding)
         {
-            std::cout << "Skidding!\n";
             if (isDeceleratingLeft)
             {
                 newFacingDirection = Direction::LEFT;
@@ -259,7 +258,6 @@ void Scene_Play::sState()
         }
         else if (isAcceleratingLeft)
         {
-            std::cout << "AL\n";
             newFacingDirection = Direction::LEFT;
         }
         else if (isAcceleratingRight)
