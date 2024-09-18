@@ -5,13 +5,11 @@ Texture Ground bin/images/mario/Ground64.png
 Texture MarioStand bin/images/mario/MarioStand64.png
 Texture MarioAir bin/images/mario/MarioAir64.png
 Texture MarioRun bin/images/mario/MarioRun64.png
-Texture QuestionBlock bin/images/mario/QuestionMarkBlock64.png
 Texture QuestionMarkBlink bin/images/mario/QuestionMarkBlink64.png
 Texture QuestionMarkBlockHit bin/images/mario/QuestionMarkBlockHit64.png
 Texture MarioSkid bin/images/mario/MarioSkid64.png
 Animation Ground Ground 1 0
 Animation Brick Brick 1 0
-Animation QuestionBlock QuestionBlock 1 0
 Animation QuestionMarkBlink QuestionMarkBlink 3 5
 Animation QuestionMarkBlockHit QuestionMarkBlockHit 1 0
 Animation MarioAir MarioAir 1 0
