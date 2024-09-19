@@ -10,7 +10,9 @@ GameEngine::GameEngine()
 
 void GameEngine::init(const std::string & assetSpecFilePath) // load in all assets, create window, frame limit, set menu scene
 {
-    m_window.create(sf::VideoMode(64*10,64*10), "Super Mario World");
+    const int widthBlocks = 26;
+    const int heightBlocks = 14;
+    m_window.create(sf::VideoMode(64*widthBlocks,64*heightBlocks), "Super Mario World");
     m_window.setKeyRepeatEnabled(false);
     m_window.setFramerateLimit(60);
 
