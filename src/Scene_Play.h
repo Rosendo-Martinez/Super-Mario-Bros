@@ -57,8 +57,8 @@ class Scene_Play : public Scene
         const double REDUCED_GRAVITY_L = 0.625;
         const double GRAVITY_L = 2.25;
 
-        const double MAX_Y_SPEED = 18; // Max Y speed
-        const double RESET_SPEED = 16; // Speed to reset to when max Y speed is exceeded
+        const double MAX_DOWNWARD_SPEED = 18; // Max speed mario can move downward
+        const double RESET_DOWNWARD_SPEED = 16; // Speed to reset to when mario exceeds max downward speed
     };
 
     struct PlayerConfig {

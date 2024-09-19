@@ -473,13 +473,9 @@ void Scene_Play::sAirBorneMovement()
     cTransform.velocity.y += cTransform.acc_y;
 
     // Step 6: Apply speed limits or exception for Y velocity
-    if (cTransform.velocity.y > m_jumpVK.MAX_Y_SPEED)
+    if (cTransform.velocity.y > m_jumpVK.MAX_DOWNWARD_SPEED)
     {
-        cTransform.velocity.y = m_jumpVK.RESET_SPEED;
-    }
-    else if (cTransform.velocity.y < -m_jumpVK.MAX_Y_SPEED)
-    {
-        cTransform.velocity.y = -m_jumpVK.RESET_SPEED;
+        cTransform.velocity.y = m_jumpVK.RESET_DOWNWARD_SPEED;
     }
 
     // Step 7: Use velocity to calculate player position
