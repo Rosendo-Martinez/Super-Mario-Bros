@@ -20,3 +20,24 @@ Tile Brick 22 5
 Tile QuestionMarkBlink 23 5
 Tile Brick 24 5
 Tile QuestionMarkBlink 22 9
+
+Decoration CloudFrontTop 19 12
+Decoration CloudMiddleTop 20 12
+Decoration CloudEndTop 21 12
+Decoration CloudFrontBottom 19 11
+Decoration CloudMiddleBottom 20 11
+Decoration CloudEndBottom 21 11
+
+Decoration CloudFrontTop 8 11
+Decoration CloudMiddleTop 9 11
+Decoration CloudEndTop 10 11
+Decoration CloudFrontBottom 8 10
+Decoration CloudMiddleBottom 9 10
+Decoration CloudEndBottom 10 10
+
+Decoration CloudFrontTop 27 11
+DecorationRangeHorizontal CloudMiddleTop 28 11 3
+Decoration CloudEndTop 31 11
+Decoration CloudFrontBottom 27 10
+DecorationRangeHorizontal CloudMiddleBottom 28 10 3
+Decoration CloudEndBottom 31 10
