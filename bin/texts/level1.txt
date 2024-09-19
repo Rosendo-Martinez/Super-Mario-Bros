@@ -120,3 +120,105 @@ Decoration CloudEndTop 87 12
 Decoration CloudFrontBottom 84 11
 DecorationRangeHorizontal CloudMiddleBottom 85 11 2
 Decoration CloudEndBottom 87 11
+
+
+
+
+
+TileRangeHorizontal Ground 89 1 64
+TileRangeHorizontal Ground 89 0 64
+
+Decoration BushFront 89 2
+DecorationRangeHorizontal BushMiddle 90 2 2
+Decoration BushEnd 92 2
+
+TileRangeHorizontal Brick 91 9 3
+Tile QuestionMarkBlink 94 9
+
+Tile Brick 94 5
+
+Decoration BigMountain 96 2
+
+TileRangeHorizontal Brick 100 5 2
+
+Decoration CloudFrontTop 104 11
+Decoration CloudMiddleTop 105 11
+Decoration CloudEndTop 106 11
+Decoration CloudFrontBottom 104 10
+Decoration CloudMiddleBottom 105 10
+Decoration CloudEndBottom 106 10
+
+Tile QuestionMarkBlink 106 5
+
+Tile QuestionMarkBlink 109 5
+
+Tile QuestionMarkBlink 112 5
+
+Tile QuestionMarkBlink 109 9
+
+Decoration BushFront 107 2
+DecorationRangeHorizontal BushMiddle 108 2 3
+Decoration BushEnd 111 2
+
+Decoration SmallMountain 112 2
+
+Tile Brick 118 5
+
+Decoration CloudFrontTop 115 12
+Decoration CloudMiddleTop 116 12
+Decoration CloudEndTop 117 12
+Decoration CloudFrontBottom 115 11
+Decoration CloudMiddleBottom 116 11
+Decoration CloudEndBottom 117 11
+
+Decoration BushFront 119 2
+Decoration BushMiddle 120 2 
+Decoration BushEnd 121 2
+
+TileRangeHorizontal Brick 121 9 3
+
+Decoration CloudFrontTop 123 11
+DecorationRangeHorizontal CloudMiddleTop 124 11 3
+Decoration CloudEndTop 127 11
+Decoration CloudFrontBottom 123 10
+DecorationRangeHorizontal CloudMiddleBottom 124 10 3
+Decoration CloudEndBottom 127 10
+
+Tile Brick 128 9
+TileRangeHorizontal QuestionMarkBlink 129 9 2
+Tile Brick 131 9
+
+TileRangeHorizontal Brick 129 5 2
+
+Decoration CloudFrontTop 132 12
+DecorationRangeHorizontal CloudMiddleTop 133 12 2
+Decoration CloudEndTop 135 12
+Decoration CloudFrontBottom 132 11
+DecorationRangeHorizontal CloudMiddleBottom 133 11 2
+Decoration CloudEndBottom 135 11
+
+TileRangeHorizontal Block 134 2 4
+TileRangeHorizontal Block 135 3 3
+TileRangeHorizontal Block 136 4 2
+Tile Block 137 5
+
+DecorationRangeHorizontal BushMiddle 138 2 2
+
+TileRangeHorizontal Block 140 2 4
+TileRangeHorizontal Block 140 3 3
+TileRangeHorizontal Block 140 4 2
+Tile Block 140 5
+
+Decoration BigMountain 144 2
+
+TileRangeHorizontal Block 148 2 5
+TileRangeHorizontal Block 149 3 4
+TileRangeHorizontal Block 150 4 3
+TileRangeHorizontal Block 151 5 2
+
+Decoration CloudFrontTop 152 11
+Decoration CloudMiddleTop 153 11
+Decoration CloudEndTop 154 11
+Decoration CloudFrontBottom 152 10
+Decoration CloudMiddleBottom 153 10
+Decoration CloudEndBottom 154 10
