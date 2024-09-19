@@ -93,3 +93,30 @@ Decoration CloudEndTop 69 12
 Decoration CloudFrontBottom 67 11
 Decoration CloudMiddleBottom 68 11
 Decoration CloudEndBottom 69 11
+
+TileRangeHorizontal Ground 71 1 15
+TileRangeHorizontal Ground 71 0 15
+
+Decoration BushFront 71 2
+Decoration BushMiddle 72 2 
+Decoration BushEnd 73 2
+
+Tile Brick 77 5
+Tile QuestionMarkBlink 78 5
+Tile Brick 79 5
+
+TileRangeHorizontal Brick 80 9 8
+
+Decoration CloudFrontTop 75 11
+DecorationRangeHorizontal CloudMiddleTop 76 11 3
+Decoration CloudEndTop 79 11
+Decoration CloudFrontBottom 75 10
+DecorationRangeHorizontal CloudMiddleBottom 76 10 3
+Decoration CloudEndBottom 79 10
+
+Decoration CloudFrontTop 84 12
+DecorationRangeHorizontal CloudMiddleTop 85 12 2
+Decoration CloudEndTop 87 12
+Decoration CloudFrontBottom 84 11
+DecorationRangeHorizontal CloudMiddleBottom 85 11 2
+Decoration CloudEndBottom 87 11
