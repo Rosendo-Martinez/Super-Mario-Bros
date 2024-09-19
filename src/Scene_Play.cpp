@@ -135,7 +135,6 @@ void Scene_Play::loadLevel(const std::string & filename) // load/reset/reload le
 
                     e->addComponent<CAnimation>(m_game->assets().getAnimation(animationName), true);
                     e->addComponent<CTransform>(gridToMidPixel(currentGx,gy,e));
-                    e->addComponent<CBoundingBox>(Vec2(64,64));
                 }
             }
             else if (type == "DecorationRangeVertical")
@@ -154,7 +153,6 @@ void Scene_Play::loadLevel(const std::string & filename) // load/reset/reload le
 
                     e->addComponent<CAnimation>(m_game->assets().getAnimation(animationName), true);
                     e->addComponent<CTransform>(gridToMidPixel(gx,currentGy,e));
-                    e->addComponent<CBoundingBox>(Vec2(64,64));
                 }
             }
             else if (type == "Player")
