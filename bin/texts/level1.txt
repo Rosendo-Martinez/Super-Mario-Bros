@@ -41,3 +41,55 @@ Decoration CloudEndTop 31 11
 Decoration CloudFrontBottom 27 10
 DecorationRangeHorizontal CloudMiddleBottom 28 10 3
 Decoration CloudEndBottom 31 10
+
+
+TileRangeHorizontal Ground 30 0 39
+TileRangeHorizontal Ground 30 1 39
+
+Tile PipeTopLeft 38 4
+Tile PipeTopRight 39 4
+TileRangeVertical PipeLeft 38 2 2
+TileRangeVertical PipeRight 39 2 2
+
+Tile PipeTopLeft 46 5
+Tile PipeTopRight 47 5
+TileRangeVertical PipeLeft 46 2 3
+TileRangeVertical PipeRight 47 2 3
+
+Tile PipeTopLeft 57 5
+Tile PipeTopRight 58 5
+TileRangeVertical PipeLeft 57 2 3
+TileRangeVertical PipeRight 58 2 3
+
+Decoration BushFront 41 2
+DecorationRangeHorizontal BushMiddle 42 2 2
+Decoration BushEnd 44 2
+
+Decoration BigMountain 48 2
+
+Decoration BushFront 59 2
+DecorationRangeHorizontal BushMiddle 60 2 3
+Decoration BushEnd 63 2
+
+Decoration SmallMountain 64 2
+
+Decoration CloudFrontTop 36 12
+DecorationRangeHorizontal CloudMiddleTop 37 12 2
+Decoration CloudEndTop 39 12
+Decoration CloudFrontBottom 36 11
+DecorationRangeHorizontal CloudMiddleBottom 37 11 2
+Decoration CloudEndBottom 39 11
+
+Decoration CloudFrontTop 56 11
+Decoration CloudMiddleTop 57 11
+Decoration CloudEndTop 58 11
+Decoration CloudFrontBottom 56 10
+Decoration CloudMiddleBottom 57 10
+Decoration CloudEndBottom 58 10
+
+Decoration CloudFrontTop 67 12
+Decoration CloudMiddleTop 68 12
+Decoration CloudEndTop 69 12
+Decoration CloudFrontBottom 67 11
+Decoration CloudMiddleBottom 68 11
+Decoration CloudEndBottom 69 11
