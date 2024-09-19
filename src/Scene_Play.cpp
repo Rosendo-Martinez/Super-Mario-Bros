@@ -330,11 +330,11 @@ void Scene_Play::sState()
                 newFacingDirection = Direction::RIGHT;
             }
         }
-        else if (isAcceleratingLeft)
+        else if (cTransform.velocity.x < 0)
         {
             newFacingDirection = Direction::LEFT;
         }
-        else if (isAcceleratingRight)
+        else if (cTransform.velocity.x > 0)
         {
             newFacingDirection = Direction::RIGHT;
         }
