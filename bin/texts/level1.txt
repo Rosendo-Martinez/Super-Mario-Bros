@@ -285,3 +285,43 @@ TileRangeHorizontal Block 187 8 3
 TileRangeHorizontal Block 188 9 2
 
 Decoration BigMountain 192 2
+
+
+TileRangeHorizontal Ground 197 0 27
+TileRangeHorizontal Ground 197 1 27
+
+Tile Block 198 2
+
+DecorationRangeVertical FlagPole 198 3 9
+Decoration FlagTop 198 12
+
+Decoration CloudFrontTop 200 11
+Decoration CloudMiddleTop 201 11
+Decoration CloudEndTop 202 11
+Decoration CloudFrontBottom 200 10
+Decoration CloudMiddleBottom 201 10
+Decoration CloudEndBottom 202 10
+
+Decoration SmallCastle 202 2
+
+Decoration BushEnd 207 2
+
+Decoration SmallMountain 208 2
+
+Decoration CloudFrontTop 211 12
+Decoration CloudMiddleTop 212 12
+Decoration CloudEndTop 213 12
+Decoration CloudFrontBottom 211 11
+Decoration CloudMiddleBottom 212 11
+Decoration CloudEndBottom 213 11
+
+Decoration BushFront 215 2
+Decoration BushMiddle 216 2 
+Decoration BushEnd 217 2
+
+Decoration CloudFrontTop 219 11
+DecorationRangeHorizontal CloudMiddleTop 220 11 3
+Decoration CloudEndTop 223 11
+Decoration CloudFrontBottom 219 10
+DecorationRangeHorizontal CloudMiddleBottom 220 10 3
+Decoration CloudEndBottom 223 10
