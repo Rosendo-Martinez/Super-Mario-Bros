@@ -165,6 +165,7 @@ void Scene_Play::loadLevel(const std::string & filename) // load/reset/reload le
                 float gy;
 
                 float GOOMBA_WALK = -m_groundedHK.MAX_WALK_SPEED;
+                float GOOMBA_GRAVITY = m_jumpVK.GRAVITY_L;
 
                 levelSpec >> gx >> gy;
 
@@ -173,6 +174,7 @@ void Scene_Play::loadLevel(const std::string & filename) // load/reset/reload le
                 e->addComponent<CTransform>(gridToMidPixel(gx,gy,e));
                 e->addComponent<CBoundingBox>(Vec2(64,64));
                 e->getComponent<CTransform>().velocity.x = GOOMBA_WALK;
+                e->getComponent<CTransform>().acc_y = GOOMBA_GRAVITY;
             }
             else
             {
@@ -679,6 +681,8 @@ void Scene_Play::sMovement()
     for (auto e : m_entityManager.getEntities("Enemy"))
     {
         CTransform& enemyCT = e->getComponent<CTransform>();
+        enemyCT.velocity.y += enemyCT.acc_y;
+        enemyCT.prevPos = enemyCT.pos;
         enemyCT.pos += enemyCT.velocity;
     }
 
@@ -894,6 +898,30 @@ void Scene_Play::sCollision()
         m_player->getComponent<CState>().isGrounded = false;
         m_player->getComponent<CState>().initialJumpXSpeed = m_player->getComponent<CTransform>().velocity.x;
         m_player->getComponent<CInput>().canJump = false;
+    }
+
+    // Enemy-block collisions 
+    for (auto enemy : m_entityManager.getEntities("Enemy"))
+    {
+        CTransform& enemyCT = enemy->getComponent<CTransform>(); 
+        for (auto block : m_entityManager.getEntities("Tile"))
+        {
+            CTransform& blockCT = block->getComponent<CTransform>();
+
+            Vec2 overlap = Physics::GetOverlap(enemy, block);
+            Vec2 prevOverlap = Physics::GetPreviousOverlap(enemy, block);
+            if (Physics::IsCollision(overlap))
+            {
+                CollisionDirection locationBlockWasHit = Physics::GetCollisionDirection(prevOverlap, enemyCT.prevPos, blockCT.pos);
+
+                if (locationBlockWasHit == CollisionDirection::TOP)
+                {
+                    // Push enemy up
+                    enemyCT.pos.y -= overlap.y;
+                    enemyCT.velocity.y = 0;
+                }
+            }
+        }
     }
 }
 
