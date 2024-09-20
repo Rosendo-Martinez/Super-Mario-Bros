@@ -222,3 +222,66 @@ Decoration CloudEndTop 154 11
 Decoration CloudFrontBottom 152 10
 Decoration CloudMiddleBottom 153 10
 Decoration CloudEndBottom 154 10
+
+
+TileRangeHorizontal Ground 155 0 42
+TileRangeHorizontal Ground 155 1 42
+
+TileRangeHorizontal Block 155 2 4
+TileRangeHorizontal Block 155 3 3
+TileRangeHorizontal Block 155 4 2
+Tile Block 155 5
+
+Decoration BushEnd 159 2
+
+Decoration SmallMountain 160 2
+
+Tile PipeTopLeft 163 3
+Tile PipeTopRight 164 3
+Tile PipeLeft 163 2
+Tile PipeRight 164 2
+
+Decoration CloudFrontTop 163 12
+Decoration CloudMiddleTop 164 12
+Decoration CloudEndTop 165 12
+Decoration CloudFrontBottom 163 11
+Decoration CloudMiddleBottom 164 11
+Decoration CloudEndBottom 165 11
+
+Decoration BushFront 167 2
+Decoration BushMiddle 168 2
+Decoration BushEnd 169 2
+
+TileRangeHorizontal Brick 168 5 2
+Tile QuestionMarkBlink 170 5
+Tile Brick 171 5
+
+Decoration CloudFrontTop 171 11
+DecorationRangeHorizontal CloudMiddleTop 172 11 3
+Decoration CloudEndTop 175 11
+Decoration CloudFrontBottom 171 10
+DecorationRangeHorizontal CloudMiddleBottom 172 10 3
+Decoration CloudEndBottom 175 10
+
+Tile PipeTopLeft 179 3
+Tile PipeTopRight 180 3
+Tile PipeLeft 179 2
+Tile PipeRight 180 2
+
+Decoration CloudFrontTop 180 12
+DecorationRangeHorizontal CloudMiddleTop 181 12 2
+Decoration CloudEndTop 183 12
+Decoration CloudFrontBottom 180 11
+DecorationRangeHorizontal CloudMiddleBottom 181 11 2
+Decoration CloudEndBottom 183 11
+
+TileRangeHorizontal Block 181 2 9
+TileRangeHorizontal Block 182 3 8
+TileRangeHorizontal Block 183 4 7
+TileRangeHorizontal Block 184 5 6
+TileRangeHorizontal Block 185 6 5
+TileRangeHorizontal Block 186 7 4
+TileRangeHorizontal Block 187 8 3
+TileRangeHorizontal Block 188 9 2
+
+Decoration BigMountain 192 2
