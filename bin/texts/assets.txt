@@ -26,6 +26,10 @@ Texture CloudEndTop bin/images/mario/CloudEndTop64.png
 Texture CloudFrontBottom bin/images/mario/CloudFrontBottom64.png
 Texture CloudMiddleBottom bin/images/mario/CloudMiddleBottom64.png
 Texture CloudEndBottom bin/images/mario/CloudEndBottom64.png
+Texture GoombaWalk bin/images/mario/GoombaWalk64.png
+Texture GoombaDead bin/images/mario/GoombaDead64.png
+Animation GoombaWalk GoombaWalk 2 7
+Animation GoombaDead GoombaDead 1 0
 Animation FlagTop FlagTop 1 0
 Animation FlagPole FlagPole 1 0
 Animation BigMountain BigMountain 1 0
