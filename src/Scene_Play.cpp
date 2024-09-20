@@ -159,6 +159,18 @@ void Scene_Play::loadLevel(const std::string & filename) // load/reset/reload le
             {
                 std::cout << type << "\n";
             }
+            else if (type == "Goomba")
+            {
+                float gx;
+                float gy;
+
+                levelSpec >> gx >> gy;
+
+                auto e = m_entityManager.addEntity("Enemy");
+                e->addComponent<CAnimation>(m_game->assets().getAnimation("GoombaWalk"), true);
+                e->addComponent<CTransform>(gridToMidPixel(gx,gy,e));
+                e->addComponent<CBoundingBox>(Vec2(64,64));
+            }
             else
             {
                 std::cout << "Error: " << type << " is not a supported entity type.\n";
@@ -905,6 +917,17 @@ void Scene_Play::sRender()
         }
 
         for (auto e : m_entityManager.getEntities("Tile"))
+        {
+            Vec2 pos = e->getComponent<CTransform>().pos - m_cameraPosition;
+            Vec2 scale = e->getComponent<CTransform>().scale;
+            sf::Sprite & sprite = e->getComponent<CAnimation>().animation.getSprite();
+
+            sprite.setPosition(sf::Vector2f(pos.x,pos.y));
+            sprite.setScale(sf::Vector2f(scale.x, scale.y));
+            window.draw(sprite);
+        }
+
+        for (auto e : m_entityManager.getEntities("Enemy"))
         {
             Vec2 pos = e->getComponent<CTransform>().pos - m_cameraPosition;
             Vec2 scale = e->getComponent<CTransform>().scale;

@@ -325,3 +325,8 @@ Decoration CloudEndTop 223 11
 Decoration CloudFrontBottom 219 10
 DecorationRangeHorizontal CloudMiddleBottom 220 10 3
 Decoration CloudEndBottom 223 10
+
+
+
+Goomba 9 2
+Goomba 12 2

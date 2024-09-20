@@ -66,6 +66,11 @@ Player GX GY CW CH SX SY SM GY B
     Gravity             GY (float)
     Bullet Animation    B (string)
 
+Enemy Specifications:
+Goomba GX GY
+    Grid X Pos:         GX (float)
+    Grid Y Pos:         GY (float)
+
 Assets File Specification
 -------------------------
 
