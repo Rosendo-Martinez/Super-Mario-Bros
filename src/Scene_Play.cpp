@@ -920,6 +920,18 @@ void Scene_Play::sCollision()
                     enemyCT.pos.y -= overlap.y;
                     enemyCT.velocity.y = 0;
                 }
+                else if (locationBlockWasHit == CollisionDirection::RIGHT)
+                {
+                    // push enemy right
+                    enemyCT.pos.x += overlap.x;
+                    enemyCT.velocity.x *= -1;
+                }
+                else if (locationBlockWasHit == CollisionDirection::LEFT)
+                {
+                    // push enemy left
+                    enemyCT.pos.x -= overlap.x;
+                    enemyCT.velocity.x *= -1;
+                }
             }
         }
     }
