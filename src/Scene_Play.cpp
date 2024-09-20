@@ -164,12 +164,15 @@ void Scene_Play::loadLevel(const std::string & filename) // load/reset/reload le
                 float gx;
                 float gy;
 
+                float GOOMBA_WALK = -m_groundedHK.MAX_WALK_SPEED;
+
                 levelSpec >> gx >> gy;
 
                 auto e = m_entityManager.addEntity("Enemy");
                 e->addComponent<CAnimation>(m_game->assets().getAnimation("GoombaWalk"), true);
                 e->addComponent<CTransform>(gridToMidPixel(gx,gy,e));
                 e->addComponent<CBoundingBox>(Vec2(64,64));
+                e->getComponent<CTransform>().velocity.x = GOOMBA_WALK;
             }
             else
             {
@@ -671,6 +674,12 @@ void Scene_Play::sMovement()
     {
         sGroundedMovement();
         // std::cout << "Grounded\n";
+    }
+
+    for (auto e : m_entityManager.getEntities("Enemy"))
+    {
+        CTransform& enemyCT = e->getComponent<CTransform>();
+        enemyCT.pos += enemyCT.velocity;
     }
 
     // std::cout << "A = (" << cTransform.acc_x << ", " << cTransform.acc_y << ")\n";
