@@ -59,6 +59,8 @@ class Scene_Play : public Scene
 
         const double MAX_DOWNWARD_SPEED = 18; // Max speed mario can move downward
         const double RESET_DOWNWARD_SPEED = 16; // Speed to reset to when mario exceeds max downward speed
+
+        const double GOOMBA_STOMP_VELOCITY = 17.25;
     };
 
     struct PlayerConfig {

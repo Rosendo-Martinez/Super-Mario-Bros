@@ -947,7 +947,7 @@ void Scene_Play::sCollision()
             if (isPlayerStompingGoomba)
             {
                 goomba->destroy();
-                playerCT.velocity.y = -m_jumpVK.INITIAL_VELOCITY_L;
+                playerCT.velocity.y = -m_jumpVK.GOOMBA_STOMP_VELOCITY;
             }
             else
             {
