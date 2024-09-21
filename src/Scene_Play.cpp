@@ -935,6 +935,26 @@ void Scene_Play::sCollision()
             }
         }
     }
+
+    for (auto goomba : m_entityManager.getEntities("Enemy"))
+    {
+        Vec2 overlap = Physics::GetOverlap(m_player, goomba);
+        if (Physics::IsCollision(overlap))
+        {
+            CTransform& playerCT = m_player->getComponent<CTransform>();
+            Vec2 prevOverlap = Physics::GetPreviousOverlap(m_player, goomba);
+            bool isPlayerStompingGoomba = playerCT.velocity.y > 0 && !m_player->getComponent<CState>().isGrounded;
+            if (isPlayerStompingGoomba)
+            {
+                goomba->destroy();
+                playerCT.velocity.y = -m_jumpVK.INITIAL_VELOCITY_L;
+            }
+            else
+            {
+                m_player->destroy();
+            }
+        }
+    }
 }
 
 void Scene_Play::sRender()
