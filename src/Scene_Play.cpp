@@ -1010,6 +1010,9 @@ void Scene_Play::sCollision()
                     g1CT.velocity.x *= (g1CT.velocity.x < 0) ? 1 : -1;
                     // Rightmost goomba walks right
                     g2CT.velocity.x *= (g2CT.velocity.x > 0) ? 1 : -1;
+
+                    g1CT.pos.x -= overlap.x/2;
+                    g2CT.pos.x += overlap.x/2;
                 }
                 else
                 {
@@ -1017,6 +1020,9 @@ void Scene_Play::sCollision()
                     g2CT.velocity.x *= (g2CT.velocity.x < 0) ? 1 : -1;
                     // Rightmost goomba walks right
                     g1CT.velocity.x *= (g1CT.velocity.x > 0) ? 1 : -1;
+
+                    g1CT.pos.x += overlap.x/2;
+                    g2CT.pos.x -= overlap.x/2;
                 }
             }
         }
