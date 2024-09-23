@@ -1,0 +1,5 @@
+Active And Inactive Goomba Efficiency Improvement Idea
+------------------------------------------------------
+Instead of having all inactive and active Goombas in the same list, it may be more efficient to split them up into two list.
+An active Goomba list, and an inactive Goomba list. This could save a couple O(n) calls each frame due to not needing to iterate over inactive Goombas. This could be done by implementing 
+a move(eId, oldTag, newTag) method in EntityManager. This way a entity can be moved from one list to another (move a inactive goomba to an active goomba list).
