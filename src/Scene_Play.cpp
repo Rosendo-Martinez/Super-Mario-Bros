@@ -982,6 +982,45 @@ void Scene_Play::sCollision()
             }
         }
     }
+
+    // Goomba-Goomba collisions
+    for (auto goomba1 : m_entityManager.getEntities("Enemy"))
+    {
+        if (!goomba1->getComponent<CEnemy>().isActive)
+        {
+            continue;
+        }
+
+        for (auto goomba2 : m_entityManager.getEntities("Enemy"))
+        {
+            if (!goomba2->getComponent<CEnemy>().isActive || goomba1->id() == goomba2->id())
+            {
+                continue;
+            }
+
+            // Note: goombas may have some overlap
+            Vec2 overlap = Physics::GetOverlap(goomba1, goomba2);
+            if (Physics::IsCollision(overlap))
+            {
+                CTransform& g1CT = goomba1->getComponent<CTransform>();
+                CTransform& g2CT = goomba2->getComponent<CTransform>();
+                if (g1CT.pos.x <= g2CT.velocity.x)
+                { 
+                    // Leftmost goomba walks left
+                    g1CT.velocity.x *= (g1CT.velocity.x < 0) ? 1 : -1;
+                    // Rightmost goomba walks right
+                    g2CT.velocity.x *= (g2CT.velocity.x > 0) ? 1 : -1;
+                }
+                else
+                {
+                    // Leftmost goomba walks left
+                    g2CT.velocity.x *= (g2CT.velocity.x < 0) ? 1 : -1;
+                    // Rightmost goomba walks right
+                    g1CT.velocity.x *= (g1CT.velocity.x > 0) ? 1 : -1;
+                }
+            }
+        }
+    }
 }
 
 void Scene_Play::sRender()
