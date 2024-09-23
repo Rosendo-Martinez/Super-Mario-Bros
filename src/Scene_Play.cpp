@@ -163,11 +163,12 @@ void Scene_Play::loadLevel(const std::string & filename) // load/reset/reload le
             {
                 float gx;
                 float gy;
+                float ad;
 
                 float GOOMBA_WALK = -m_groundedHK.MAX_WALK_SPEED;
                 float GOOMBA_GRAVITY = m_jumpVK.GRAVITY_L;
 
-                levelSpec >> gx >> gy;
+                levelSpec >> gx >> gy >> ad;
 
                 auto e = m_entityManager.addEntity("Enemy");
                 e->addComponent<CAnimation>(m_game->assets().getAnimation("GoombaWalk"), true);
@@ -176,6 +177,8 @@ void Scene_Play::loadLevel(const std::string & filename) // load/reset/reload le
                 e->addComponent<CEnemy>();
                 e->getComponent<CTransform>().velocity.x = GOOMBA_WALK;
                 e->getComponent<CTransform>().acc_y = GOOMBA_GRAVITY;
+                e->getComponent<CEnemy>().activation_x = (gx - ad) * 64;
+                std::cout << e->getComponent<CEnemy>().activation_x << "\n";
             }
             else
             {
@@ -707,7 +710,7 @@ void Scene_Play::sEnemy()
 {
     for (auto goomba : m_entityManager.getEntities("Enemy"))
     {
-        if (goomba->getComponent<CTransform>().pos.x - 10 * 64 <= m_player->getComponent<CTransform>().pos.x)
+        if (goomba->getComponent<CEnemy>().activation_x <= m_player->getComponent<CTransform>().pos.x)
         {
             goomba->getComponent<CEnemy>().isActive = true;
         }

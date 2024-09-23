@@ -108,5 +108,6 @@ class CEnemy : public Component
 {
 public:
     bool isActive = false;
+    float activation_x = 0;
     CEnemy() {}
 };

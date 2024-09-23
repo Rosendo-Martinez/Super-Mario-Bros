@@ -67,9 +67,10 @@ Player GX GY CW CH SX SY SM GY B
     Bullet Animation    B (string)
 
 Enemy Specifications:
-Goomba GX GY
-    Grid X Pos:         GX (float)
-    Grid Y Pos:         GY (float)
+Goomba GX GY AD
+    Grid X Pos:          GX (float)
+    Grid Y Pos:          GY (float)
+    Activation Distance: AD (float, blocks)
 
 Assets File Specification
 -------------------------
