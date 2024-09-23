@@ -975,7 +975,7 @@ void Scene_Play::sCollision()
             {
                 goomba->destroy();
                 playerCT.velocity.y = -m_jumpVK.GOOMBA_STOMP_VELOCITY;
-                playerCT.pos.x -= overlap.y;
+                playerCT.pos.y -= overlap.y;
                 break;
             }
             else
