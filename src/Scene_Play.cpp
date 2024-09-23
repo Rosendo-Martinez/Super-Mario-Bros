@@ -178,7 +178,6 @@ void Scene_Play::loadLevel(const std::string & filename) // load/reset/reload le
                 e->getComponent<CTransform>().velocity.x = GOOMBA_WALK;
                 e->getComponent<CTransform>().acc_y = GOOMBA_GRAVITY;
                 e->getComponent<CEnemy>().activation_x = (gx - ad) * 64;
-                std::cout << e->getComponent<CEnemy>().activation_x << "\n";
             }
             else
             {
