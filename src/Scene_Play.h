@@ -99,7 +99,7 @@ public:
 
     void sAnimation();
     void sMovement();
-    void sEnemySpawn();
+    void sEnemy();
     void sCollision();
     void sRender();
     void sDoAction(const Action & action); // do the action

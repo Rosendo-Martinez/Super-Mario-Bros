@@ -103,3 +103,10 @@ public:
     float initialJumpXSpeed = 0;
     CState() {}
 };
+
+class CEnemy : public Component
+{
+public:
+    bool isActive = false;
+    CEnemy() {}
+};

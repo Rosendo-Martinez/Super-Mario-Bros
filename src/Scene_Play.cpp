@@ -173,6 +173,7 @@ void Scene_Play::loadLevel(const std::string & filename) // load/reset/reload le
                 e->addComponent<CAnimation>(m_game->assets().getAnimation("GoombaWalk"), true);
                 e->addComponent<CTransform>(gridToMidPixel(gx,gy,e));
                 e->addComponent<CBoundingBox>(Vec2(64,64));
+                e->addComponent<CEnemy>();
                 e->getComponent<CTransform>().velocity.x = GOOMBA_WALK;
                 e->getComponent<CTransform>().acc_y = GOOMBA_GRAVITY;
             }
@@ -220,6 +221,7 @@ void Scene_Play::update() // update EM, and cal systems
         spawnPlayer();
     }
 
+    sEnemy();
     sState(); // Here?
     sAnimation();
     sMovement();
@@ -680,6 +682,11 @@ void Scene_Play::sMovement()
 
     for (auto e : m_entityManager.getEntities("Enemy"))
     {
+        if (!e->getComponent<CEnemy>().isActive)
+        {
+            continue;
+        }
+
         CTransform& enemyCT = e->getComponent<CTransform>();
         enemyCT.velocity.y += enemyCT.acc_y;
         enemyCT.prevPos = enemyCT.pos;
@@ -696,8 +703,15 @@ void Scene_Play::sMovement()
     }
 }
 
-void Scene_Play::sEnemySpawn()
+void Scene_Play::sEnemy()
 {
+    for (auto goomba : m_entityManager.getEntities("Enemy"))
+    {
+        if (goomba->getComponent<CTransform>().pos.x - 10 * 64 <= m_player->getComponent<CTransform>().pos.x)
+        {
+            goomba->getComponent<CEnemy>().isActive = true;
+        }
+    }
 }
 
 void Scene_Play::sCollision()
@@ -903,6 +917,11 @@ void Scene_Play::sCollision()
     // Enemy-block collisions 
     for (auto enemy : m_entityManager.getEntities("Enemy"))
     {
+        if (!enemy->getComponent<CEnemy>().isActive)
+        {
+            continue;
+        }
+
         CTransform& enemyCT = enemy->getComponent<CTransform>(); 
         for (auto block : m_entityManager.getEntities("Tile"))
         {
@@ -936,8 +955,14 @@ void Scene_Play::sCollision()
         }
     }
 
+    // Goomba-Player collision
     for (auto goomba : m_entityManager.getEntities("Enemy"))
     {
+        if (!goomba->getComponent<CEnemy>().isActive)
+        {
+            continue;
+        }
+
         Vec2 overlap = Physics::GetOverlap(m_player, goomba);
         if (Physics::IsCollision(overlap))
         {
