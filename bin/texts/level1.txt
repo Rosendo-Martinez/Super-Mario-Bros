@@ -328,7 +328,27 @@ Decoration CloudEndBottom 223 10
 
 
 
-Goomba 9 2 5
-Goomba 24 6 5
-Goomba 35 2 5
-Goomba 36 2 6
+Goomba 22 2 13
+
+Goomba 40 2 13
+
+Goomba 51 2 13
+Goomba 53 2 15
+
+Goomba 80 10 13
+Goomba 81 10 14
+
+Goomba 97 2 13
+Goomba 99 2 15
+
+Goomba 113 2 13
+Goomba 114 2 14
+
+Goomba 124 2 13
+Goomba 125 2 14
+
+Goomba 128 2 17
+Goomba 129 2 18
+
+Goomba 174 2 13
+Goomba 175 2 14
