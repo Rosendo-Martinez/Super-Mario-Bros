@@ -1,0 +1,13 @@
+A file for optimization ideas. Note, some ideas are good, some are bad.
+
+Split Up Active and Inactive Goombas Into 2 Lists
+------------------------------------------------------
+Instead of having all inactive and active Goombas in the same list, it may be more efficient to split them up into two list.
+An active Goomba list, and an inactive Goomba list. This could save a couple O(n) calls each frame due to not needing to iterate over inactive Goombas. This could be done by implementing 
+a move(eId, oldTag, newTag) method in EntityManager. This way a entity can be moved from one list to another (move a inactive goomba to an active goomba list).
+
+Unneeded CD for Unreachable Tiles
+---------------------------------
+Their are some tiles that mario will never be able to reach. For example, if a tile was surrounded on all sides by a tile,
+then mario would never be able to collide with that tile. So, it would not be necessary to have collision detection for these tiles.
+Instead of being tiles, they should be decoration, which does not get CD.
