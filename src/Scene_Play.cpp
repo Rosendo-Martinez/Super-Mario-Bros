@@ -289,6 +289,14 @@ void Scene_Play::sAnimation()
     {
         e->getComponent<CAnimation>().animation.update();
     }
+
+    for (auto e : m_entityManager.getEntities("Animation"))
+    {
+        if (e->getComponent<CAnimation>().animation.hasEnded())
+        {
+            e->destroy();
+        }
+    }
 }
 
 void Scene_Play::sState()
@@ -976,6 +984,13 @@ void Scene_Play::sCollision()
                 goomba->destroy();
                 playerCT.velocity.y = -m_jumpVK.GOOMBA_STOMP_VELOCITY;
                 playerCT.pos.y -= overlap.y;
+
+
+                // create a dead goomba add it to list "Dead Goombas"
+                // place it a original goombas location
+                auto stompedGoomba = m_entityManager.addEntity("Animation");
+                stompedGoomba->addComponent<CAnimation>(m_game->assets().getAnimation("GoombaDead"), false);
+                stompedGoomba->addComponent<CTransform>(goomba->getComponent<CTransform>().pos);
                 break;
             }
             else
@@ -1072,6 +1087,17 @@ void Scene_Play::sRender()
         }
 
         for (auto e : m_entityManager.getEntities("Enemy"))
+        {
+            Vec2 pos = e->getComponent<CTransform>().pos - m_cameraPosition;
+            Vec2 scale = e->getComponent<CTransform>().scale;
+            sf::Sprite & sprite = e->getComponent<CAnimation>().animation.getSprite();
+
+            sprite.setPosition(sf::Vector2f(pos.x,pos.y));
+            sprite.setScale(sf::Vector2f(scale.x, scale.y));
+            window.draw(sprite);
+        }
+
+        for (auto e : m_entityManager.getEntities("Animation"))
         {
             Vec2 pos = e->getComponent<CTransform>().pos - m_cameraPosition;
             Vec2 scale = e->getComponent<CTransform>().scale;

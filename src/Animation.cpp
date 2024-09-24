@@ -67,7 +67,7 @@ void Animation::update()
 */
 bool Animation::hasEnded() const
 {
-    if (m_speed == 0 || floor(m_currentFrame / m_speed) > m_frameCount)
+    if (m_speed == 0 || floor(m_currentFrame / m_speed) >= (double) m_frameCount)
     {
         return true;
     }
