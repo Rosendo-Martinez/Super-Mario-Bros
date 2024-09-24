@@ -2,25 +2,31 @@
 #include <cmath>
 #include <cassert>
 
+// Should not be used
 Animation::Animation()
 {
 }
 
+// For single-frame textures
 Animation::Animation(const std::string & name, const sf::Texture & t)
     : Animation(name, t, 1, 0)
 {
 }
 
-Animation::Animation(const std::string & name, const sf::Texture & t, size_t duration) // Duration is same as speed for single-frame textures
+// For single-frame textures with duration
+// Duration is essentially the same as speed
+Animation::Animation(const std::string & name, const sf::Texture & t, size_t duration)
     : Animation(name, t, 1, duration)
 {
 }
 
+// For single-frame or multi-frame textures
 Animation::Animation(const std::string & name, const sf::Texture & t, size_t frameCount, size_t speed)
     : Animation(name, t, frameCount, speed, 1.f, 1.f)
 {
 }
 
+// For single-frame or multi-frame textures
 Animation::Animation(const std::string & name, const sf::Texture & t, size_t frameCount, size_t speed, float scaleX, float scaleY)
     : m_name(name)
     , m_sprite(t)
@@ -35,8 +41,7 @@ Animation::Animation(const std::string & name, const sf::Texture & t, size_t fra
     m_sprite.setScale(sf::Vector2f(scaleX, scaleY));
 }
 
-// updates the animation to show the next frame, depending on its speed
-// animation loop when it reaches the end
+// Call once per frame.
 void Animation::update()
 {
     m_currentFrame++;
@@ -66,7 +71,7 @@ bool Animation::hasEnded() const
     {
         return true;
     }
-    
+
     return false;
 }
 
@@ -85,6 +90,10 @@ sf::Sprite & Animation::getSprite()
     return m_sprite;
 }
 
+/*
+Returns the index of the texture frame that the animation
+is currently on.
+*/
 int Animation::getCurrentAnimationFrameIndex() const
 {
     if (m_speed == 0)
@@ -100,6 +109,14 @@ int Animation::getCurrentAnimationFrameIndex() const
     return currentAnimationFrame;
 }
 
+/*
+Sets the current texture frame the animation is on.
+
+This is what it does:
+currentFrame = index * speed
+
+Take this into account when using this method.
+*/
 void Animation::setCurrentAnimationFrame(int index)
 {
     m_currentFrame = index * m_speed;
