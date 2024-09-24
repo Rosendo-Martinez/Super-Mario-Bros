@@ -1,5 +1,6 @@
 #include "Animation.h"
 #include <cmath>
+#include <cassert>
 
 Animation::Animation()
 {
@@ -22,6 +23,7 @@ Animation::Animation(const std::string & name, const sf::Texture & t, size_t fra
     , m_currentFrame(0)
     , m_speed(speed)
 {
+    assert(frameCount > 1 ? (speed > 0) : true); // Speed must be non-zero for multi-frame assets
     m_size = Vec2((float)t.getSize().x / frameCount, (float)t.getSize().y);
     m_sprite.setOrigin(m_size.x / 2.0f, m_size.y / 2.0f);
     m_sprite.setTextureRect(sf::IntRect(0, 0, m_size.x, m_size.y));
@@ -34,7 +36,7 @@ void Animation::update()
 {
     m_currentFrame++;
 
-    if (m_speed != 0)
+    if (m_frameCount > 1)
     {
         // zero-indexed frame count
         int fullAnimationFramesPlayed = (int) floor(m_currentFrame / m_speed);
