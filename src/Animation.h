@@ -17,6 +17,7 @@ private:
 public:
     Animation();
     Animation(const std::string & name, const sf::Texture & t);
+    Animation(const std::string & name, const sf::Texture & t, size_t duration);
     Animation(const std::string & name, const sf::Texture & t, size_t frameCount, size_t speed);
     Animation(const std::string & name, const sf::Texture & t, size_t frameCount, size_t speed, float scaleX, float scaleY);
     void update();

@@ -11,6 +11,11 @@ Animation::Animation(const std::string & name, const sf::Texture & t)
 {
 }
 
+Animation::Animation(const std::string & name, const sf::Texture & t, size_t duration) // Duration is same as speed for single-frame textures
+    : Animation(name, t, 1, duration)
+{
+}
+
 Animation::Animation(const std::string & name, const sf::Texture & t, size_t frameCount, size_t speed)
     : Animation(name, t, frameCount, speed, 1.f, 1.f)
 {
@@ -47,9 +52,21 @@ void Animation::update()
     }
 }
 
+/*
+    Returns true if all texture frames have been fully played.
+    A texture frame has been fully played if it has been played for X
+    frames, where X is equal to the speed/duration. Else, it returns 
+    false.
+
+    Note, a speed or duration of 0 always returns true.
+*/
 bool Animation::hasEnded() const
 {
-    // TODO: detect when animation has ended (last frame was played) and return true
+    if (m_speed == 0 || floor(m_currentFrame / m_speed) > m_frameCount)
+    {
+        return true;
+    }
+    
     return false;
 }
 
