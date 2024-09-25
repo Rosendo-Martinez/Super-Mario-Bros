@@ -2,6 +2,18 @@
 #include "Scene_Play.h"
 #include <iostream>
 #include <fstream>
+#include <ctime>
+
+clock_t deltaTime = 0;
+unsigned int frames = 0;
+double  frameRate = 30;
+double  averageFrameTimeMilliseconds = 33.333;
+
+
+double clockToMilliseconds(clock_t ticks){
+    // units/(units/time) => time (seconds) * 1000 = milliseconds
+    return (ticks/(double)CLOCKS_PER_SEC)*1000.0;
+}
 
 GameEngine::GameEngine()
 {
@@ -121,9 +133,24 @@ void GameEngine::run() // main game loop
 {
     while (m_window.isOpen())
     {
+        clock_t beginFrame = clock();
         sUserInput();
         m_sceneMap[m_currentScene]->update();
         m_sceneMap[m_currentScene]->sRender();
+        clock_t endFrame = clock();
+
+        deltaTime += endFrame - beginFrame;
+        frames ++;
+
+        if(clockToMilliseconds(deltaTime)>1000.0){ //every second
+            frameRate = (double)frames*0.5 +  frameRate*0.5; // average the frame rate
+            frames = 0;
+            deltaTime -= CLOCKS_PER_SEC; // discard ticks in 1 second, but keep any left over
+            averageFrameTimeMilliseconds  = 1000.0/(frameRate==0?0.001:frameRate);
+
+            // Note: sleep is not taken into account when calculating performance
+            std::cout << "MSPF: " << averageFrameTimeMilliseconds << "\n";
+        }
     }
 }
 
