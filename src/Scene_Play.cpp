@@ -276,6 +276,9 @@ void Scene_Play::update()
 
 /**
  * Player animation system.
+ * 
+ * Note, it just checks what animation player needs for current frame.
+ * It does not update the a player's animation (calls <animation>.update()).
  */
 void Scene_Play::sPlayerAnimation()
 {
@@ -332,16 +335,20 @@ void Scene_Play::sPlayerAnimation()
     }
 }
 
+/**
+ * The animation system.
+ */
 void Scene_Play::sAnimation()
 {
     sPlayerAnimation();
 
-    // Update animations
+    // Update animations for all entities (includes player animation)
     for (auto e: m_entityManager.getEntities())
     {
         e->getComponent<CAnimation>().animation.update();
     }
 
+    // Animations are short lived entities, who die when their animation is over
     for (auto e : m_entityManager.getEntities("Animation"))
     {
         if (e->getComponent<CAnimation>().animation.hasEnded())
