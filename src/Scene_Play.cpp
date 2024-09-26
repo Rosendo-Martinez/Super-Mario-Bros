@@ -274,7 +274,10 @@ void Scene_Play::update()
     sRender();
 }
 
-void Scene_Play::sAnimation()
+/**
+ * Player animation system.
+ */
+void Scene_Play::sPlayerAnimation()
 {
     const CState& cState = m_player->getComponent<CState>();
     CTransform& cTransform = m_player->getComponent<CTransform>();
@@ -305,7 +308,7 @@ void Scene_Play::sAnimation()
     {
         nextAnimation = "MarioAir";
     }
-    
+
     std::string currentAnimation = cAnimation.animation.getName();
     // Only change animations if previous animation is different from this frame animation
     if (currentAnimation != nextAnimation)
@@ -326,7 +329,12 @@ void Scene_Play::sAnimation()
     {
         cTransform.scale.x *= -1;
     }
+}
 
+void Scene_Play::sAnimation()
+{
+    sPlayerAnimation();
+    
     // Update animations
     for (auto e: m_entityManager.getEntities())
     {

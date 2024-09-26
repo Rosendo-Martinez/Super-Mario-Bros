@@ -95,6 +95,7 @@ private:
     void sPlayerAirBorneMovement();
     void sPlayerGroundedMovement();
     void sPlayerState();
+    void sPlayerAnimation();
 
 public:
     Scene_Play(GameEngine * gameEngine, const std::string & levelPath);
