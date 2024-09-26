@@ -88,6 +88,7 @@ private:
     Vec2 gridToCartesianRepresentation(Vec2 gridPos, Vec2 entitySize);
     void loadLevel();
     void createStaticEntity(std::string type, std::string animation, float gx, float gy);
+    void createEnemyEntity(std::string type, float gx, float gy, float activationDistance);
     
     void spawnPlayer();
     void spawnBullet(std::shared_ptr<Entity> entity);

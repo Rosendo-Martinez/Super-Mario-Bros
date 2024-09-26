@@ -97,6 +97,36 @@ void Scene_Play::createStaticEntity(std::string type, std::string animation, flo
 }
 
 /**
+ * Creates Goomba type entities.
+ */
+void Scene_Play::createEnemyEntity(std::string type, float gx, float gy, float activationDistance)
+{
+    if (type != "Goomba")
+    {
+        std::cout << "Error: " << type << " creation is not yet supported!\n";
+        return;
+    }
+
+    // Kinematic constantans
+    const float GOOMBA_WALK = -m_groundedHK.MAX_WALK_SPEED;
+    const float GOOMBA_GRAVITY = m_jumpVK.GRAVITY_L;
+
+    auto e = m_entityManager.addEntity("Enemy");
+
+    // Add components
+    e->addComponent<CAnimation>(m_game->assets().getAnimation("GoombaWalk"), true);
+    e->addComponent<CBoundingBox>(Vec2(64,64));
+    CTransform& goombaCT = e->addComponent<CTransform>(gridToCartesianRepresentation(gx,gy,e));
+    CEnemy& goombaCE =  e->addComponent<CEnemy>();
+
+    // Initialize components
+    goombaCT.velocity.x = GOOMBA_WALK;
+    goombaCT.acc_y = GOOMBA_GRAVITY;
+    goombaCE.activation_x = (gx - activationDistance) * 64;
+}
+
+
+/**
  * Loads the level.
  * 
  * If level was already loaded, then calling this function reloads the level.
@@ -176,25 +206,9 @@ void Scene_Play::loadLevel()
             float gy;
             float ad;
 
-            // Kinematic constantans
-            const float GOOMBA_WALK = -m_groundedHK.MAX_WALK_SPEED;
-            const float GOOMBA_GRAVITY = m_jumpVK.GRAVITY_L;
-
             levelSpec >> gx >> gy >> ad;
 
-            auto e = m_entityManager.addEntity("Enemy");
-
-            // Add components
-            e->addComponent<CAnimation>(m_game->assets().getAnimation("GoombaWalk"), true);
-            e->addComponent<CBoundingBox>(Vec2(64,64));
-            CTransform& goombaCT = e->addComponent<CTransform>(gridToCartesianRepresentation(gx,gy,e));
-            CEnemy& goombaCE =  e->addComponent<CEnemy>();
-
-            // Initialize components
-            goombaCT.velocity.x = GOOMBA_WALK;
-            goombaCT.acc_y = GOOMBA_GRAVITY;
-            goombaCE.activation_x = (gx - ad) * 64;
-
+            createEnemyEntity(type, gx, gy, ad);
             continue;
         }
         else
