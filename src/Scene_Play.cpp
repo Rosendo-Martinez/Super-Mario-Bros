@@ -43,17 +43,30 @@ void Scene_Play::init()
  */
 Vec2 Scene_Play::gridToCartesianRepresentation(float gridX, float gridY, std::shared_ptr<Entity> entity)
 {
-    sf::RenderWindow & window = m_game->window();
-
     sf::Sprite sprite = entity->getComponent<CAnimation>().animation.getSprite();
+
+    return gridToCartesianRepresentation(Vec2(gridX,gridY), Vec2(sprite.getGlobalBounds().width, sprite.getGlobalBounds().height));
+}
+
+/**
+ * Transforms the grid coordinate representation of the position of a entity
+ * to the cartesian coordinate representation.
+ * 
+ * Note, unlike the grid coordinate representation of the entity, where the bottom left corner of the grid cell
+ * lines up with the bottom left corner of the entity, in the cartesian coordinate representation the entity is
+ * represented by a point at its center.
+ */
+Vec2 Scene_Play::gridToCartesianRepresentation(Vec2 gridPos, Vec2 size)
+{
+    sf::RenderWindow & window = m_game->window();
     const int heighGrid = window.getSize().y;
     const int widthGrid = window.getSize().x;
 
     // Bottom left corner of entity in cartesian coordinates (from grid coordinates)
-    const Vec2 bottomLeft(m_gridCellSize.x * (gridX), heighGrid - m_gridCellSize.y * (gridY));
+    const Vec2 bottomLeft(m_gridCellSize.x * (gridPos.x), heighGrid - m_gridCellSize.y * (gridPos.y));
 
     // Center of entity
-    const Vec2 center(bottomLeft.x + sprite.getGlobalBounds().width / 2, bottomLeft.y - sprite.getGlobalBounds().height / 2);
+    const Vec2 center(bottomLeft.x + size.x / 2, bottomLeft.y - size.y / 2);
 
     return center;
 }
