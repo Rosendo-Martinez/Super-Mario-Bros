@@ -116,7 +116,7 @@ void Scene_Play::loadLevel()
         std::string type;
         levelSpec >> type;
 
-        if (type == "Tile")
+        if (type == "Tile" || type == "Decoration")
         {
             std::string animationName;
             float gx;
@@ -127,83 +127,62 @@ void Scene_Play::loadLevel()
             createStaticEntity(type, animationName, gx, gy);
             continue;
         }
-        else if (type == "TileRangeHorizontal")
+        else if (type == "TileRangeHorizontal" || type == "DecorationRangeHorizontal")
         {
             std::string animationName;
             float gx;
             float gy;
             int width;
 
+            if (type == "TileRangeHorizontal")
+            {
+                type = "Tile";
+            }
+            else
+            {
+                type = "Decoration";
+            }
+
             levelSpec >> animationName >> gx >> gy >> width;
 
             for (int i = 0; i < width; i++)
             {
-                int currentGx = gx + i;
+                const int currentGx = gx + i;
 
-                createStaticEntity("Tile", animationName, currentGx, gy);
+                createStaticEntity(type, animationName, currentGx, gy);
             }
+            continue;
         }
-        else if (type == "TileRangeVertical")
+        else if (type == "TileRangeVertical" || type == "DecorationRangeVertical")
         {
             std::string animationName;
             float gx;
             float gy;
             int height;
 
-            levelSpec >> animationName >> gx >> gy >> height;
-
-            for (int i = 0; i < height; i++)
+            if (type == "TileRangeVertical")
             {
-                int currentGy = gy + i;
-
-                createStaticEntity("Tile", animationName, gx, currentGy);
+                type = "Tile";
             }
-        }
-        else if (type == "Decoration")
-        {
-            std::string animationName;
-            float gx;
-            float gy;
-
-            levelSpec >> animationName >> gx >> gy;
-
-            createStaticEntity(type, animationName, gx, gy);
-        }
-        else if (type == "DecorationRangeHorizontal")
-        {
-            std::string animationName;
-            float gx;
-            float gy;
-            int width;
-
-            levelSpec >> animationName >> gx >> gy >> width;
-
-            for (int i = 0; i < width; i++)
+            else
             {
-                int currentGx = gx + i;
-
-                createStaticEntity("Decoration", animationName, currentGx, gy);
+                type = "Decoration";
             }
-        }
-        else if (type == "DecorationRangeVertical")
-        {
-            std::string animationName;
-            float gx;
-            float gy;
-            int height;
 
             levelSpec >> animationName >> gx >> gy >> height;
 
             for (int i = 0; i < height; i++)
             {
-                int currentGy = gy + i;
+                const int currentGy = gy + i;
 
-                createStaticEntity("Decoration", animationName, gx, currentGy);
+                createStaticEntity(type, animationName, gx, currentGy);
             }
+            continue;
         }
         else if (type == "Player")
         {
-            std::cout << type << "\n";
+            std::cout << "Error: Player type is not yet supported!\n";
+            return;
         }
         else if (type == "Goomba")
         {
@@ -224,10 +203,12 @@ void Scene_Play::loadLevel()
             e->getComponent<CTransform>().velocity.x = GOOMBA_WALK;
             e->getComponent<CTransform>().acc_y = GOOMBA_GRAVITY;
             e->getComponent<CEnemy>().activation_x = (gx - ad) * 64;
+            continue;
         }
         else
         {
             std::cout << "Error: " << type << " is not a supported entity type.\n";
+            return;
         }
     }
 }
