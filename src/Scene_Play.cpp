@@ -247,7 +247,12 @@ Scene_Play::Scene_Play(GameEngine * gameEngine, const std::string & levelPath)
     init();
 }
 
-void Scene_Play::update() // update EM, and cal systems
+/**
+ * Renders the next game frame.
+ * 
+ * Before it renders the next frame, it updates entities, and runs the game systems.
+ */
+void Scene_Play::update()
 {
     m_entityManager.update();
 
@@ -256,11 +261,16 @@ void Scene_Play::update() // update EM, and cal systems
         spawnPlayer();
     }
 
+    // Call systems that calculate state of entities
     sEnemy();
-    sPlayerState(); // Here?
+    sPlayerState();
+
+    // Call systems that depend on entity state
     sAnimation();
     sMovement();
     sCollision();
+
+    // Render the frame to the screen
     sRender();
 }
 
