@@ -195,11 +195,6 @@ void Scene_Play::loadLevel()
             }
             continue;
         }
-        else if (type == "Player")
-        {
-            std::cout << "Error: Player type is not yet supported!\n";
-            return;
-        }
         else if (type == "Goomba")
         {
             float gx;
@@ -213,7 +208,7 @@ void Scene_Play::loadLevel()
         }
         else
         {
-            std::cout << "Error: " << type << " is not a supported entity type.\n";
+            std::cout << "Error: " << type << " is not or not yet a supported entity type.\n";
             return;
         }
     }
