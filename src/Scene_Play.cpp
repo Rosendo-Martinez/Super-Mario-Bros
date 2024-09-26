@@ -224,7 +224,7 @@ void Scene_Play::update() // update EM, and cal systems
     }
 
     sEnemy();
-    sState(); // Here?
+    sPlayerState(); // Here?
     sAnimation();
     sMovement();
     sCollision();
@@ -299,7 +299,7 @@ void Scene_Play::sAnimation()
     }
 }
 
-void Scene_Play::sState()
+void Scene_Play::sPlayerState()
 {
     CState& cState = m_player->getComponent<CState>();
     const CInput& cInput = m_player->getComponent<CInput>();
@@ -394,7 +394,7 @@ void Scene_Play::sState()
     cState.facingDir = newFacingDirection;
 }
 
-void Scene_Play::sAirBorneMovement()
+void Scene_Play::sPlayerAirBorneMovement()
 {
     CTransform& cTransform  = m_player->getComponent<CTransform>();
     const CInput& cInput          = m_player->getComponent<CInput>();
@@ -512,7 +512,7 @@ void Scene_Play::sAirBorneMovement()
     cTransform.pos += cTransform.velocity;
 }
 
-void Scene_Play::sGroundedMovement()
+void Scene_Play::sPlayerGroundedMovement()
 {
     CInput& cInput         = m_player->getComponent<CInput>();
     CTransform& cTransform = m_player->getComponent<CTransform>();
@@ -681,12 +681,12 @@ void Scene_Play::sMovement()
 
     if (isAirborne)
     {
-        sAirBorneMovement();
+        sPlayerAirBorneMovement();
         // std::cout << "Airborne\n";
     }
     else
     {
-        sGroundedMovement();
+        sPlayerGroundedMovement();
         // std::cout << "Grounded\n";
     }
 
