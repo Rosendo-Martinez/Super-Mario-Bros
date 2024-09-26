@@ -72,6 +72,31 @@ Vec2 Scene_Play::gridToCartesianRepresentation(Vec2 gridPos, Vec2 size)
 }
 
 /**
+ * Creates Tile, and Decoration type entities.
+ */
+void Scene_Play::createStaticEntity(std::string type, std::string animation, float gx, float gy)
+{
+    if (type != "Tile" && type != "Decoration")
+    {
+        std::cout << "Error: can only create Tile or Decoration type entities!\n";
+        return;
+    }
+
+    // Create entity
+    auto e = m_entityManager.addEntity(type);
+
+    // Add components
+    e->addComponent<CAnimation>(m_game->assets().getAnimation(animation), true);
+    e->addComponent<CTransform>(gridToCartesianRepresentation(gx,gy,e));
+
+    // Tiles have bounding boxes (i.e collisions)
+    if (type == "Tile")
+    {
+        e->addComponent<CBoundingBox>(Vec2(64,64));
+    }
+}
+
+/**
  * Loads the level.
  * 
  * If level was already loaded, then calling this function reloads the level.
@@ -83,141 +108,126 @@ void Scene_Play::loadLevel()
     if (!levelSpec.is_open())
     {
         std::cout << "Error: level specification file could not be open.\n";
+        return;
     }
-    else
+
+    while (levelSpec)
     {
-        while (levelSpec)
+        std::string type;
+        levelSpec >> type;
+
+        if (type == "Tile")
         {
-            std::string type;
-            levelSpec >> type;
+            std::string animationName;
+            float gx;
+            float gy;
 
-            if (type == "Tile")
+            levelSpec >> animationName >> gx >> gy;
+
+            createStaticEntity(type, animationName, gx, gy);
+            continue;
+        }
+        else if (type == "TileRangeHorizontal")
+        {
+            std::string animationName;
+            float gx;
+            float gy;
+            int width;
+
+            levelSpec >> animationName >> gx >> gy >> width;
+
+            for (int i = 0; i < width; i++)
             {
-                auto e = m_entityManager.addEntity(type);
-                std::string animationName;
-                float gx;
-                float gy;
+                int currentGx = gx + i;
 
-                levelSpec >> animationName >> gx >> gy;
-
-                e->addComponent<CAnimation>(m_game->assets().getAnimation(animationName), true);
-                e->addComponent<CTransform>(gridToCartesianRepresentation(gx,gy,e));
-                e->addComponent<CBoundingBox>(Vec2(64,64));
+                createStaticEntity("Tile", animationName, currentGx, gy);
             }
-            else if (type == "TileRangeHorizontal")
+        }
+        else if (type == "TileRangeVertical")
+        {
+            std::string animationName;
+            float gx;
+            float gy;
+            int height;
+
+            levelSpec >> animationName >> gx >> gy >> height;
+
+            for (int i = 0; i < height; i++)
             {
-                std::string animationName;
-                float gx;
-                float gy;
-                int width;
+                int currentGy = gy + i;
 
-                levelSpec >> animationName >> gx >> gy >> width;
-
-                for (int i = 0; i < width; i++)
-                {
-                    int currentGx = gx + i;
-                    auto e = m_entityManager.addEntity("Tile");
-
-                    e->addComponent<CAnimation>(m_game->assets().getAnimation(animationName), true);
-                    e->addComponent<CTransform>(gridToCartesianRepresentation(currentGx,gy,e));
-                    e->addComponent<CBoundingBox>(Vec2(64,64));
-                }
+                createStaticEntity("Tile", animationName, gx, currentGy);
             }
-            else if (type == "TileRangeVertical")
+        }
+        else if (type == "Decoration")
+        {
+            std::string animationName;
+            float gx;
+            float gy;
+
+            levelSpec >> animationName >> gx >> gy;
+
+            createStaticEntity(type, animationName, gx, gy);
+        }
+        else if (type == "DecorationRangeHorizontal")
+        {
+            std::string animationName;
+            float gx;
+            float gy;
+            int width;
+
+            levelSpec >> animationName >> gx >> gy >> width;
+
+            for (int i = 0; i < width; i++)
             {
-                std::string animationName;
-                float gx;
-                float gy;
-                int height;
+                int currentGx = gx + i;
 
-                levelSpec >> animationName >> gx >> gy >> height;
-
-                for (int i = 0; i < height; i++)
-                {
-                    int currentGy = gy + i;
-                    auto e = m_entityManager.addEntity("Tile");
-
-                    e->addComponent<CAnimation>(m_game->assets().getAnimation(animationName), true);
-                    e->addComponent<CTransform>(gridToCartesianRepresentation(gx,currentGy,e));
-                    e->addComponent<CBoundingBox>(Vec2(64,64));
-                }
+                createStaticEntity("Decoration", animationName, currentGx, gy);
             }
-            else if (type == "Decoration")
+        }
+        else if (type == "DecorationRangeVertical")
+        {
+            std::string animationName;
+            float gx;
+            float gy;
+            int height;
+
+            levelSpec >> animationName >> gx >> gy >> height;
+
+            for (int i = 0; i < height; i++)
             {
-                auto e = m_entityManager.addEntity(type);
-                std::string animationName;
-                float gx;
-                float gy;
+                int currentGy = gy + i;
 
-                levelSpec >> animationName >> gx >> gy;
-
-                e->addComponent<CAnimation>(m_game->assets().getAnimation(animationName), true);
-                e->addComponent<CTransform>(gridToCartesianRepresentation(gx,gy,e));
+                createStaticEntity("Decoration", animationName, gx, currentGy);
             }
-            else if (type == "DecorationRangeHorizontal")
-            {
-                std::string animationName;
-                float gx;
-                float gy;
-                int width;
+        }
+        else if (type == "Player")
+        {
+            std::cout << type << "\n";
+        }
+        else if (type == "Goomba")
+        {
+            float gx;
+            float gy;
+            float ad;
 
-                levelSpec >> animationName >> gx >> gy >> width;
+            float GOOMBA_WALK = -m_groundedHK.MAX_WALK_SPEED;
+            float GOOMBA_GRAVITY = m_jumpVK.GRAVITY_L;
 
-                for (int i = 0; i < width; i++)
-                {
-                    int currentGx = gx + i;
-                    auto e = m_entityManager.addEntity("Decoration");
+            levelSpec >> gx >> gy >> ad;
 
-                    e->addComponent<CAnimation>(m_game->assets().getAnimation(animationName), true);
-                    e->addComponent<CTransform>(gridToCartesianRepresentation(currentGx,gy,e));
-                }
-            }
-            else if (type == "DecorationRangeVertical")
-            {
-                std::string animationName;
-                float gx;
-                float gy;
-                int height;
-
-                levelSpec >> animationName >> gx >> gy >> height;
-
-                for (int i = 0; i < height; i++)
-                {
-                    int currentGy = gy + i;
-                    auto e = m_entityManager.addEntity("Decoration");
-
-                    e->addComponent<CAnimation>(m_game->assets().getAnimation(animationName), true);
-                    e->addComponent<CTransform>(gridToCartesianRepresentation(gx,currentGy,e));
-                }
-            }
-            else if (type == "Player")
-            {
-                std::cout << type << "\n";
-            }
-            else if (type == "Goomba")
-            {
-                float gx;
-                float gy;
-                float ad;
-
-                float GOOMBA_WALK = -m_groundedHK.MAX_WALK_SPEED;
-                float GOOMBA_GRAVITY = m_jumpVK.GRAVITY_L;
-
-                levelSpec >> gx >> gy >> ad;
-
-                auto e = m_entityManager.addEntity("Enemy");
-                e->addComponent<CAnimation>(m_game->assets().getAnimation("GoombaWalk"), true);
-                e->addComponent<CTransform>(gridToCartesianRepresentation(gx,gy,e));
-                e->addComponent<CBoundingBox>(Vec2(64,64));
-                e->addComponent<CEnemy>();
-                e->getComponent<CTransform>().velocity.x = GOOMBA_WALK;
-                e->getComponent<CTransform>().acc_y = GOOMBA_GRAVITY;
-                e->getComponent<CEnemy>().activation_x = (gx - ad) * 64;
-            }
-            else
-            {
-                std::cout << "Error: " << type << " is not a supported entity type.\n";
-            }
+            auto e = m_entityManager.addEntity("Enemy");
+            e->addComponent<CAnimation>(m_game->assets().getAnimation("GoombaWalk"), true);
+            e->addComponent<CTransform>(gridToCartesianRepresentation(gx,gy,e));
+            e->addComponent<CBoundingBox>(Vec2(64,64));
+            e->addComponent<CEnemy>();
+            e->getComponent<CTransform>().velocity.x = GOOMBA_WALK;
+            e->getComponent<CTransform>().acc_y = GOOMBA_GRAVITY;
+            e->getComponent<CEnemy>().activation_x = (gx - ad) * 64;
+        }
+        else
+        {
+            std::cout << "Error: " << type << " is not a supported entity type.\n";
         }
     }
 }

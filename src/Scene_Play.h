@@ -87,6 +87,7 @@ private:
     Vec2 gridToCartesianRepresentation(float gridX, float gridY, std::shared_ptr<Entity> entity);
     Vec2 gridToCartesianRepresentation(Vec2 gridPos, Vec2 entitySize);
     void loadLevel();
+    void createStaticEntity(std::string type, std::string animation, float gx, float gy);
     
     void spawnPlayer();
     void spawnBullet(std::shared_ptr<Entity> entity);
