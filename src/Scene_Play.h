@@ -82,7 +82,7 @@ private:
     sf::Text m_gridText;
     Vec2 m_cameraPosition; // relative to game map
 
-    void init(const std::string & levelPath); // register actions, font/text, loadlevel(path)
+    void init();
     Vec2 gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity);
     void loadLevel(const std::string & filename); // load/reset/reload level
     

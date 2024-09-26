@@ -5,10 +5,14 @@
 #include <cmath>
 #include <fstream>
 
-void Scene_Play::init(const std::string & levelPath) // register actions, font/text, loadlevel(path)
+/*
+Initializes the object. 
+
+Should be called once and only once before any other class methods are called.
+*/
+void Scene_Play::init()
 {
-    spawnPlayer();
-    loadLevel(levelPath);
+    // Bind keyboard keys to actions
     registerAction(sf::Keyboard::G, "TOGGLE_GRID");
     registerAction(sf::Keyboard::C, "TOGGLE_BOUNDING_BOXES");
     registerAction(sf::Keyboard::T, "TOGGLE_TEXTURES");
@@ -18,6 +22,15 @@ void Scene_Play::init(const std::string & levelPath) // register actions, font/t
     registerAction(sf::Keyboard::D, "RIGHT");
     registerAction(sf::Keyboard::B, "RUN");
     registerAction(sf::Keyboard::V, "JUMP");
+
+    // Initialize debugging grid
+    m_gridText.setFont(m_game->assets().getFont("Grid"));
+    m_gridText.setCharacterSize(12);
+    m_gridText.setFillColor(sf::Color::White);
+
+    // Spawn  player, and load the level
+    spawnPlayer();
+    loadLevel("bin/texts/level1.txt");    
 }
 
 Vec2 Scene_Play::gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity)
@@ -43,7 +56,7 @@ Vec2 Scene_Play::gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity
 
 void Scene_Play::loadLevel(const std::string & filename) // load/reset/reload level
 {
-    std::ifstream levelSpec ("bin/texts/level1.txt");
+    std::ifstream levelSpec (filename);
 
     if (!levelSpec.is_open())
     {
@@ -207,11 +220,7 @@ void Scene_Play::spawnBullet(std::shared_ptr<Entity> entity)
 Scene_Play::Scene_Play(GameEngine * gameEngine, const std::string & levelPath)
     : Scene(gameEngine)
 {
-    m_gridText.setFont(m_game->assets().getFont("Grid"));
-    m_gridText.setCharacterSize(12);
-    m_gridText.setFillColor(sf::Color::White);
-
-    init("");
+    init();
 }
 
 void Scene_Play::update() // update EM, and cal systems
