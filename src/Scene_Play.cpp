@@ -214,6 +214,12 @@ void Scene_Play::loadLevel()
     }
 }
 
+/**
+ * Spawns/Re-spawns the player.
+ * 
+ * Note, does not delete previous player if is re-spawning player.
+ * Take this into account when re-spawning the player.
+ */
 void Scene_Play::spawnPlayer()
 {
     auto player = m_entityManager.addEntity("Player");
@@ -224,7 +230,7 @@ void Scene_Play::spawnPlayer()
     player->addComponent<CState>();
     m_player = player;
 
-    m_player->getComponent<CTransform>().acc_y = 0.375 * 4;
+    m_player->getComponent<CTransform>().acc_y = m_jumpVK.GRAVITY_S;
 }
 
 void Scene_Play::spawnBullet(std::shared_ptr<Entity> entity)
