@@ -674,24 +674,20 @@ void Scene_Play::sPlayerGroundedMovement()
 
 void Scene_Play::sMovement()
 {
-    CInput& cInput = m_player->getComponent<CInput>();
-    CTransform& cTransform = m_player->getComponent<CTransform>();
-    CState& cState = m_player->getComponent<CState>();
-    bool isAirborne = !cState.isGrounded;
-
-    if (isAirborne)
+    // Handle player movement
+    if (!m_player->getComponent<CState>().isGrounded)
     {
         sPlayerAirBorneMovement();
-        // std::cout << "Airborne\n";
     }
     else
     {
         sPlayerGroundedMovement();
-        // std::cout << "Grounded\n";
     }
 
+    // Handle enemy movement
     for (auto e : m_entityManager.getEntities("Enemy"))
     {
+        // Enemies are activated when player comes within a certain range
         if (!e->getComponent<CEnemy>().isActive)
         {
             continue;
@@ -703,11 +699,8 @@ void Scene_Play::sMovement()
         enemyCT.pos += enemyCT.velocity;
     }
 
-    // std::cout << "A = (" << cTransform.acc_x << ", " << cTransform.acc_y << ")\n";
-    // std::cout << "V = (" << cTransform.velocity.x << ", " << cTransform.velocity.y << ")\n";
-
     // Player fell off the map
-    if (cTransform.pos.y - 64/2 > m_game->window().getSize().y)
+    if (m_player->getComponent<CTransform>().pos.y - 64/2 > m_game->window().getSize().y)
     {
         m_player->destroy();
     }
