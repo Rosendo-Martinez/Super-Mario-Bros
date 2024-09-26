@@ -70,6 +70,7 @@ class Scene_Play : public Scene
 
 private:
     std::shared_ptr<Entity> m_player;
+    // Path to level specification file
     std::string m_levelPath;
     PlayerConfig m_playerConfig;
     GROUNDED_HORIZONTAL_KINEMATICS m_groundedHK;
@@ -84,7 +85,7 @@ private:
 
     void init();
     Vec2 gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity);
-    void loadLevel(const std::string & filename); // load/reset/reload level
+    void loadLevel();
     
     void spawnPlayer();
     void spawnBullet(std::shared_ptr<Entity> entity);

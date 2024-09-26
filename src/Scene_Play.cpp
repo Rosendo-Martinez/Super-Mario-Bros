@@ -28,9 +28,9 @@ void Scene_Play::init()
     m_gridText.setCharacterSize(12);
     m_gridText.setFillColor(sf::Color::White);
 
-    // Spawn  player, and load the level
+    // Spawn player, and load the level
     spawnPlayer();
-    loadLevel("bin/texts/level1.txt");    
+    loadLevel();
 }
 
 Vec2 Scene_Play::gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity)
@@ -54,9 +54,14 @@ Vec2 Scene_Play::gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity
     return Vec2(x_m, y_m);
 }
 
-void Scene_Play::loadLevel(const std::string & filename) // load/reset/reload level
+/**
+ * Loads the level.
+ * 
+ * If level was already loaded, then calling this function reloads the level.
+ */
+void Scene_Play::loadLevel()
 {
-    std::ifstream levelSpec (filename);
+    std::ifstream levelSpec (m_levelPath);
 
     if (!levelSpec.is_open())
     {
@@ -220,6 +225,7 @@ void Scene_Play::spawnBullet(std::shared_ptr<Entity> entity)
 Scene_Play::Scene_Play(GameEngine * gameEngine, const std::string & levelPath)
     : Scene(gameEngine)
 {
+    m_levelPath = "bin/texts/level1.txt";
     init();
 }
 
