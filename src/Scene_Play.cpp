@@ -233,6 +233,9 @@ void Scene_Play::spawnPlayer()
     m_player->getComponent<CTransform>().acc_y = m_jumpVK.GRAVITY_S;
 }
 
+/**
+ * NOT YET IMPLEMENTED.
+ */
 void Scene_Play::spawnBullet(std::shared_ptr<Entity> entity)
 {
 }
