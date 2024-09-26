@@ -33,25 +33,29 @@ void Scene_Play::init()
     loadLevel();
 }
 
-Vec2 Scene_Play::gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity)
+/**
+ * Transforms the grid coordinate representation of the position of a entity
+ * to the cartesian coordinate representation.
+ * 
+ * Note, unlike the grid coordinate representation of the entity, where the bottom left corner of the grid cell
+ * lines up with the bottom left corner of the entity, in the cartesian coordinate representation the entity is
+ * represented by a point at its center.
+ */
+Vec2 Scene_Play::gridToCartesianRepresentation(float gridX, float gridY, std::shared_ptr<Entity> entity)
 {
     sf::RenderWindow & window = m_game->window();
 
     sf::Sprite sprite = entity->getComponent<CAnimation>().animation.getSprite();
     const int heighGrid = window.getSize().y;
     const int widthGrid = window.getSize().x;
-    const int heightCell = m_gridSize.y;
-    const int widthCell = m_gridSize.x;
 
-    // grid to cartesian coordinates
-    float x_c = widthCell * (gridX);
-    float y_c = heighGrid - heightCell * (gridY);
+    // Bottom left corner of entity in cartesian coordinates (from grid coordinates)
+    const Vec2 bottomLeft(m_gridCellSize.x * (gridX), heighGrid - m_gridCellSize.y * (gridY));
 
-    // center of entity
-    float x_m = x_c + sprite.getGlobalBounds().width / 2;
-    float y_m = y_c - sprite.getGlobalBounds().height / 2;
+    // Center of entity
+    const Vec2 center(bottomLeft.x + sprite.getGlobalBounds().width / 2, bottomLeft.y - sprite.getGlobalBounds().height / 2);
 
-    return Vec2(x_m, y_m);
+    return center;
 }
 
 /**
@@ -84,7 +88,7 @@ void Scene_Play::loadLevel()
                 levelSpec >> animationName >> gx >> gy;
 
                 e->addComponent<CAnimation>(m_game->assets().getAnimation(animationName), true);
-                e->addComponent<CTransform>(gridToMidPixel(gx,gy,e));
+                e->addComponent<CTransform>(gridToCartesianRepresentation(gx,gy,e));
                 e->addComponent<CBoundingBox>(Vec2(64,64));
             }
             else if (type == "TileRangeHorizontal")
@@ -102,7 +106,7 @@ void Scene_Play::loadLevel()
                     auto e = m_entityManager.addEntity("Tile");
 
                     e->addComponent<CAnimation>(m_game->assets().getAnimation(animationName), true);
-                    e->addComponent<CTransform>(gridToMidPixel(currentGx,gy,e));
+                    e->addComponent<CTransform>(gridToCartesianRepresentation(currentGx,gy,e));
                     e->addComponent<CBoundingBox>(Vec2(64,64));
                 }
             }
@@ -121,7 +125,7 @@ void Scene_Play::loadLevel()
                     auto e = m_entityManager.addEntity("Tile");
 
                     e->addComponent<CAnimation>(m_game->assets().getAnimation(animationName), true);
-                    e->addComponent<CTransform>(gridToMidPixel(gx,currentGy,e));
+                    e->addComponent<CTransform>(gridToCartesianRepresentation(gx,currentGy,e));
                     e->addComponent<CBoundingBox>(Vec2(64,64));
                 }
             }
@@ -135,7 +139,7 @@ void Scene_Play::loadLevel()
                 levelSpec >> animationName >> gx >> gy;
 
                 e->addComponent<CAnimation>(m_game->assets().getAnimation(animationName), true);
-                e->addComponent<CTransform>(gridToMidPixel(gx,gy,e));
+                e->addComponent<CTransform>(gridToCartesianRepresentation(gx,gy,e));
             }
             else if (type == "DecorationRangeHorizontal")
             {
@@ -152,7 +156,7 @@ void Scene_Play::loadLevel()
                     auto e = m_entityManager.addEntity("Decoration");
 
                     e->addComponent<CAnimation>(m_game->assets().getAnimation(animationName), true);
-                    e->addComponent<CTransform>(gridToMidPixel(currentGx,gy,e));
+                    e->addComponent<CTransform>(gridToCartesianRepresentation(currentGx,gy,e));
                 }
             }
             else if (type == "DecorationRangeVertical")
@@ -170,7 +174,7 @@ void Scene_Play::loadLevel()
                     auto e = m_entityManager.addEntity("Decoration");
 
                     e->addComponent<CAnimation>(m_game->assets().getAnimation(animationName), true);
-                    e->addComponent<CTransform>(gridToMidPixel(gx,currentGy,e));
+                    e->addComponent<CTransform>(gridToCartesianRepresentation(gx,currentGy,e));
                 }
             }
             else if (type == "Player")
@@ -190,7 +194,7 @@ void Scene_Play::loadLevel()
 
                 auto e = m_entityManager.addEntity("Enemy");
                 e->addComponent<CAnimation>(m_game->assets().getAnimation("GoombaWalk"), true);
-                e->addComponent<CTransform>(gridToMidPixel(gx,gy,e));
+                e->addComponent<CTransform>(gridToCartesianRepresentation(gx,gy,e));
                 e->addComponent<CBoundingBox>(Vec2(64,64));
                 e->addComponent<CEnemy>();
                 e->getComponent<CTransform>().velocity.x = GOOMBA_WALK;
@@ -209,7 +213,7 @@ void Scene_Play::spawnPlayer()
 {
     auto player = m_entityManager.addEntity("Player");
     player->addComponent<CAnimation>(m_game->assets().getAnimation("MarioStand"), true);
-    player->addComponent<CTransform>(gridToMidPixel(4,7,player));
+    player->addComponent<CTransform>(gridToCartesianRepresentation(4,7,player));
     player->addComponent<CBoundingBox>(Vec2(64, 64));
     player->addComponent<CInput>();
     player->addComponent<CState>();
@@ -1150,8 +1154,8 @@ void Scene_Play::sRender()
     {
         const int heightWindow = window.getSize().y;
         const int widthWindow = window.getSize().x;
-        const int heightCell = m_gridSize.y;
-        const int widthCell = m_gridSize.x;
+        const int heightCell = m_gridCellSize.y;
+        const int widthCell = m_gridCellSize.x;
         const int MAP_WIDTH_BLOCKS = 400;
 
         // Draw grid vertical lines

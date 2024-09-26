@@ -79,12 +79,12 @@ private:
     bool m_drawTextures = true;
     bool m_drawCollision = false;
     bool m_drawGrid = false;
-    const Vec2 m_gridSize = { 64, 64 };
+    const Vec2 m_gridCellSize = { 64, 64 };
     sf::Text m_gridText;
     Vec2 m_cameraPosition; // relative to game map
 
     void init();
-    Vec2 gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity);
+    Vec2 gridToCartesianRepresentation(float gridX, float gridY, std::shared_ptr<Entity> entity);
     void loadLevel();
     
     void spawnPlayer();
