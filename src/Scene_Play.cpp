@@ -43,9 +43,9 @@ void Scene_Play::init()
  */
 Vec2 Scene_Play::gridToCartesianRepresentation(float gridX, float gridY, std::shared_ptr<Entity> entity)
 {
-    sf::Sprite sprite = entity->getComponent<CAnimation>().animation.getSprite();
+    const sf::FloatRect size = entity->getComponent<CAnimation>().animation.getSprite().getGlobalBounds();
 
-    return gridToCartesianRepresentation(Vec2(gridX,gridY), Vec2(sprite.getGlobalBounds().width, sprite.getGlobalBounds().height));
+    return gridToCartesianRepresentation(Vec2(gridX,gridY), Vec2(size.width, size.height));
 }
 
 /**
@@ -58,7 +58,7 @@ Vec2 Scene_Play::gridToCartesianRepresentation(float gridX, float gridY, std::sh
  */
 Vec2 Scene_Play::gridToCartesianRepresentation(Vec2 gridPos, Vec2 size)
 {
-    sf::RenderWindow & window = m_game->window();
+    const sf::RenderWindow & window = m_game->window();
     const int heighGrid = window.getSize().y;
     const int widthGrid = window.getSize().x;
 
