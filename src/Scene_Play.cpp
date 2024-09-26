@@ -309,15 +309,16 @@ void Scene_Play::sPlayerAnimation()
         nextAnimation = "MarioAir";
     }
 
-    std::string currentAnimation = cAnimation.animation.getName();
-    // Only change animations if previous animation is different from this frame animation
+    const std::string currentAnimation = cAnimation.animation.getName();
+    
+    // Only change animations if previous animation is different from this frame's animation
     if (currentAnimation != nextAnimation)
     {
         Animation next = m_game->assets().getAnimation(nextAnimation);
         if ((nextAnimation == "MarioRun" && currentAnimation == "MarioWalk") || (nextAnimation == "MarioWalk" && currentAnimation == "MarioRun"))
         {
             // For a smooth transition from walking to running, and running to walking
-            // (Both use exact same animation, but with different animation speeds.)
+            // (Both use exact same animation texture, but with different animation speeds.)
             next.setCurrentAnimationFrame(cAnimation.animation.getCurrentAnimationFrameIndex());
         }
         cAnimation.animation = next;
@@ -334,7 +335,7 @@ void Scene_Play::sPlayerAnimation()
 void Scene_Play::sAnimation()
 {
     sPlayerAnimation();
-    
+
     // Update animations
     for (auto e: m_entityManager.getEntities())
     {
