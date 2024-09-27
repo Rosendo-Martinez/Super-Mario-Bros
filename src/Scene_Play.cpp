@@ -74,7 +74,7 @@ Vec2 Scene_Play::gridToCartesianRepresentation(Vec2 gridPos, Vec2 size)
 /**
  * Creates Tile, and Decoration type entities.
  */
-void Scene_Play::createStaticEntity(std::string type, std::string animation, float gx, float gy)
+void Scene_Play::createStaticEntity(const std::string& type, const std::string& animation, float gx, float gy)
 {
     if (type != "Tile" && type != "Decoration")
     {
@@ -99,7 +99,7 @@ void Scene_Play::createStaticEntity(std::string type, std::string animation, flo
 /**
  * Creates Goomba type entities.
  */
-void Scene_Play::createEnemyEntity(std::string type, float gx, float gy, float activationDistance)
+void Scene_Play::createEnemyEntity(const std::string& type, float gx, float gy, float activationDistance)
 {
     if (type != "Goomba")
     {
