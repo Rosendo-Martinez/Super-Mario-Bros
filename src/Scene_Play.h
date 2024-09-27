@@ -35,6 +35,8 @@ private:
     // Utility functions
     Vec2 gridToCartesianRepresentation(float gridX, float gridY, std::shared_ptr<Entity> entity);
     Vec2 gridToCartesianRepresentation(Vec2 gridPos, Vec2 entitySize);
+    
+    void reloadLevel();
 
     // Player-related systems
     void sPlayerAirBorneMovement();

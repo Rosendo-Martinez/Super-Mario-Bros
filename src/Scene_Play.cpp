@@ -7,6 +7,19 @@
 #include "PhysicsConstants.h"
 
 /**
+ * Reloads the level.
+ * 
+ * Use after player gets killed by enemy or falls off the map.
+ */
+void Scene_Play::reloadLevel()
+{
+    m_entityManager = EntityManager();
+    loadLevel();
+    spawnPlayer();
+    m_cameraPosition = Vec2(0.f,0.f);
+}
+
+/**
  * Initializes the object. 
  * Should be called once and only once before any other class methods are called.
  */
@@ -258,7 +271,7 @@ void Scene_Play::update()
 
     if (!m_player->isActive())
     {
-        spawnPlayer();
+        reloadLevel();
     }
 
     // Call systems that calculate state of entities
