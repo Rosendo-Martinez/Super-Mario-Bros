@@ -1339,10 +1339,21 @@ void Scene_Play::sDoAction(const Action & action)
     }
 }
 
+/**
+ * NOT YET IMPLEMENTED.
+ * 
+ * Purpose is unkown.
+ */
 void Scene_Play::sDebug()
 {   
 }
 
-void Scene_Play::onEnd() // before scene ends change to menu scene
+/**
+ * NOT YET IMPLEMENTED.
+ * 
+ * Will be called when this scene is over.
+ * It will change the scene from Scene_Play to Scene_Menu.
+ */
+void Scene_Play::onEnd() 
 {
 }
