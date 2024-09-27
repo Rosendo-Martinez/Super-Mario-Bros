@@ -1032,11 +1032,12 @@ void Scene_Play::sPlayerCollision()
     }
 }
 
-void Scene_Play::sCollision()
+/**
+ * The enemy collision system.
+ */
+void Scene_Play::sEnemyCollision()
 {
-    sPlayerCollision();
-
-    // Enemy-block collisions 
+    // Enemy-Tile collisions (detection & resolution)
     for (auto enemy : m_entityManager.getEntities("Enemy"))
     {
         if (!enemy->getComponent<CEnemy>().isActive)
@@ -1077,7 +1078,7 @@ void Scene_Play::sCollision()
         }
     }
 
-    // Goomba-Goomba collisions
+    // Goomba-Goomba collisions (detection & resolution)
     for (auto goomba1 : m_entityManager.getEntities("Enemy"))
     {
         if (!goomba1->getComponent<CEnemy>().isActive)
@@ -1121,6 +1122,12 @@ void Scene_Play::sCollision()
             }
         }
     }
+}
+
+void Scene_Play::sCollision()
+{
+    sPlayerCollision();
+    sEnemyCollision();
 }
 
 void Scene_Play::sRender()
