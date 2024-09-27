@@ -1159,15 +1159,15 @@ void Scene_Play::sRender()
 {
     sf::RenderWindow & window = m_game->window();
     window.clear(sf::Color(97, 126, 248)); 
-
-    // Make camera follow player
-    m_cameraPosition.x = m_player->getComponent<CTransform>().pos.x - window.getSize().x/2;
-    // Make sure camera does not go out of left bound
-    if (m_cameraPosition.x < 0)
+    
+    // Update camera position
+    float newCameraPosX = m_player->getComponent<CTransform>().pos.x - window.getSize().x/2;
+    if (newCameraPosX < m_cameraPosition.x)
     {
-        m_cameraPosition.x = 0;
+        // Camera shouldn't move backwards
+        newCameraPosX = m_cameraPosition.x;
     }
-    // Make sure to render entities with positions relative to camera
+    m_cameraPosition.x = newCameraPosX;
 
     // Draw entities
     if (m_drawTextures)

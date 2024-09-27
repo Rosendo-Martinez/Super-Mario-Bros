@@ -81,7 +81,8 @@ private:
     bool m_drawGrid = false;
     const Vec2 m_gridCellSize = { 64, 64 };
     sf::Text m_gridText;
-    Vec2 m_cameraPosition; // relative to game map
+    // Top left corner of camera
+    Vec2 m_cameraPosition {0.f,0.f};
 
     void init();
     Vec2 gridToCartesianRepresentation(float gridX, float gridY, std::shared_ptr<Entity> entity);
