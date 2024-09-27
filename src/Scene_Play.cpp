@@ -577,6 +577,9 @@ void Scene_Play::sPlayerAirBorneMovement()
     cTransform.pos += cTransform.velocity;
 }
 
+/**
+ * Player grounded movement system.
+ */
 void Scene_Play::sPlayerGroundedMovement()
 {
     CInput& cInput         = m_player->getComponent<CInput>();
