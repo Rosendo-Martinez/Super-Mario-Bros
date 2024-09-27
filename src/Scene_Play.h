@@ -96,6 +96,7 @@ private:
     void sPlayerGroundedMovement();
     void sPlayerState();
     void sPlayerAnimation();
+    void sPlayerCollision();
 
 public:
     Scene_Play(GameEngine * gameEngine, const std::string & levelPath);

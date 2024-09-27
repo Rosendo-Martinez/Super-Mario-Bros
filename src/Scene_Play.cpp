@@ -792,7 +792,10 @@ void Scene_Play::sEnemyState()
     }
 }
 
-void Scene_Play::sCollision()
+/**
+ * The player collision system.
+ */
+void Scene_Play::sPlayerCollision()
 {
     // Basic idea behind player-block collisions is that the player only needs to resolve collisions for at most one block in each collision direction.
     // For example, if the player collides with 2 blocks and both collisions are from the left, then the player really only needs to do
@@ -992,6 +995,47 @@ void Scene_Play::sCollision()
         m_player->getComponent<CInput>().canJump = false;
     }
 
+    // Player-Goomba CD & CR
+    for (auto goomba : m_entityManager.getEntities("Enemy"))
+    {
+        if (!goomba->getComponent<CEnemy>().isActive)
+        {
+            continue;
+        }
+
+        Vec2 overlap = Physics::GetOverlap(m_player, goomba);
+        if (Physics::IsCollision(overlap))
+        {
+            CTransform& playerCT = m_player->getComponent<CTransform>();
+            Vec2 prevOverlap = Physics::GetPreviousOverlap(m_player, goomba);
+            bool isPlayerStompingGoomba = playerCT.velocity.y > 0 && !m_player->getComponent<CState>().isGrounded;
+            if (isPlayerStompingGoomba)
+            {
+                goomba->destroy();
+                playerCT.velocity.y = -m_jumpVK.GOOMBA_STOMP_VELOCITY;
+                playerCT.pos.y -= overlap.y;
+
+
+                // create a dead goomba add it to list "Dead Goombas"
+                // place it a original goombas location
+                auto stompedGoomba = m_entityManager.addEntity("Animation");
+                stompedGoomba->addComponent<CAnimation>(m_game->assets().getAnimation("GoombaDead"), false);
+                stompedGoomba->addComponent<CTransform>(goomba->getComponent<CTransform>().pos);
+                break;
+            }
+            else
+            {
+                m_player->destroy();
+                break;
+            }
+        }
+    }
+}
+
+void Scene_Play::sCollision()
+{
+    sPlayerCollision();
+
     // Enemy-block collisions 
     for (auto enemy : m_entityManager.getEntities("Enemy"))
     {
@@ -1029,42 +1073,6 @@ void Scene_Play::sCollision()
                     enemyCT.pos.x -= overlap.x;
                     enemyCT.velocity.x *= -1;
                 }
-            }
-        }
-    }
-
-    // Goomba-Player collision
-    for (auto goomba : m_entityManager.getEntities("Enemy"))
-    {
-        if (!goomba->getComponent<CEnemy>().isActive)
-        {
-            continue;
-        }
-
-        Vec2 overlap = Physics::GetOverlap(m_player, goomba);
-        if (Physics::IsCollision(overlap))
-        {
-            CTransform& playerCT = m_player->getComponent<CTransform>();
-            Vec2 prevOverlap = Physics::GetPreviousOverlap(m_player, goomba);
-            bool isPlayerStompingGoomba = playerCT.velocity.y > 0 && !m_player->getComponent<CState>().isGrounded;
-            if (isPlayerStompingGoomba)
-            {
-                goomba->destroy();
-                playerCT.velocity.y = -m_jumpVK.GOOMBA_STOMP_VELOCITY;
-                playerCT.pos.y -= overlap.y;
-
-
-                // create a dead goomba add it to list "Dead Goombas"
-                // place it a original goombas location
-                auto stompedGoomba = m_entityManager.addEntity("Animation");
-                stompedGoomba->addComponent<CAnimation>(m_game->assets().getAnimation("GoombaDead"), false);
-                stompedGoomba->addComponent<CTransform>(goomba->getComponent<CTransform>().pos);
-                break;
-            }
-            else
-            {
-                m_player->destroy();
-                break;
             }
         }
     }
