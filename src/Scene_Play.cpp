@@ -1274,86 +1274,68 @@ void Scene_Play::sRender()
     window.display();
 }
 
-void Scene_Play::sDoAction(const Action & action) // do the action
+/**
+ * Does the specified action.
+ * 
+ * Example:
+ * An action of type START and name TOGGLE_GRID will toggle the debug grid.
+ */
+void Scene_Play::sDoAction(const Action & action)
 {
+    // Toggle Actions
     if (action.type() == "START")
     {
         if (action.name() == "TOGGLE_GRID")
         {
             m_drawGrid = !m_drawGrid;
+            return;
         }
-
-        if (action.name() == "TOGGLE_BOUNDING_BOXES")
+        else if (action.name() == "TOGGLE_BOUNDING_BOXES")
         {
             m_drawCollision = !m_drawCollision;
+            return;
         }
 
-        if (action.name() == "TOGGLE_TEXTURES")
+        else if (action.name() == "TOGGLE_TEXTURES")
         {
             m_drawTextures = !m_drawTextures;
-        }
-
-        if (action.name() == "UP")
-        {
-            m_player->getComponent<CInput>().up = true;
-        }
-
-        if (action.name() == "DOWN")
-        {
-            m_player->getComponent<CInput>().down = true;
-        }
-
-        if (action.name() == "LEFT")
-        {
-            m_player->getComponent<CInput>().left = true;
-        }
-
-        if (action.name() == "RIGHT")
-        {
-            m_player->getComponent<CInput>().right = true;
-        }
-
-        if (action.name() == "RUN")
-        {
-            m_player->getComponent<CInput>().B = true;
-        }
-
-        if (action.name() == "JUMP")
-        {
-            m_player->getComponent<CInput>().A = true;
+            return;
         }
     }
-    else if (action.type() == "END")
+
+    bool newState;
+    if (action.type() == "START") // START
     {
-        if (action.name() == "UP")
-        {
-            m_player->getComponent<CInput>().up = false;
-        }
+        newState = true;
+    }
+    else // END
+    {
+        newState = false;
+    }
 
-        if (action.name() == "DOWN")
-        {
-            m_player->getComponent<CInput>().down = false;
-        }
-
-        if (action.name() == "LEFT")
-        {
-            m_player->getComponent<CInput>().left = false;
-        }
-
-        if (action.name() == "RIGHT")
-        {
-            m_player->getComponent<CInput>().right = false;
-        }
-
-        if (action.name() == "RUN")
-        {
-            m_player->getComponent<CInput>().B = false;
-        }
-
-        if (action.name() == "JUMP")
-        {
-            m_player->getComponent<CInput>().A = false;
-        }
+    if (action.name() == "UP")
+    {
+        m_player->getComponent<CInput>().up = newState;
+    }
+    else if (action.name() == "DOWN")
+    {
+        m_player->getComponent<CInput>().down = newState;
+    }
+    else if (action.name() == "LEFT")
+    {
+        m_player->getComponent<CInput>().left = newState;
+    }
+    else if (action.name() == "RIGHT")
+    {
+        m_player->getComponent<CInput>().right = newState;
+    }
+    else if (action.name() == "RUN")
+    {
+        m_player->getComponent<CInput>().B = newState;
+    }
+    else if (action.name() == "JUMP")
+    {
+        m_player->getComponent<CInput>().A = newState;
     }
 }
 
