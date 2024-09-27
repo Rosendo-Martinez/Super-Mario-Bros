@@ -358,13 +358,16 @@ void Scene_Play::sAnimation()
     }
 }
 
+/**
+ * Player state system.
+ */
 void Scene_Play::sPlayerState()
 {
     CState& cState = m_player->getComponent<CState>();
     const CInput& cInput = m_player->getComponent<CInput>();
     const CTransform& cTransform = m_player->getComponent<CTransform>();
 
-    const bool isAirborne = !cState.isGrounded;
+    const bool isAirborne      = !cState.isGrounded;
     const bool isPressingLeft  = cInput.left;
     const bool isPressingRight = cInput.right;
     const bool isStandingStill = cTransform.velocity.x == 0;
@@ -387,25 +390,25 @@ void Scene_Play::sPlayerState()
         const double maxXSpeed                    = isAboveInitialSpeedThresholdForVel ? m_airborneHK.ABOVE_IST_SPEED_LIMIT_VEL : m_airborneHK.BELLOW_ISP_SPEED_LIMIT_VEL;
         const bool isBellowMaxSpeed               = (cTransform.velocity.x < maxXSpeed) && (cTransform.velocity.x > -maxXSpeed);
 
-        isDeceleratingLeft              = (isMovingRight && isChangingMovementDirection);
-        isDeceleratingRight             = (isMovingLeft && isChangingMovementDirection);
-        isAcceleratingLeft              = (isPressingLeft && !isPressingRight) && (isMovingLeft || isStandingStill) && isBellowMaxSpeed;
-        isAcceleratingRight             = isPressingRight && !isPressingLeft && (isStandingStill || isMovingRight) && isBellowMaxSpeed;
+        isDeceleratingLeft  = (isMovingRight && isChangingMovementDirection);
+        isDeceleratingRight = (isMovingLeft && isChangingMovementDirection);
+        isAcceleratingLeft  = (isPressingLeft && !isPressingRight) && (isMovingLeft || isStandingStill) && isBellowMaxSpeed;
+        isAcceleratingRight = isPressingRight && !isPressingLeft && (isStandingStill || isMovingRight) && isBellowMaxSpeed;
     }
     else // grounded
     {
-        const bool isRunning                      = cInput.B;
-        const bool isAtMaxWalkSpeed               = cTransform.velocity.x == m_groundedHK.MAX_WALK_SPEED || cTransform.velocity.x == -m_groundedHK.MAX_WALK_SPEED;
-        const bool isAtMaxRunSpeed                = cTransform.velocity.x == m_groundedHK.MAX_RUN_SPEED || cTransform.velocity.x == -m_groundedHK.MAX_RUN_SPEED;
-        const bool isWalkingButPastMaxWalkSpeed   = (cTransform.velocity.x > m_groundedHK.MAX_WALK_SPEED || cTransform.velocity.x < -m_groundedHK.MAX_WALK_SPEED) && !isRunning;
-        const bool isChangingMovementDirection    = (isMovingLeft && (isPressingRight || !isPressingLeft)) || (isMovingRight && (isPressingLeft || !isPressingRight)); // stopping, or turning
-        const bool isSkiddingInPreviousFrame      = cState.isSkidding;
+        const bool isRunning                    = cInput.B;
+        const bool isAtMaxWalkSpeed             = cTransform.velocity.x == m_groundedHK.MAX_WALK_SPEED || cTransform.velocity.x == -m_groundedHK.MAX_WALK_SPEED;
+        const bool isAtMaxRunSpeed              = cTransform.velocity.x == m_groundedHK.MAX_RUN_SPEED || cTransform.velocity.x == -m_groundedHK.MAX_RUN_SPEED;
+        const bool isWalkingButPastMaxWalkSpeed = (cTransform.velocity.x > m_groundedHK.MAX_WALK_SPEED || cTransform.velocity.x < -m_groundedHK.MAX_WALK_SPEED) && !isRunning;
+        const bool isChangingMovementDirection  = (isMovingLeft && (isPressingRight || !isPressingLeft)) || (isMovingRight && (isPressingLeft || !isPressingRight)); // stopping, or turning
+        const bool isSkiddingInPreviousFrame    = cState.isSkidding;
         
-        isDeceleratingLeft              = (isMovingRight && (isChangingMovementDirection || isWalkingButPastMaxWalkSpeed));
-        isDeceleratingRight             = (isMovingLeft && (isChangingMovementDirection || isWalkingButPastMaxWalkSpeed));
-        isAcceleratingLeft              = (isPressingLeft && !isPressingRight) && (isMovingLeft || isStandingStill) && (!isAtMaxWalkSpeed || isRunning) && !isAtMaxRunSpeed && !isWalkingButPastMaxWalkSpeed;
-        isAcceleratingRight             = isPressingRight && !isPressingLeft && (isStandingStill || isMovingRight) && (!isAtMaxWalkSpeed || isRunning) && !isAtMaxRunSpeed && !isWalkingButPastMaxWalkSpeed;
-        isSkidding                      = ((isMovingRight && isPressingLeft && !isPressingRight) || (isMovingLeft && isPressingRight && !isPressingLeft)) || ((isDeceleratingLeft || isDeceleratingRight) && isSkiddingInPreviousFrame);
+        isDeceleratingLeft  = (isMovingRight && (isChangingMovementDirection || isWalkingButPastMaxWalkSpeed));
+        isDeceleratingRight = (isMovingLeft && (isChangingMovementDirection || isWalkingButPastMaxWalkSpeed));
+        isAcceleratingLeft  = (isPressingLeft && !isPressingRight) && (isMovingLeft || isStandingStill) && (!isAtMaxWalkSpeed || isRunning) && !isAtMaxRunSpeed && !isWalkingButPastMaxWalkSpeed;
+        isAcceleratingRight = isPressingRight && !isPressingLeft && (isStandingStill || isMovingRight) && (!isAtMaxWalkSpeed || isRunning) && !isAtMaxRunSpeed && !isWalkingButPastMaxWalkSpeed;
+        isSkidding          = ((isMovingRight && isPressingLeft && !isPressingRight) || (isMovingLeft && isPressingRight && !isPressingLeft)) || ((isDeceleratingLeft || isDeceleratingRight) && isSkiddingInPreviousFrame);
 
         if (isSkidding)
         {
