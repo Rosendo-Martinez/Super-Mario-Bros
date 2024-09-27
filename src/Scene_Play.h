@@ -10,17 +10,6 @@
 
 class Scene_Play : public Scene
 {
-    struct GROUNDED_HORIZONTAL_KINEMATICS {
-        const double MIN_WALK_SPEED           = 0.296875;
-        const double MAX_WALK_SPEED           = 6.25;
-        const double MAX_RUN_SPEED            = 10.25;
-        const double SKID_TURNAROUND_SPEED    = 2.25;
-        const double WALK_ACC                 = 0.1484375;
-        const double RUN_ACC                  = 0.22265625;
-        const double RELEASE_DEC              = 0.203125;
-        const double SKID_DEC                 = 0.40625;
-    };
-
     struct AIRBORNE_HORIZONTAL_KINEMATICS {
         const double CURRENT_SPEED_THRESHOLD_FOR_ACC = 6.25; // CST
         const double INITIAL_SPEED_THRESHOLD_FOR_ACC = 7.25; // IST
@@ -73,7 +62,6 @@ private:
     // Path to level specification file
     std::string m_levelPath;
     PlayerConfig m_playerConfig;
-    GROUNDED_HORIZONTAL_KINEMATICS m_groundedHK;
     AIRBORNE_HORIZONTAL_KINEMATICS m_airborneHK;
     AIRBORNE_VERTICAL_KINEMATICS m_jumpVK;
     bool m_drawTextures = true;

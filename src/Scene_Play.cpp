@@ -4,6 +4,7 @@
 #include <sstream> 
 #include <cmath>
 #include <fstream>
+#include "PhysicsConstants.h"
 
 /**
  * Initializes the object. 
@@ -107,7 +108,7 @@ void Scene_Play::createEnemyEntity(std::string type, float gx, float gy, float a
     }
 
     // Kinematic constantans
-    const float GOOMBA_WALK = -m_groundedHK.MAX_WALK_SPEED;
+    const float GOOMBA_WALK = -GROUNDED_HORIZONTAL_KINEMATICS::MAX_WALK_SPEED;
     const float GOOMBA_GRAVITY = m_jumpVK.GRAVITY_L;
 
     auto e = m_entityManager.addEntity("Enemy");
@@ -297,7 +298,7 @@ void Scene_Play::sPlayerAnimation()
         {
             nextAnimation = "MarioSkid";
         }
-        else if (cTransform.velocity.x > m_groundedHK.MAX_WALK_SPEED || cTransform.velocity.x < -m_groundedHK.MAX_WALK_SPEED) // running
+        else if (cTransform.velocity.x > GROUNDED_HORIZONTAL_KINEMATICS::MAX_WALK_SPEED || cTransform.velocity.x < -GROUNDED_HORIZONTAL_KINEMATICS::MAX_WALK_SPEED) // running
         {
             nextAnimation = "MarioRun";
         }
@@ -397,9 +398,9 @@ void Scene_Play::sPlayerState()
     else // grounded
     {
         const bool isRunning                    = cInput.B;
-        const bool isAtMaxWalkSpeed             = cTransform.velocity.x == m_groundedHK.MAX_WALK_SPEED || cTransform.velocity.x == -m_groundedHK.MAX_WALK_SPEED;
-        const bool isAtMaxRunSpeed              = cTransform.velocity.x == m_groundedHK.MAX_RUN_SPEED || cTransform.velocity.x == -m_groundedHK.MAX_RUN_SPEED;
-        const bool isWalkingButPastMaxWalkSpeed = (cTransform.velocity.x > m_groundedHK.MAX_WALK_SPEED || cTransform.velocity.x < -m_groundedHK.MAX_WALK_SPEED) && !isRunning;
+        const bool isAtMaxWalkSpeed             = cTransform.velocity.x == GROUNDED_HORIZONTAL_KINEMATICS::MAX_WALK_SPEED || cTransform.velocity.x == -GROUNDED_HORIZONTAL_KINEMATICS::MAX_WALK_SPEED;
+        const bool isAtMaxRunSpeed              = cTransform.velocity.x == GROUNDED_HORIZONTAL_KINEMATICS::MAX_RUN_SPEED || cTransform.velocity.x == -GROUNDED_HORIZONTAL_KINEMATICS::MAX_RUN_SPEED;
+        const bool isWalkingButPastMaxWalkSpeed = (cTransform.velocity.x > GROUNDED_HORIZONTAL_KINEMATICS::MAX_WALK_SPEED || cTransform.velocity.x < -GROUNDED_HORIZONTAL_KINEMATICS::MAX_WALK_SPEED) && !isRunning;
         const bool isChangingMovementDirection  = (isMovingLeft && (isPressingRight || !isPressingLeft)) || (isMovingRight && (isPressingLeft || !isPressingRight)); // stopping, or turning
         const bool isSkiddingInPreviousFrame    = cState.isSkidding;
         
@@ -604,20 +605,20 @@ void Scene_Play::sPlayerGroundedMovement()
     double accelerationX = 0;
     if (isRunning)
     {
-        accelerationX = m_groundedHK.RUN_ACC;
+        accelerationX = GROUNDED_HORIZONTAL_KINEMATICS::RUN_ACC;
     }
     else
     {
-        accelerationX = m_groundedHK.WALK_ACC;
+        accelerationX = GROUNDED_HORIZONTAL_KINEMATICS::WALK_ACC;
     }
     double decelerationX = 0;
     if (isSkidding) 
     {
-        decelerationX = m_groundedHK.SKID_DEC;
+        decelerationX = GROUNDED_HORIZONTAL_KINEMATICS::SKID_DEC;
     }
     else
     {
-        decelerationX = m_groundedHK.RELEASE_DEC;
+        decelerationX = GROUNDED_HORIZONTAL_KINEMATICS::RELEASE_DEC;
     }
 
     if (isDeceleratingRight)
@@ -644,41 +645,41 @@ void Scene_Play::sPlayerGroundedMovement()
     // Step 2: Use X acceleration to calculate X velocity
     cTransform.velocity.x += cTransform.acc_x;
 
-    const bool isPastMaxWalkSpeed      = cTransform.velocity.x > m_groundedHK.MAX_WALK_SPEED || cTransform.velocity.x < -m_groundedHK.MAX_WALK_SPEED;
-    const bool isPastMaxRunSpeed       = cTransform.velocity.x > m_groundedHK.MAX_RUN_SPEED || cTransform.velocity.x < -m_groundedHK.MAX_RUN_SPEED;
-    const bool isBellowMinWalkSpeed    = cTransform.velocity.x < m_groundedHK.MIN_WALK_SPEED && cTransform.velocity.x > -m_groundedHK.MIN_WALK_SPEED;
-    const bool isBellowTurnAroundSpeed = cTransform.velocity.x < m_groundedHK.SKID_TURNAROUND_SPEED && cTransform.velocity.x > -m_groundedHK.SKID_TURNAROUND_SPEED;
+    const bool isPastMaxWalkSpeed      = cTransform.velocity.x > GROUNDED_HORIZONTAL_KINEMATICS::MAX_WALK_SPEED || cTransform.velocity.x < -GROUNDED_HORIZONTAL_KINEMATICS::MAX_WALK_SPEED;
+    const bool isPastMaxRunSpeed       = cTransform.velocity.x > GROUNDED_HORIZONTAL_KINEMATICS::MAX_RUN_SPEED || cTransform.velocity.x < -GROUNDED_HORIZONTAL_KINEMATICS::MAX_RUN_SPEED;
+    const bool isBellowMinWalkSpeed    = cTransform.velocity.x < GROUNDED_HORIZONTAL_KINEMATICS::MIN_WALK_SPEED && cTransform.velocity.x > -GROUNDED_HORIZONTAL_KINEMATICS::MIN_WALK_SPEED;
+    const bool isBellowTurnAroundSpeed = cTransform.velocity.x < GROUNDED_HORIZONTAL_KINEMATICS::SKID_TURNAROUND_SPEED && cTransform.velocity.x > -GROUNDED_HORIZONTAL_KINEMATICS::SKID_TURNAROUND_SPEED;
 
     // Step 3: Apply speed limits or exception for X velocity
     // Mario is walking right and past max walk speed
     if (isPastMaxWalkSpeed && isAcceleratingRight && isWalking)
     {
-        cTransform.velocity.x = m_groundedHK.MAX_WALK_SPEED;
+        cTransform.velocity.x = GROUNDED_HORIZONTAL_KINEMATICS::MAX_WALK_SPEED;
     }
     // Mario is walking left and past max walk speed
     else if (isPastMaxWalkSpeed && isAcceleratingLeft && isWalking)
     {
-        cTransform.velocity.x = -m_groundedHK.MAX_WALK_SPEED;
+        cTransform.velocity.x = -GROUNDED_HORIZONTAL_KINEMATICS::MAX_WALK_SPEED;
     }
     // Mario is running right and past max run speed
     else if (isPastMaxRunSpeed && isAcceleratingRight && isRunning)
     {
-        cTransform.velocity.x = m_groundedHK.MAX_RUN_SPEED;   
+        cTransform.velocity.x = GROUNDED_HORIZONTAL_KINEMATICS::MAX_RUN_SPEED;   
     }
     // Mario is running left and past max run speed
     else if (isPastMaxRunSpeed && isAcceleratingLeft && isRunning)
     {
-        cTransform.velocity.x = -m_groundedHK.MAX_RUN_SPEED;   
+        cTransform.velocity.x = -GROUNDED_HORIZONTAL_KINEMATICS::MAX_RUN_SPEED;   
     }
     // Mario is accelerating right and is bellow min x speed
     else if (isBellowMinWalkSpeed && isAcceleratingRight)
     {
-        cTransform.velocity.x = m_groundedHK.MIN_WALK_SPEED;
+        cTransform.velocity.x = GROUNDED_HORIZONTAL_KINEMATICS::MIN_WALK_SPEED;
     }
     // Mario is accelerating left and is bellow min x speed
     else if (isBellowMinWalkSpeed && isAcceleratingLeft)
     {
-        cTransform.velocity.x = -m_groundedHK.MIN_WALK_SPEED;
+        cTransform.velocity.x = -GROUNDED_HORIZONTAL_KINEMATICS::MIN_WALK_SPEED;
     }
     // Mario is decelerating and is bellow min x speed
     else if ((isBellowMinWalkSpeed || (isBellowTurnAroundSpeed && isSkidding)) && (isDeceleratingLeft || isDeceleratingRight))
