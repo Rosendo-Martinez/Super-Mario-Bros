@@ -109,7 +109,7 @@ void Scene_Play::createEnemyEntity(std::string type, float gx, float gy, float a
 
     // Kinematic constantans
     const float GOOMBA_WALK = -GROUNDED_HORIZONTAL_KINEMATICS::MAX_WALK_SPEED;
-    const float GOOMBA_GRAVITY = m_jumpVK.GRAVITY_L;
+    const float GOOMBA_GRAVITY = AIRBORNE_VERTICAL_KINEMATICS::GRAVITY_L;
 
     auto e = m_entityManager.addEntity("Enemy");
 
@@ -230,7 +230,7 @@ void Scene_Play::spawnPlayer()
     player->addComponent<CState>();
     m_player = player;
 
-    m_player->getComponent<CTransform>().acc_y = m_jumpVK.GRAVITY_S;
+    m_player->getComponent<CTransform>().acc_y = AIRBORNE_VERTICAL_KINEMATICS::GRAVITY_S;
 }
 
 /**
@@ -542,24 +542,24 @@ void Scene_Play::sPlayerAirBorneMovement()
     }
     
     const bool isPressingJump                         = cInput.A;
-    const bool hadReducedGravity                      = (cTransform.acc_y == m_jumpVK.REDUCED_GRAVITY_S) || (cTransform.acc_y == m_jumpVK.REDUCED_GRAVITY_M);
+    const bool hadReducedGravity                      = (cTransform.acc_y == AIRBORNE_VERTICAL_KINEMATICS::REDUCED_GRAVITY_S) || (cTransform.acc_y == AIRBORNE_VERTICAL_KINEMATICS::REDUCED_GRAVITY_M);
     const bool isFalling                              = (cTransform.velocity.y >= 0);
     const bool isJustStartingNormalGravityPhaseOfJump = hadReducedGravity && (!isPressingJump || isFalling);
 
     // Step 4: Figure out Y acceleration
     if (isJustStartingNormalGravityPhaseOfJump)
     {
-        if (cTransform.acc_y == m_jumpVK.REDUCED_GRAVITY_S)
+        if (cTransform.acc_y == AIRBORNE_VERTICAL_KINEMATICS::REDUCED_GRAVITY_S)
         {
-            cTransform.acc_y = m_jumpVK.GRAVITY_S;
+            cTransform.acc_y = AIRBORNE_VERTICAL_KINEMATICS::GRAVITY_S;
         }
-        else if (cTransform.acc_y == m_jumpVK.REDUCED_GRAVITY_M)
+        else if (cTransform.acc_y == AIRBORNE_VERTICAL_KINEMATICS::REDUCED_GRAVITY_M)
         {
-            cTransform.acc_y = m_jumpVK.GRAVITY_M;
+            cTransform.acc_y = AIRBORNE_VERTICAL_KINEMATICS::GRAVITY_M;
         }
         else
         {
-            cTransform.acc_y = m_jumpVK.GRAVITY_L;
+            cTransform.acc_y = AIRBORNE_VERTICAL_KINEMATICS::GRAVITY_L;
         }
     }
 
@@ -567,9 +567,9 @@ void Scene_Play::sPlayerAirBorneMovement()
     cTransform.velocity.y += cTransform.acc_y;
 
     // Step 6: Apply speed limits or exception for Y velocity
-    if (cTransform.velocity.y > m_jumpVK.MAX_DOWNWARD_SPEED)
+    if (cTransform.velocity.y > AIRBORNE_VERTICAL_KINEMATICS::MAX_DOWNWARD_SPEED)
     {
-        cTransform.velocity.y = m_jumpVK.RESET_DOWNWARD_SPEED;
+        cTransform.velocity.y = AIRBORNE_VERTICAL_KINEMATICS::RESET_DOWNWARD_SPEED;
     }
 
     // Step 7: Use velocity to calculate player position
@@ -690,8 +690,8 @@ void Scene_Play::sPlayerGroundedMovement()
     const double xSpeed                  = cTransform.velocity.x;
     const bool canJump                   = cInput.canJump;
     const bool isPressingJump            = cInput.A;
-    const bool isAtSmallHorizontalSpeed  = (m_jumpVK.SMALL_SPEED_THRESHOLD > xSpeed) && (-m_jumpVK.SMALL_SPEED_THRESHOLD < xSpeed);
-    const bool isAtMediumHorizontalSpeed = (m_jumpVK.MEDIUM_SPEED_THRESHOLD >= xSpeed) && (-m_jumpVK.MEDIUM_SPEED_THRESHOLD <= xSpeed) && (!isAtSmallHorizontalSpeed);
+    const bool isAtSmallHorizontalSpeed  = (AIRBORNE_VERTICAL_KINEMATICS::SMALL_SPEED_THRESHOLD > xSpeed) && (-AIRBORNE_VERTICAL_KINEMATICS::SMALL_SPEED_THRESHOLD < xSpeed);
+    const bool isAtMediumHorizontalSpeed = (AIRBORNE_VERTICAL_KINEMATICS::MEDIUM_SPEED_THRESHOLD >= xSpeed) && (-AIRBORNE_VERTICAL_KINEMATICS::MEDIUM_SPEED_THRESHOLD <= xSpeed) && (!isAtSmallHorizontalSpeed);
     const bool isJustStartingJump        = canJump && isPressingJump;
 
     // Step 4: Check if player is about to jump
@@ -699,15 +699,15 @@ void Scene_Play::sPlayerGroundedMovement()
     {
         if (isAtSmallHorizontalSpeed)
         {
-            cTransform.acc_y = m_jumpVK.REDUCED_GRAVITY_S;
+            cTransform.acc_y = AIRBORNE_VERTICAL_KINEMATICS::REDUCED_GRAVITY_S;
         }
         else if (isAtMediumHorizontalSpeed)
         {
-            cTransform.acc_y = m_jumpVK.REDUCED_GRAVITY_M;
+            cTransform.acc_y = AIRBORNE_VERTICAL_KINEMATICS::REDUCED_GRAVITY_M;
         }
         else
         {
-            cTransform.acc_y = m_jumpVK.REDUCED_GRAVITY_L;
+            cTransform.acc_y = AIRBORNE_VERTICAL_KINEMATICS::REDUCED_GRAVITY_L;
         }
     }
 
@@ -719,15 +719,15 @@ void Scene_Play::sPlayerGroundedMovement()
     {
         if (isAtSmallHorizontalSpeed)
         {
-            cTransform.velocity.y = -m_jumpVK.INITIAL_VELOCITY_S;
+            cTransform.velocity.y = -AIRBORNE_VERTICAL_KINEMATICS::INITIAL_VELOCITY_S;
         }
         else if (isAtMediumHorizontalSpeed)
         {
-            cTransform.velocity.y = -m_jumpVK.INITIAL_VELOCITY_M;
+            cTransform.velocity.y = -AIRBORNE_VERTICAL_KINEMATICS::INITIAL_VELOCITY_M;
         }
         else
         {
-            cTransform.velocity.y = -m_jumpVK.INITIAL_VELOCITY_L;
+            cTransform.velocity.y = -AIRBORNE_VERTICAL_KINEMATICS::INITIAL_VELOCITY_L;
         }
 
         cInput.canJump = false;
@@ -1012,7 +1012,7 @@ void Scene_Play::sPlayerCollision()
             if (isPlayerStompingGoomba)
             {
                 goomba->destroy();
-                playerCT.velocity.y = -m_jumpVK.GOOMBA_STOMP_VELOCITY;
+                playerCT.velocity.y = -AIRBORNE_VERTICAL_KINEMATICS::GOOMBA_STOMP_VELOCITY;
                 playerCT.pos.y -= overlap.y;
 
 

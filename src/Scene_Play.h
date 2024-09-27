@@ -26,32 +26,6 @@ class Scene_Play : public Scene
         const double ABOVE_IST_SPEED_LIMIT_VEL = 10.25; // Speed limit if mario started airborne at x speed above CST
     };
 
-    struct AIRBORNE_VERTICAL_KINEMATICS {
-        const double SMALL_SPEED_THRESHOLD = 4; // SST
-        const double MEDIUM_SPEED_THRESHOLD = 9.2490234375; // MST
-        const double LARGE_SPEED_THRESHOLD = 9.25; // LST
-
-        // < SST
-        const double INITIAL_VELOCITY_S = 16;
-        const double REDUCED_GRAVITY_S = 0.5;
-        const double GRAVITY_S = 1.75;
-
-        // >= SST AND <= MST
-        const double INITIAL_VELOCITY_M = 16;
-        const double REDUCED_GRAVITY_M = 0.46875;
-        const double GRAVITY_M = 1.5;
-
-        // >= LST
-        const double INITIAL_VELOCITY_L = 20;
-        const double REDUCED_GRAVITY_L = 0.625;
-        const double GRAVITY_L = 2.25;
-
-        const double MAX_DOWNWARD_SPEED = 18; // Max speed mario can move downward
-        const double RESET_DOWNWARD_SPEED = 16; // Speed to reset to when mario exceeds max downward speed
-
-        const double GOOMBA_STOMP_VELOCITY = 17.25;
-    };
-
     struct PlayerConfig {
         float X, Y, CX, CY, SPEED, MAX_SPEED, JUMP, GRAVITY;
         std::string WEAPON;
@@ -63,7 +37,6 @@ private:
     std::string m_levelPath;
     PlayerConfig m_playerConfig;
     AIRBORNE_HORIZONTAL_KINEMATICS m_airborneHK;
-    AIRBORNE_VERTICAL_KINEMATICS m_jumpVK;
     bool m_drawTextures = true;
     bool m_drawCollision = false;
     bool m_drawGrid = false;
