@@ -5,11 +5,10 @@
 #include <cmath>
 #include <fstream>
 
-/*
-Initializes the object. 
-
-Should be called once and only once before any other class methods are called.
-*/
+/**
+ * Initializes the object. 
+ * Should be called once and only once before any other class methods are called.
+ */
 void Scene_Play::init()
 {
     // Bind keyboard keys to actions
