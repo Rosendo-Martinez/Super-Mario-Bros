@@ -1134,13 +1134,13 @@ void Scene_Play::sCollision()
 }
 
 /**
- * Renders the entities with the given type.
+ * Renders the given entities to the window.
  */
-void Scene_Play::sRenderEntities(std::string type)
+void Scene_Play::sRenderEntities(EntityVec & entities)
 {
     sf::RenderWindow & window = m_game->window();
 
-    for (auto e : m_entityManager.getEntities(type))
+    for (auto e : entities)
     {
         Vec2 pos = e->getComponent<CTransform>().pos - m_cameraPosition;
         Vec2 scale = e->getComponent<CTransform>().scale;
@@ -1172,11 +1172,12 @@ void Scene_Play::sRender()
     // Draw entities
     if (m_drawTextures)
     {
-        sRenderEntities("Decoration");
-        sRenderEntities("Tile");
-        sRenderEntities("Enemy");
-        sRenderEntities("Animation");
-        sRenderEntities("Player");
+        // Rendering order
+        sRenderEntities(m_entityManager.getEntities("Decoration"));
+        sRenderEntities(m_entityManager.getEntities("Tile"));
+        sRenderEntities(m_entityManager.getEntities("Enemy"));
+        sRenderEntities(m_entityManager.getEntities("Animation"));
+        sRenderEntities(m_entityManager.getEntities("Player"));
     }
 
     // Draw Bounding Boxes

@@ -98,7 +98,7 @@ private:
     void sPlayerAnimation();
     void sPlayerCollision();
     void sEnemyCollision();
-    void sRenderEntities(std::string type);
+    void sRenderEntities(EntityVec & entities);
 
 public:
     Scene_Play(GameEngine * gameEngine, const std::string & levelPath);
