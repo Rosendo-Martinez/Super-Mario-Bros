@@ -1153,6 +1153,90 @@ void Scene_Play::sRenderEntities(EntityVec & entities)
 }
 
 /**
+ * Renders bounding boxes for all entities.
+ */
+void Scene_Play::sRenderBoundingBoxes()
+{
+    sf::RenderWindow & window = m_game->window();
+
+    for (auto e : m_entityManager.getEntities())
+    {
+        Vec2 pos = e->getComponent<CTransform>().pos - m_cameraPosition;
+        Vec2 size = e->getComponent<CBoundingBox>().size;
+        sf::RectangleShape bb(sf::Vector2f(size.x,size.y));
+
+        bb.setPosition(sf::Vector2f(pos.x - size.x/2, pos.y - size.y/2));
+        bb.setFillColor(sf::Color(0,0,0,0));
+        bb.setOutlineColor(sf::Color::White);
+        bb.setOutlineThickness(1.f);
+
+        window.draw(bb);
+    }
+}
+
+/**
+ * Renders debugging grid.
+ */
+void Scene_Play::sRenderDebugGrid()
+{
+    sf::RenderWindow & window = m_game->window();
+
+    const int heightWindow = window.getSize().y;
+    const int widthWindow = window.getSize().x;
+    const int heightCell = m_gridCellSize.y;
+    const int widthCell = m_gridCellSize.x;
+    const int MAP_WIDTH_BLOCKS = 400;
+
+    // Draw grid vertical lines
+    const int verticalLines = ceil((float) widthWindow / widthCell);
+    for (int i = 0; i < MAP_WIDTH_BLOCKS; i++) 
+    {
+        int x = widthCell * (i + 1) - m_cameraPosition.x;
+        sf::VertexArray line(sf::Lines, 2);
+
+        line[0].position = sf::Vector2f(x, 0);
+        line[1].position = sf::Vector2f(x, heightWindow);
+        line[0].color = sf::Color::White;
+        line[1].color = sf::Color::White;
+
+        window.draw(line);
+    }
+
+    // Draw grid horizontal lines
+    const int horizontalLines = ceil((float) heightWindow / heightCell);
+    for (int i = 0; i < horizontalLines; i++)
+    {
+        int y = heightWindow - heightCell * (i + 1);
+        sf::VertexArray line(sf::Lines, 2);
+
+        line[0].position = sf::Vector2f(0, y);
+        line[1].position = sf::Vector2f(widthWindow, y);
+        line[0].color = sf::Color::White;
+        line[1].color = sf::Color::White;
+
+        window.draw(line);
+    }
+
+    // Draw grid coordinates
+    for (int gx = 0; gx < MAP_WIDTH_BLOCKS; gx++)
+    {
+        for (int gy = 0; gy < horizontalLines; gy++)
+        {
+            std::ostringstream oss;
+            oss << "(" << gx << "," << gy << ")";
+            m_gridText.setString(oss.str());
+
+            // relative to top left of window
+            int x = widthCell * gx - m_cameraPosition.x;
+            int y = heightWindow - (heightCell * (gy + 1));
+            m_gridText.setPosition(sf::Vector2f(x, y));
+            
+            window.draw(m_gridText);
+        }
+    }
+}
+
+/**
  * The render system.
  */
 void Scene_Play::sRender()
@@ -1169,7 +1253,6 @@ void Scene_Play::sRender()
     }
     m_cameraPosition.x = newCameraPosX;
 
-    // Draw entities
     if (m_drawTextures)
     {
         // Rendering order
@@ -1179,81 +1262,13 @@ void Scene_Play::sRender()
         sRenderEntities(m_entityManager.getEntities("Animation"));
         sRenderEntities(m_entityManager.getEntities("Player"));
     }
-
-    // Draw Bounding Boxes
     if (m_drawCollision)
     {
-        for (auto e : m_entityManager.getEntities())
-        {
-            Vec2 pos = e->getComponent<CTransform>().pos - m_cameraPosition;
-            Vec2 size = e->getComponent<CBoundingBox>().size;
-            sf::RectangleShape bb(sf::Vector2f(size.x,size.y));
-
-            bb.setPosition(sf::Vector2f(pos.x - size.x/2, pos.y - size.y/2));
-            bb.setFillColor(sf::Color(0,0,0,0));
-            bb.setOutlineColor(sf::Color::White);
-            bb.setOutlineThickness(1.f);
-
-            window.draw(bb);
-        }
+        sRenderBoundingBoxes();
     }
-
     if (m_drawGrid)
     {
-        const int heightWindow = window.getSize().y;
-        const int widthWindow = window.getSize().x;
-        const int heightCell = m_gridCellSize.y;
-        const int widthCell = m_gridCellSize.x;
-        const int MAP_WIDTH_BLOCKS = 400;
-
-        // Draw grid vertical lines
-        const int verticalLines = ceil((float) widthWindow / widthCell);
-        for (int i = 0; i < MAP_WIDTH_BLOCKS; i++) 
-        {
-            int x = widthCell * (i + 1) - m_cameraPosition.x;
-            sf::VertexArray line(sf::Lines, 2);
-
-            line[0].position = sf::Vector2f(x, 0);
-            line[1].position = sf::Vector2f(x, heightWindow);
-            line[0].color = sf::Color::White;
-            line[1].color = sf::Color::White;
-
-            window.draw(line);
-        }
-
-        // Draw grid horizontal lines
-        const int horizontalLines = ceil((float) heightWindow / heightCell);
-        for (int i = 0; i < horizontalLines; i++)
-        {
-            int y = heightWindow - heightCell * (i + 1);
-            sf::VertexArray line(sf::Lines, 2);
-
-            line[0].position = sf::Vector2f(0, y);
-            line[1].position = sf::Vector2f(widthWindow, y);
-            line[0].color = sf::Color::White;
-            line[1].color = sf::Color::White;
-
-            window.draw(line);
-        }
-
-        // Draw grid coordinates
-        for (int gx = 0; gx < MAP_WIDTH_BLOCKS; gx++)
-        {
-            for (int gy = 0; gy < horizontalLines; gy++)
-            {
-                std::ostringstream oss;
-                oss << "(" << gx << "," << gy << ")";
-                m_gridText.setString(oss.str());
-
-                // relative to top left of window
-                int x = widthCell * gx - m_cameraPosition.x;
-                int y = heightWindow - (heightCell * (gy + 1));
-                m_gridText.setPosition(sf::Vector2f(x, y));
-                
-                window.draw(m_gridText);
-            }
-        }
-
+        sRenderDebugGrid();
     }
 
     window.display();

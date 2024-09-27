@@ -100,6 +100,8 @@ private:
     void sPlayerCollision();
     void sEnemyCollision();
     void sRenderEntities(EntityVec & entities);
+    void sRenderBoundingBoxes();
+    void sRenderDebugGrid();
 
 public:
     Scene_Play(GameEngine * gameEngine, const std::string & levelPath);
