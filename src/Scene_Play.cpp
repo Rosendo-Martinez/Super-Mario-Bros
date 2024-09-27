@@ -1142,11 +1142,11 @@ void Scene_Play::sRenderEntities(EntityVec & entities)
 
     for (auto e : entities)
     {
-        Vec2 pos = e->getComponent<CTransform>().pos - m_cameraPosition;
-        Vec2 scale = e->getComponent<CTransform>().scale;
+        const Vec2 posRelativeToCamera = e->getComponent<CTransform>().pos - m_cameraPosition;
+        const Vec2 scale = e->getComponent<CTransform>().scale;
         sf::Sprite & sprite = e->getComponent<CAnimation>().animation.getSprite();
 
-        sprite.setPosition(sf::Vector2f(pos.x,pos.y));
+        sprite.setPosition(sf::Vector2f(posRelativeToCamera.x,posRelativeToCamera.y));
         sprite.setScale(sf::Vector2f(scale.x, scale.y));
         window.draw(sprite);
     }
