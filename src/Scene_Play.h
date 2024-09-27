@@ -10,22 +10,6 @@
 
 class Scene_Play : public Scene
 {
-    struct AIRBORNE_HORIZONTAL_KINEMATICS {
-        const double CURRENT_SPEED_THRESHOLD_FOR_ACC = 6.25; // CST
-        const double INITIAL_SPEED_THRESHOLD_FOR_ACC = 7.25; // IST
-
-        const double BELOW_CST_ACC = 0.1484375; // Acceleration when current speed < CST
-        const double ABOVE_CST_ACC = 0.22265625; // Acceleration when current speed >= CST
-
-        const double ABOVE_CST_DEC = 0.22265625;  // Deceleration when current speed >= CST
-        const double ABOVE_IST_DEC = 0.203125; // Deceleration when IST <= current speed < CST
-        const double BELOW_IST_DEC = 0.1484375; // Deceleration when current speed < IST
-
-        const double INITIAL_SPEED_THRESHOLD_FOR_VEL = 6.25;
-        const double BELLOW_ISP_SPEED_LIMIT_VEL = 6.25; // Speed limit if mario started airborne at x speed bellow CST
-        const double ABOVE_IST_SPEED_LIMIT_VEL = 10.25; // Speed limit if mario started airborne at x speed above CST
-    };
-
     struct PlayerConfig {
         float X, Y, CX, CY, SPEED, MAX_SPEED, JUMP, GRAVITY;
         std::string WEAPON;
@@ -36,7 +20,6 @@ private:
     // Path to level specification file
     std::string m_levelPath;
     PlayerConfig m_playerConfig;
-    AIRBORNE_HORIZONTAL_KINEMATICS m_airborneHK;
     bool m_drawTextures = true;
     bool m_drawCollision = false;
     bool m_drawGrid = false;

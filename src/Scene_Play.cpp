@@ -386,8 +386,8 @@ void Scene_Play::sPlayerState()
     if (isAirborne)
     {
         const bool isChangingMovementDirection    = (isMovingLeft && (isPressingRight && !isPressingLeft)) || (isMovingRight && (isPressingLeft && !isPressingRight)); // turning only, doesn't include stopping
-        const bool isAboveInitialSpeedThresholdForVel = (cState.initialJumpXSpeed <= -m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_VEL || cState.initialJumpXSpeed >= m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_VEL);
-        const double maxXSpeed                    = isAboveInitialSpeedThresholdForVel ? m_airborneHK.ABOVE_IST_SPEED_LIMIT_VEL : m_airborneHK.BELLOW_ISP_SPEED_LIMIT_VEL;
+        const bool isAboveInitialSpeedThresholdForVel = (cState.initialJumpXSpeed <= -AIRBORNE_HORIZONTAL_KINEMATICS::INITIAL_SPEED_THRESHOLD_FOR_VEL || cState.initialJumpXSpeed >= AIRBORNE_HORIZONTAL_KINEMATICS::INITIAL_SPEED_THRESHOLD_FOR_VEL);
+        const double maxXSpeed                    = isAboveInitialSpeedThresholdForVel ? AIRBORNE_HORIZONTAL_KINEMATICS::ABOVE_IST_SPEED_LIMIT_VEL : AIRBORNE_HORIZONTAL_KINEMATICS::BELLOW_ISP_SPEED_LIMIT_VEL;
         const bool isBellowMaxSpeed               = (cTransform.velocity.x < maxXSpeed) && (cTransform.velocity.x > -maxXSpeed);
 
         isDeceleratingLeft  = (isMovingRight && isChangingMovementDirection);
@@ -465,32 +465,32 @@ void Scene_Play::sPlayerAirBorneMovement()
     const CInput& cInput    = m_player->getComponent<CInput>();
     const CState& cState    = m_player->getComponent<CState>();
 
-    const bool isAboveInitialSpeedThresholdForVel = (cState.initialJumpXSpeed <= -m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_VEL || cState.initialJumpXSpeed >= m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_VEL);
-    const bool isAboveCurrentSpeedThresholdForAcc = (cTransform.velocity.x <= -m_airborneHK.CURRENT_SPEED_THRESHOLD_FOR_ACC || cTransform.velocity.x >= m_airborneHK.CURRENT_SPEED_THRESHOLD_FOR_ACC);
-    const bool isAboveInitialSpeedThresholdForAcc = (cState.initialJumpXSpeed <= -m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_ACC || cState.initialJumpXSpeed >= m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_ACC);
+    const bool isAboveInitialSpeedThresholdForVel = (cState.initialJumpXSpeed <= -AIRBORNE_HORIZONTAL_KINEMATICS::INITIAL_SPEED_THRESHOLD_FOR_VEL || cState.initialJumpXSpeed >= AIRBORNE_HORIZONTAL_KINEMATICS::INITIAL_SPEED_THRESHOLD_FOR_VEL);
+    const bool isAboveCurrentSpeedThresholdForAcc = (cTransform.velocity.x <= -AIRBORNE_HORIZONTAL_KINEMATICS::CURRENT_SPEED_THRESHOLD_FOR_ACC || cTransform.velocity.x >= AIRBORNE_HORIZONTAL_KINEMATICS::CURRENT_SPEED_THRESHOLD_FOR_ACC);
+    const bool isAboveInitialSpeedThresholdForAcc = (cState.initialJumpXSpeed <= -AIRBORNE_HORIZONTAL_KINEMATICS::INITIAL_SPEED_THRESHOLD_FOR_ACC || cState.initialJumpXSpeed >= AIRBORNE_HORIZONTAL_KINEMATICS::INITIAL_SPEED_THRESHOLD_FOR_ACC);
 
     // Step 1: Figure out X acceleration for current frame
     double accelerationX = 0;
     if (isAboveCurrentSpeedThresholdForAcc)
     {
-        accelerationX = m_airborneHK.ABOVE_CST_ACC;
+        accelerationX = AIRBORNE_HORIZONTAL_KINEMATICS::ABOVE_CST_ACC;
     }
     else
     {
-        accelerationX = m_airborneHK.BELOW_CST_ACC;
+        accelerationX = AIRBORNE_HORIZONTAL_KINEMATICS::BELOW_CST_ACC;
     }
     double decelerationX = 0;
     if (isAboveCurrentSpeedThresholdForAcc)
     {
-        decelerationX = m_airborneHK.ABOVE_CST_DEC;
+        decelerationX = AIRBORNE_HORIZONTAL_KINEMATICS::ABOVE_CST_DEC;
     }
     else if (isAboveInitialSpeedThresholdForAcc)
     {
-        decelerationX = m_airborneHK.ABOVE_IST_DEC;
+        decelerationX = AIRBORNE_HORIZONTAL_KINEMATICS::ABOVE_IST_DEC;
     }
     else
     {
-        decelerationX = m_airborneHK.BELOW_IST_DEC;
+        decelerationX = AIRBORNE_HORIZONTAL_KINEMATICS::BELOW_IST_DEC;
     }
 
     if (cState.acceleration == Acceleration::ACCELERATING_LEFT)
@@ -520,24 +520,24 @@ void Scene_Play::sPlayerAirBorneMovement()
     // Step 3: Apply speed limits or exception for X velocity
     if (isAboveInitialSpeedThresholdForVel)
     {
-        if (cTransform.velocity.x > m_airborneHK.ABOVE_IST_SPEED_LIMIT_VEL)
+        if (cTransform.velocity.x > AIRBORNE_HORIZONTAL_KINEMATICS::ABOVE_IST_SPEED_LIMIT_VEL)
         {
-            cTransform.velocity.x = m_airborneHK.ABOVE_IST_SPEED_LIMIT_VEL;
+            cTransform.velocity.x = AIRBORNE_HORIZONTAL_KINEMATICS::ABOVE_IST_SPEED_LIMIT_VEL;
         }
-        else if (cTransform.velocity.x < -m_airborneHK.ABOVE_IST_SPEED_LIMIT_VEL)
+        else if (cTransform.velocity.x < -AIRBORNE_HORIZONTAL_KINEMATICS::ABOVE_IST_SPEED_LIMIT_VEL)
         {
-            cTransform.velocity.x = -m_airborneHK.ABOVE_IST_SPEED_LIMIT_VEL;
+            cTransform.velocity.x = -AIRBORNE_HORIZONTAL_KINEMATICS::ABOVE_IST_SPEED_LIMIT_VEL;
         }
     }
     else
     {
-        if (cTransform.velocity.x > m_airborneHK.BELLOW_ISP_SPEED_LIMIT_VEL)
+        if (cTransform.velocity.x > AIRBORNE_HORIZONTAL_KINEMATICS::BELLOW_ISP_SPEED_LIMIT_VEL)
         {
-            cTransform.velocity.x = m_airborneHK.BELLOW_ISP_SPEED_LIMIT_VEL;
+            cTransform.velocity.x = AIRBORNE_HORIZONTAL_KINEMATICS::BELLOW_ISP_SPEED_LIMIT_VEL;
         }
-        else if (cTransform.velocity.x < -m_airborneHK.BELLOW_ISP_SPEED_LIMIT_VEL)
+        else if (cTransform.velocity.x < -AIRBORNE_HORIZONTAL_KINEMATICS::BELLOW_ISP_SPEED_LIMIT_VEL)
         {
-            cTransform.velocity.x = -m_airborneHK.BELLOW_ISP_SPEED_LIMIT_VEL;
+            cTransform.velocity.x = -AIRBORNE_HORIZONTAL_KINEMATICS::BELLOW_ISP_SPEED_LIMIT_VEL;
         }
     }
     
