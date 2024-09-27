@@ -104,7 +104,7 @@ public:
 
     void sAnimation();
     void sMovement();
-    void sEnemy();
+    void sEnemyState();
     void sCollision();
     void sRender();
     void sDoAction(const Action & action); // do the action

@@ -262,7 +262,7 @@ void Scene_Play::update()
     }
 
     // Call systems that calculate state of entities
-    sEnemy();
+    sEnemyState();
     sPlayerState();
 
     // Call systems that depend on entity state
@@ -740,6 +740,9 @@ void Scene_Play::sPlayerGroundedMovement()
     cTransform.pos += cTransform.velocity;
 }
 
+/**
+ * The movement system.
+ */
 void Scene_Play::sMovement()
 {
     // Handle player movement
@@ -755,7 +758,7 @@ void Scene_Play::sMovement()
     // Handle enemy movement
     for (auto e : m_entityManager.getEntities("Enemy"))
     {
-        // Enemies are activated when player comes within a certain range
+        // Inactive Goombas can't move
         if (!e->getComponent<CEnemy>().isActive)
         {
             continue;
@@ -774,10 +777,14 @@ void Scene_Play::sMovement()
     }
 }
 
-void Scene_Play::sEnemy()
+/**
+ * The enemy state system.
+ */
+void Scene_Play::sEnemyState()
 {
     for (auto goomba : m_entityManager.getEntities("Enemy"))
     {
+        // Goombas are activated when player comes within a certain range
         if (goomba->getComponent<CEnemy>().activation_x <= m_player->getComponent<CTransform>().pos.x)
         {
             goomba->getComponent<CEnemy>().isActive = true;
