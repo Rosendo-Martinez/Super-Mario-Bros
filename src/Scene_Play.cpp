@@ -1124,12 +1124,37 @@ void Scene_Play::sEnemyCollision()
     }
 }
 
+/**
+ * The collision system.
+ */
 void Scene_Play::sCollision()
 {
     sPlayerCollision();
     sEnemyCollision();
 }
 
+/**
+ * Renders the entities with the given type.
+ */
+void Scene_Play::sRenderEntities(std::string type)
+{
+    sf::RenderWindow & window = m_game->window();
+
+    for (auto e : m_entityManager.getEntities(type))
+    {
+        Vec2 pos = e->getComponent<CTransform>().pos - m_cameraPosition;
+        Vec2 scale = e->getComponent<CTransform>().scale;
+        sf::Sprite & sprite = e->getComponent<CAnimation>().animation.getSprite();
+
+        sprite.setPosition(sf::Vector2f(pos.x,pos.y));
+        sprite.setScale(sf::Vector2f(scale.x, scale.y));
+        window.draw(sprite);
+    }
+}
+
+/**
+ * The render system.
+ */
 void Scene_Play::sRender()
 {
     sf::RenderWindow & window = m_game->window();
@@ -1147,60 +1172,11 @@ void Scene_Play::sRender()
     // Draw entities
     if (m_drawTextures)
     {
-        for (auto e : m_entityManager.getEntities("Decoration"))
-        {
-            Vec2 pos = e->getComponent<CTransform>().pos - m_cameraPosition;
-            Vec2 scale = e->getComponent<CTransform>().scale;
-            sf::Sprite & sprite = e->getComponent<CAnimation>().animation.getSprite();
-
-            sprite.setPosition(sf::Vector2f(pos.x,pos.y));
-            sprite.setScale(sf::Vector2f(scale.x, scale.y));
-            window.draw(sprite);
-        }
-
-        for (auto e : m_entityManager.getEntities("Tile"))
-        {
-            Vec2 pos = e->getComponent<CTransform>().pos - m_cameraPosition;
-            Vec2 scale = e->getComponent<CTransform>().scale;
-            sf::Sprite & sprite = e->getComponent<CAnimation>().animation.getSprite();
-
-            sprite.setPosition(sf::Vector2f(pos.x,pos.y));
-            sprite.setScale(sf::Vector2f(scale.x, scale.y));
-            window.draw(sprite);
-        }
-
-        for (auto e : m_entityManager.getEntities("Enemy"))
-        {
-            Vec2 pos = e->getComponent<CTransform>().pos - m_cameraPosition;
-            Vec2 scale = e->getComponent<CTransform>().scale;
-            sf::Sprite & sprite = e->getComponent<CAnimation>().animation.getSprite();
-
-            sprite.setPosition(sf::Vector2f(pos.x,pos.y));
-            sprite.setScale(sf::Vector2f(scale.x, scale.y));
-            window.draw(sprite);
-        }
-
-        for (auto e : m_entityManager.getEntities("Animation"))
-        {
-            Vec2 pos = e->getComponent<CTransform>().pos - m_cameraPosition;
-            Vec2 scale = e->getComponent<CTransform>().scale;
-            sf::Sprite & sprite = e->getComponent<CAnimation>().animation.getSprite();
-
-            sprite.setPosition(sf::Vector2f(pos.x,pos.y));
-            sprite.setScale(sf::Vector2f(scale.x, scale.y));
-            window.draw(sprite);
-        }
-
-        for (auto e : m_entityManager.getEntities("Player"))
-        {
-            Vec2 pos = e->getComponent<CTransform>().pos - m_cameraPosition;
-            Vec2 scale = e->getComponent<CTransform>().scale;
-            sf::Sprite & sprite = e->getComponent<CAnimation>().animation.getSprite();
-
-            sprite.setPosition(sf::Vector2f(pos.x,pos.y));
-            sprite.setScale(sf::Vector2f(scale.x, scale.y));
-            window.draw(sprite);
-        }
+        sRenderEntities("Decoration");
+        sRenderEntities("Tile");
+        sRenderEntities("Enemy");
+        sRenderEntities("Animation");
+        sRenderEntities("Player");
     }
 
     // Draw Bounding Boxes
