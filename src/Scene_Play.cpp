@@ -456,11 +456,14 @@ void Scene_Play::sPlayerState()
     cState.facingDir = newFacingDirection;
 }
 
+/**
+ * Player airborne movement system.
+ */
 void Scene_Play::sPlayerAirBorneMovement()
 {
     CTransform& cTransform  = m_player->getComponent<CTransform>();
-    const CInput& cInput          = m_player->getComponent<CInput>();
-    const CState& cState          = m_player->getComponent<CState>();
+    const CInput& cInput    = m_player->getComponent<CInput>();
+    const CState& cState    = m_player->getComponent<CState>();
 
     const bool isAboveInitialSpeedThresholdForVel = (cState.initialJumpXSpeed <= -m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_VEL || cState.initialJumpXSpeed >= m_airborneHK.INITIAL_SPEED_THRESHOLD_FOR_VEL);
     const bool isAboveCurrentSpeedThresholdForAcc = (cTransform.velocity.x <= -m_airborneHK.CURRENT_SPEED_THRESHOLD_FOR_ACC || cTransform.velocity.x >= m_airborneHK.CURRENT_SPEED_THRESHOLD_FOR_ACC);
