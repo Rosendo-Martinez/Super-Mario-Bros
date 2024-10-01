@@ -788,7 +788,7 @@ void Scene_Play::sMovement()
     {
         CTransform& animationCT = e->getComponent<CTransform>();
 
-        animationCT.velocity.y += AIRBORNE_VERTICAL_KINEMATICS::GRAVITY_L;
+        animationCT.velocity.y += animationCT.acc_y;
 
         if (animationCT.velocity.y > AIRBORNE_VERTICAL_KINEMATICS::MAX_DOWNWARD_SPEED)
         {
@@ -949,7 +949,7 @@ void Scene_Play::sPlayerCollision()
                 Vec2 scale (0.5f, 0.5f);
                 float angle = 45;
                 float angularVel = AIRBORNE_VERTICAL_KINEMATICS::GRAVITY_L * 4;
-                brokenBrickTL->addComponent<CTransform>(pos, vel, scale, angle, angularVel);
+                brokenBrickTL->addComponent<CTransform>(pos, vel, scale, angle, angularVel, AIRBORNE_VERTICAL_KINEMATICS::GRAVITY_L);
                 brokenBrickTL->addComponent<CAnimation>(m_game->assets().getAnimation("BrokenBrick"), false);
             }
 
@@ -960,7 +960,7 @@ void Scene_Play::sPlayerCollision()
                 Vec2 scale (0.5f, 0.5f);
                 float angle = -45;
                 float angularVel = AIRBORNE_VERTICAL_KINEMATICS::GRAVITY_L * 4;
-                brokenBrickTR->addComponent<CTransform>(pos, vel, scale, angle, angularVel);
+                brokenBrickTR->addComponent<CTransform>(pos, vel, scale, angle, angularVel, AIRBORNE_VERTICAL_KINEMATICS::GRAVITY_L);
                 brokenBrickTR->addComponent<CAnimation>(m_game->assets().getAnimation("BrokenBrick"), false);
             }
 
@@ -971,7 +971,7 @@ void Scene_Play::sPlayerCollision()
                 Vec2 scale (0.5f, 0.5f);
                 float angle = 45;
                 float angularVel = AIRBORNE_VERTICAL_KINEMATICS::GRAVITY_L * 4;
-                brokenBrickBL->addComponent<CTransform>(pos, vel, scale, angle, angularVel);
+                brokenBrickBL->addComponent<CTransform>(pos, vel, scale, angle, angularVel, AIRBORNE_VERTICAL_KINEMATICS::GRAVITY_L);
                 brokenBrickBL->addComponent<CAnimation>(m_game->assets().getAnimation("BrokenBrick"), false);
             }
 
@@ -982,7 +982,7 @@ void Scene_Play::sPlayerCollision()
                 Vec2 scale (0.5f, 0.5f);
                 float angle = -45;
                 float angularVel = AIRBORNE_VERTICAL_KINEMATICS::GRAVITY_L * 4;
-                brokenBrickBL->addComponent<CTransform>(pos, vel, scale, angle, angularVel);
+                brokenBrickBL->addComponent<CTransform>(pos, vel, scale, angle, angularVel, AIRBORNE_VERTICAL_KINEMATICS::GRAVITY_L);
                 brokenBrickBL->addComponent<CAnimation>(m_game->assets().getAnimation("BrokenBrick"), false);
             }
         }
