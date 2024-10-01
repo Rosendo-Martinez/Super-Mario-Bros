@@ -788,6 +788,12 @@ void Scene_Play::sMovement()
     {
         m_player->destroy();
     }
+
+    // Player can not move outside of camera
+    if (m_player->getComponent<CTransform>().pos.x - m_player->getComponent<CBoundingBox>().halfSize.x < m_cameraPosition.x)
+    {
+        m_player->getComponent<CTransform>().pos.x = m_player->getComponent<CBoundingBox>().halfSize.x + m_cameraPosition.x;
+    }
 }
 
 /**
