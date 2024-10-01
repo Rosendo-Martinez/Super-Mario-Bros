@@ -20,6 +20,7 @@ public:
     Vec2  scale      = { 1.0, 1.0 };
     Vec2  velocity   = { 0.0, 0.0 };
     float angle      = 0;
+    float angularVel = 0;
     double acc_x     = 0;
     double acc_y     = 0;
 
@@ -28,6 +29,8 @@ public:
         : pos(p), prevPos(p) {}
     CTransform(const Vec2 & p, const Vec2 & sp, const Vec2 & sc, float a)
         : pos(p), prevPos(p), velocity(sp), scale(sc), angle(a) {}
+    CTransform(const Vec2 & p, const Vec2 & sp, const Vec2 & sc, float a, float angularSp)
+        : pos(p), prevPos(p), velocity(sp), scale(sc), angle(a), angularVel(angularSp) {}
 };
 
 class CLifeSpan : public Component

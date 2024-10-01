@@ -50,6 +50,7 @@ Animation CloudMiddleBottom CloudMiddleBottom 1 0
 Animation CloudEndBottom CloudEndBottom 1 0
 Animation Ground Ground 1 0
 Animation Brick Brick 1 0
+Animation BrokenBrick Brick 1 70
 Animation Block Block 1 0
 Animation QuestionMarkBlink QuestionMarkBlink 3 5
 Animation QuestionMarkBlockHit QuestionMarkBlockHit 1 0

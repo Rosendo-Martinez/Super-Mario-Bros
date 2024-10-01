@@ -783,6 +783,22 @@ void Scene_Play::sMovement()
         enemyCT.pos += enemyCT.velocity;
     }
 
+    // Handle animation movement
+    for (auto e : m_entityManager.getEntities("Animation"))
+    {
+        CTransform& animationCT = e->getComponent<CTransform>();
+
+        animationCT.velocity.y += AIRBORNE_VERTICAL_KINEMATICS::GRAVITY_L;
+
+        if (animationCT.velocity.y > AIRBORNE_VERTICAL_KINEMATICS::MAX_DOWNWARD_SPEED)
+        {
+            animationCT.velocity.y = AIRBORNE_VERTICAL_KINEMATICS::MAX_DOWNWARD_SPEED;
+        }
+
+        animationCT.pos += animationCT.velocity;
+        animationCT.angle += animationCT.angularVel;
+    }
+
     // Player fell off the map
     if (m_player->getComponent<CTransform>().pos.y - 64/2 > m_game->window().getSize().y)
     {
@@ -922,6 +938,53 @@ void Scene_Play::sPlayerCollision()
         else if (bottomHitBlock->getComponent<CAnimation>().animation.getName() == "Brick")
         {
             bottomHitBlock->destroy();
+
+            CTransform& hitBlockCT = bottomHitBlock->getComponent<CTransform>();
+            CBoundingBox hitBlockBB = bottomHitBlock->getComponent<CBoundingBox>();
+
+            {
+                auto brokenBrickTL = m_entityManager.addEntity("Animation");
+                Vec2 pos (hitBlockCT.pos.x - hitBlockBB.halfSize.x/2, hitBlockCT.pos.y - hitBlockBB.halfSize.y/2);
+                Vec2 vel (-GROUNDED_HORIZONTAL_KINEMATICS::MAX_WALK_SPEED, -AIRBORNE_VERTICAL_KINEMATICS::INITIAL_VELOCITY_L * 1.5);
+                Vec2 scale (0.5f, 0.5f);
+                float angle = 45;
+                float angularVel = AIRBORNE_VERTICAL_KINEMATICS::GRAVITY_L * 4;
+                brokenBrickTL->addComponent<CTransform>(pos, vel, scale, angle, angularVel);
+                brokenBrickTL->addComponent<CAnimation>(m_game->assets().getAnimation("BrokenBrick"), false);
+            }
+
+            {
+                auto brokenBrickTR = m_entityManager.addEntity("Animation");
+                Vec2 pos (hitBlockCT.pos.x + hitBlockBB.halfSize.x/2, hitBlockCT.pos.y - hitBlockBB.halfSize.y/2);
+                Vec2 vel (GROUNDED_HORIZONTAL_KINEMATICS::MAX_WALK_SPEED, -AIRBORNE_VERTICAL_KINEMATICS::INITIAL_VELOCITY_L * 1.5);
+                Vec2 scale (0.5f, 0.5f);
+                float angle = -45;
+                float angularVel = AIRBORNE_VERTICAL_KINEMATICS::GRAVITY_L * 4;
+                brokenBrickTR->addComponent<CTransform>(pos, vel, scale, angle, angularVel);
+                brokenBrickTR->addComponent<CAnimation>(m_game->assets().getAnimation("BrokenBrick"), false);
+            }
+
+            {
+                auto brokenBrickBL = m_entityManager.addEntity("Animation");
+                Vec2 pos (hitBlockCT.pos.x - hitBlockBB.halfSize.x/2, hitBlockCT.pos.y + hitBlockBB.halfSize.y/2);
+                Vec2 vel (-GROUNDED_HORIZONTAL_KINEMATICS::MAX_WALK_SPEED * 1.5, -AIRBORNE_VERTICAL_KINEMATICS::INITIAL_VELOCITY_L);
+                Vec2 scale (0.5f, 0.5f);
+                float angle = 45;
+                float angularVel = AIRBORNE_VERTICAL_KINEMATICS::GRAVITY_L * 4;
+                brokenBrickBL->addComponent<CTransform>(pos, vel, scale, angle, angularVel);
+                brokenBrickBL->addComponent<CAnimation>(m_game->assets().getAnimation("BrokenBrick"), false);
+            }
+
+            {
+                auto brokenBrickBL = m_entityManager.addEntity("Animation");
+                Vec2 pos (hitBlockCT.pos.x + hitBlockBB.halfSize.x/2, hitBlockCT.pos.y + hitBlockBB.halfSize.y/2);
+                Vec2 vel (GROUNDED_HORIZONTAL_KINEMATICS::MAX_WALK_SPEED * 1.5, -AIRBORNE_VERTICAL_KINEMATICS::INITIAL_VELOCITY_L);
+                Vec2 scale (0.5f, 0.5f);
+                float angle = -45;
+                float angularVel = AIRBORNE_VERTICAL_KINEMATICS::GRAVITY_L * 4;
+                brokenBrickBL->addComponent<CTransform>(pos, vel, scale, angle, angularVel);
+                brokenBrickBL->addComponent<CAnimation>(m_game->assets().getAnimation("BrokenBrick"), false);
+            }
         }
     }
     if (leftHitBlock != nullptr) 
@@ -1167,6 +1230,7 @@ void Scene_Play::sRenderEntities(EntityVec & entities)
 
         sprite.setPosition(sf::Vector2f(posRelativeToCamera.x,posRelativeToCamera.y));
         sprite.setScale(sf::Vector2f(scale.x, scale.y));
+        sprite.setRotation(e->getComponent<CTransform>().angle);
         window.draw(sprite);
     }
 }
