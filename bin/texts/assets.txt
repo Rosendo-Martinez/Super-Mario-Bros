@@ -28,6 +28,7 @@ Texture CloudMiddleBottom bin/images/mario/CloudMiddleBottom64.png
 Texture CloudEndBottom bin/images/mario/CloudEndBottom64.png
 Texture GoombaWalk bin/images/mario/GoombaWalk64.png
 Texture GoombaDead bin/images/mario/GoombaDead64.png
+Texture CoinBlink bin/images/mario/CoinBlink64.png
 Animation GoombaWalk GoombaWalk 2 7
 Animation GoombaDead GoombaDead 1 10
 Animation FlagTop FlagTop 1 0
@@ -59,3 +60,4 @@ Animation MarioRun MarioRun 3 4
 Animation MarioWalk MarioRun 3 6
 Animation MarioSkid MarioSkid 1 0
 Animation MarioStand MarioStand 1 0
+Animation CoinBlink CoinBlink 3 8

@@ -364,11 +364,24 @@ void Scene_Play::sAnimation()
     // Animations are short lived entities, who die when their animation is over
     for (auto e : m_entityManager.getEntities("Animation"))
     {
-        if (e->getComponent<CAnimation>().animation.hasEnded())
+        if (!e->hasComponent<CLifeSpan>() && e->getComponent<CAnimation>().animation.hasEnded())
         {
             e->destroy();
             e->removeComponent<CTransform>();
             e->removeComponent<CAnimation>();
+        }
+
+        // TODO: CREATE AND MOVE TO sState
+        if (e->hasComponent<CLifeSpan>())
+        {
+            e->getComponent<CLifeSpan>().lifespan -= 1;
+
+            if (e->getComponent<CLifeSpan>().lifespan == 0)
+            {
+                e->destroy();
+                e->removeComponent<CAnimation>();
+                e->removeComponent<CTransform>();
+            }
         }
     }
 }
@@ -939,6 +952,11 @@ void Scene_Play::sPlayerCollision()
             hitQuestionBlock->addComponent<CAnimation>(m_game->assets().getAnimation("QuestionMarkBlockHit"), true);
             hitQuestionBlock->addComponent<CTransform>(bottomHitBlock->getComponent<CTransform>().pos);
             hitQuestionBlock->addComponent<CBoundingBox>(Vec2(64, 64));
+
+            auto coin = m_entityManager.addEntity("Animation");
+            coin->addComponent<CLifeSpan>(50,0);
+            coin->addComponent<CTransform>(Vec2(bottomHitBlock->getComponent<CTransform>().pos.x, bottomHitBlock->getComponent<CTransform>().pos.y - bottomHitBlock->getComponent<CBoundingBox>().size.y * 1.25));
+            coin->addComponent<CAnimation>(m_game->assets().getAnimation("CoinBlink"), true);
 
             bottomHitBlock->destroy();
         }
