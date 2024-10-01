@@ -367,6 +367,8 @@ void Scene_Play::sAnimation()
         if (e->getComponent<CAnimation>().animation.hasEnded())
         {
             e->destroy();
+            e->removeComponent<CTransform>();
+            e->removeComponent<CAnimation>();
         }
     }
 }
@@ -786,6 +788,11 @@ void Scene_Play::sMovement()
     // Handle animation movement
     for (auto e : m_entityManager.getEntities("Animation"))
     {
+        if (!e->hasComponent<CTransform>())
+        {
+            continue;
+        }
+
         CTransform& animationCT = e->getComponent<CTransform>();
 
         animationCT.velocity.y += animationCT.acc_y;
@@ -1224,6 +1231,11 @@ void Scene_Play::sRenderEntities(EntityVec & entities)
 
     for (auto e : entities)
     {
+        if (!e->hasComponent<CAnimation>())
+        {
+            continue;
+        }
+
         const Vec2 posRelativeToCamera = e->getComponent<CTransform>().pos - m_cameraPosition;
         const Vec2 scale = e->getComponent<CTransform>().scale;
         sf::Sprite & sprite = e->getComponent<CAnimation>().animation.getSprite();
