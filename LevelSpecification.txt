@@ -71,6 +71,10 @@ Goomba GX GY AD
     Grid X Pos:          GX (float)
     Grid Y Pos:          GY (float)
     Activation Distance: AD (float, blocks)
+Koopa GX GY AD
+    Grid X Pos:          GX (float)
+    Grid Y Pos:          GY (float)
+    Activation Distance: AD (float, blocks)
 
 Assets File Specification
 -------------------------

@@ -29,6 +29,9 @@ Texture CloudEndBottom bin/images/mario/CloudEndBottom64.png
 Texture GoombaWalk bin/images/mario/GoombaWalk64.png
 Texture GoombaDead bin/images/mario/GoombaDead64.png
 Texture CoinBlink bin/images/mario/CoinBlink64.png
+Texture KoopaWalk bin/images/mario/KoopaWalk64.png
+Texture EmptyShell bin/images/mario/EmptyShell64.png
+Texture ShellShake bin/images/mario/ShellShake64.png
 Animation GoombaWalk GoombaWalk 2 7
 Animation GoombaDead GoombaDead 1 10
 Animation FlagTop FlagTop 1 0
@@ -61,3 +64,6 @@ Animation MarioWalk MarioRun 3 6
 Animation MarioSkid MarioSkid 1 0
 Animation MarioStand MarioStand 1 0
 Animation CoinBlink CoinBlink 3 8
+Animation KoopaWalk KoopaWalk 2 7
+Animation KoopaShell EmptyShell 1 0
+Animation KoopaShake ShellShake 1 0
