@@ -129,9 +129,10 @@ void Scene_Play::createEnemyEntity(const std::string& type, float gx, float gy, 
     CEnemy& goombaCE =  e->addComponent<CEnemy>();
 
     // Initialize components
-    goombaCT.velocity.x = ENEMY_KINEMATICS::GOOMBA_SPEED;
+    goombaCT.velocity.x = -ENEMY_KINEMATICS::GOOMBA_SPEED;
     goombaCT.acc_y = ENEMY_KINEMATICS::GRAVITY;
     goombaCE.activation_x = (gx - activationDistance) * 64;
+    goombaCE.type = EnemyType::GOOMBA;
 }
 
 
@@ -1101,6 +1102,11 @@ void Scene_Play::sPlayerCollision()
     // Player-Goomba CD & CR
     for (auto goomba : m_entityManager.getEntities("Enemy"))
     {
+        if (goomba->getComponent<CEnemy>().type != EnemyType::GOOMBA) // Temporary
+        {
+            continue;
+        }
+
         if (!goomba->getComponent<CEnemy>().isActive)
         {
             continue;

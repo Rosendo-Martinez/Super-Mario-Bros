@@ -107,10 +107,17 @@ public:
     CState() {}
 };
 
+enum class EnemyType
+{
+    GOOMBA, KOOPA, DEFAULT
+};
+
 class CEnemy : public Component
 {
 public:
+    EnemyType type = EnemyType::DEFAULT;
     bool isActive = false;
     float activation_x = 0;
     CEnemy() {}
+    CEnemy(EnemyType type, bool isActive, float activationDist) : type(type), isActive(isActive), activation_x(activationDist) {}
 };
