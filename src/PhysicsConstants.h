@@ -54,6 +54,6 @@ struct ENEMY_KINEMATICS
     static constexpr double GRAVITY = 2.25; // All enemies gravity
     static constexpr double GOOMBA_SPEED = 6.25;
     static constexpr double KOOPA_SPEED = 6.25;
-    static constexpr double SHELL_SPEED = 7;
+    static constexpr double SHELL_SPEED = 12;
     static constexpr double STOMP_SPEED = 17.25; // The upward speed mario receives after stomping enemy
 };

@@ -1116,42 +1116,71 @@ void Scene_Play::sPlayerCollision()
     }
 
     // Player-Goomba CD & CR
-    for (auto goomba : m_entityManager.getEntities("Enemy"))
+    for (auto enemy : m_entityManager.getEntities("Enemy"))
     {
-        if (goomba->getComponent<CEnemy>().type != EnemyType::GOOMBA) // Temporary
+        if (!enemy->getComponent<CEnemy>().isActive)
         {
             continue;
         }
 
-        if (!goomba->getComponent<CEnemy>().isActive)
-        {
-            continue;
-        }
-
-        Vec2 overlap = Physics::GetOverlap(m_player, goomba);
+        Vec2 overlap = Physics::GetOverlap(m_player, enemy);
         if (Physics::IsCollision(overlap))
         {
             CTransform& playerCT = m_player->getComponent<CTransform>();
-            Vec2 prevOverlap = Physics::GetPreviousOverlap(m_player, goomba);
-            bool isPlayerStompingGoomba = playerCT.velocity.y > 0 && !m_player->getComponent<CState>().isGrounded;
-            if (isPlayerStompingGoomba)
+            Vec2 prevOverlap = Physics::GetPreviousOverlap(m_player, enemy);
+            bool isStomp = playerCT.velocity.y > 0 && !m_player->getComponent<CState>().isGrounded;
+
+            if (isStomp)
             {
-                goomba->destroy();
                 playerCT.velocity.y = -ENEMY_KINEMATICS::STOMP_SPEED;
                 playerCT.pos.y -= overlap.y;
 
-
-                // create a dead goomba add it to list "Dead Goombas"
-                // place it a original goombas location
-                auto stompedGoomba = m_entityManager.addEntity("Animation");
-                stompedGoomba->addComponent<CAnimation>(m_game->assets().getAnimation("GoombaDead"), false);
-                stompedGoomba->addComponent<CTransform>(goomba->getComponent<CTransform>().pos);
-                break;
+                if (enemy->getComponent<CEnemy>().type == EnemyType::GOOMBA)
+                {
+                    enemy->destroy();
+                    // create a dead goomba add it to list "Dead Goombas"
+                    // place it a original goombas location
+                    auto stompedGoomba = m_entityManager.addEntity("Animation");
+                    stompedGoomba->addComponent<CAnimation>(m_game->assets().getAnimation("GoombaDead"), false);
+                    stompedGoomba->addComponent<CTransform>(enemy->getComponent<CTransform>().pos);
+                    break;
+                }
+                else // Koopa
+                {
+                    if (enemy->hasComponent<CLifeSpan>()) // Koopa is in shell
+                    {
+                        enemy->destroy();
+                    }
+                    else
+                    {
+                        enemy->getComponent<CAnimation>().animation = m_game->assets().getAnimation("KoopaShell");
+                        enemy->getComponent<CTransform>().velocity.x = 0;
+                        enemy->addComponent<CLifeSpan>(200,0);
+                    }
+                }
             }
             else
             {
-                m_player->destroy();
-                break;
+                if (enemy->getComponent<CEnemy>().type == EnemyType::KOOPA && enemy->hasComponent<CLifeSpan>()) // koopa in shell and not moving
+                {
+                    enemy->removeComponent<CLifeSpan>();
+                    if (enemy->getComponent<CTransform>().pos.x < m_player->getComponent<CTransform>().pos.x)
+                    {
+                        enemy->getComponent<CTransform>().velocity.x = -ENEMY_KINEMATICS::SHELL_SPEED;
+                        enemy->getComponent<CTransform>().pos.x -= overlap.x;
+                    }
+                    else
+                    {
+                        enemy->getComponent<CTransform>().velocity.x = ENEMY_KINEMATICS::SHELL_SPEED;
+                        enemy->getComponent<CTransform>().pos.x += overlap.x;
+                    }
+                    break;
+                }
+                else
+                {
+                    m_player->destroy();
+                    break;
+                }
             }
         }
     }
