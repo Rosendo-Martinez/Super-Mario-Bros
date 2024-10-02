@@ -216,6 +216,22 @@ void Scene_Play::loadLevel()
             createEnemyEntity(type, gx, gy, ad);
             continue;
         }
+        else if (type == "Koopa")
+        {
+            float gx;
+            float gy;
+            float ad;
+
+            levelSpec >> gx >> gy >> ad;
+
+            auto koopa = m_entityManager.addEntity("Enemy");
+            koopa->addComponent<CEnemy>(EnemyType::KOOPA, false, ad);
+            koopa->addComponent<CAnimation>(m_game->assets().getAnimation("KoopaWalk"), true);
+            koopa->addComponent<CTransform>(gridToCartesianRepresentation(Vec2(gx,gy), Vec2(64,64)), Vec2(-ENEMY_KINEMATICS::KOOPA_SPEED, 0), Vec2(1,1), 0, 0, ENEMY_KINEMATICS::GRAVITY);
+            koopa->addComponent<CBoundingBox>(Vec2(64,64));
+
+            continue;
+        }
         else
         {
             std::cout << "Error: " << type << " is not or not yet a supported entity type.\n";
