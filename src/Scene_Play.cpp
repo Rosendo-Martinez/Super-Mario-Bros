@@ -120,10 +120,6 @@ void Scene_Play::createEnemyEntity(const std::string& type, float gx, float gy, 
         return;
     }
 
-    // Kinematic constantans
-    const float GOOMBA_WALK = -GROUNDED_HORIZONTAL_KINEMATICS::MAX_WALK_SPEED;
-    const float GOOMBA_GRAVITY = AIRBORNE_VERTICAL_KINEMATICS::GRAVITY_L;
-
     auto e = m_entityManager.addEntity("Enemy");
 
     // Add components
@@ -133,8 +129,8 @@ void Scene_Play::createEnemyEntity(const std::string& type, float gx, float gy, 
     CEnemy& goombaCE =  e->addComponent<CEnemy>();
 
     // Initialize components
-    goombaCT.velocity.x = GOOMBA_WALK;
-    goombaCT.acc_y = GOOMBA_GRAVITY;
+    goombaCT.velocity.x = ENEMY_KINEMATICS::GOOMBA_SPEED;
+    goombaCT.acc_y = ENEMY_KINEMATICS::GRAVITY;
     goombaCE.activation_x = (gx - activationDistance) * 64;
 }
 
@@ -1119,7 +1115,7 @@ void Scene_Play::sPlayerCollision()
             if (isPlayerStompingGoomba)
             {
                 goomba->destroy();
-                playerCT.velocity.y = -AIRBORNE_VERTICAL_KINEMATICS::GOOMBA_STOMP_VELOCITY;
+                playerCT.velocity.y = -ENEMY_KINEMATICS::STOMP_SPEED;
                 playerCT.pos.y -= overlap.y;
 
 

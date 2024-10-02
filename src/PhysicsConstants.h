@@ -47,6 +47,13 @@ struct AIRBORNE_VERTICAL_KINEMATICS {
 
     static constexpr double MAX_DOWNWARD_SPEED = 18; // Max speed mario can move downward
     static constexpr double RESET_DOWNWARD_SPEED = 16; // Speed to reset to when mario exceeds max downward speed
+};
 
-    static constexpr double GOOMBA_STOMP_VELOCITY = 17.25;
+struct ENEMY_KINEMATICS
+{
+    static constexpr double GRAVITY = 2.25; // All enemies gravity
+    static constexpr double GOOMBA_SPEED = 6.25;
+    static constexpr double KOOPA_SPEED = 6.25;
+    static constexpr double SHELL_SPEED = 7;
+    static constexpr double STOMP_SPEED = 17.25; // The upward speed mario receives after stomping enemy
 };
