@@ -224,11 +224,12 @@ void Scene_Play::loadLevel()
 
             levelSpec >> gx >> gy >> ad;
 
+            const Vec2 KOOPA_BB = Vec2(64,92);
             auto koopa = m_entityManager.addEntity("Enemy");
             koopa->addComponent<CEnemy>(EnemyType::KOOPA, false, ad);
             koopa->addComponent<CAnimation>(m_game->assets().getAnimation("KoopaWalk"), true);
-            koopa->addComponent<CTransform>(gridToCartesianRepresentation(Vec2(gx,gy), Vec2(64,64)), Vec2(-ENEMY_KINEMATICS::KOOPA_SPEED, 0), Vec2(1,1), 0, 0, ENEMY_KINEMATICS::GRAVITY);
-            koopa->addComponent<CBoundingBox>(Vec2(64,64));
+            koopa->addComponent<CTransform>(gridToCartesianRepresentation(Vec2(gx,gy), KOOPA_BB), Vec2(-ENEMY_KINEMATICS::KOOPA_SPEED, 0), Vec2(1,1), 0, 0, ENEMY_KINEMATICS::GRAVITY);
+            koopa->addComponent<CBoundingBox>(KOOPA_BB);
 
             continue;
         }
@@ -865,11 +866,15 @@ void Scene_Play::sEnemyState()
 
         if (enemy->getComponent<CEnemy>().type == EnemyType::KOOPA)
         {
-            if (enemy->hasComponent<CLifeSpan>() && enemy->getComponent<CLifeSpan>().lifespan == 0)
+            if (enemy->hasComponent<CLifeSpan>() && enemy->getComponent<CLifeSpan>().lifespan == 0) // Koopa woke up (out of shell)
             {
+                const Vec2 KOOPA_BB = Vec2(64,92);
+                const Vec2 EMPTY_SHELL_BB = Vec2(64,64);
                 enemy->removeComponent<CLifeSpan>();
                 enemy->getComponent<CAnimation>().animation = m_game->assets().getAnimation("KoopaWalk");
                 enemy->getComponent<CTransform>().velocity.x = -ENEMY_KINEMATICS::KOOPA_SPEED;
+                enemy->addComponent<CBoundingBox>(KOOPA_BB);
+                enemy->getComponent<CTransform>().pos.y -= KOOPA_BB.y - EMPTY_SHELL_BB.y;
             }
         }
     }
@@ -1168,9 +1173,11 @@ void Scene_Play::sPlayerCollision()
                     }
                     else
                     {
+                        const Vec2 EMPTY_SHELL_BB = Vec2(64,64);
                         enemy->getComponent<CAnimation>().animation = m_game->assets().getAnimation("KoopaShell");
                         enemy->getComponent<CTransform>().velocity.x = 0;
                         enemy->addComponent<CLifeSpan>(100,0);
+                        enemy->addComponent<CBoundingBox>(EMPTY_SHELL_BB);
                     }
                 }
             }
