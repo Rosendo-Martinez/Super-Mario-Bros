@@ -850,12 +850,27 @@ void Scene_Play::sMovement()
  */
 void Scene_Play::sEnemyState()
 {
-    for (auto goomba : m_entityManager.getEntities("Enemy"))
+    for (auto enemy : m_entityManager.getEntities("Enemy"))
     {
-        // Goombas are activated when player comes within a certain range
-        if (goomba->getComponent<CEnemy>().activation_x <= m_player->getComponent<CTransform>().pos.x)
+        if (enemy->hasComponent<CLifeSpan>())
         {
-            goomba->getComponent<CEnemy>().isActive = true;
+            enemy->getComponent<CLifeSpan>().lifespan -= 1;
+        }
+
+        // Goombas are activated when player comes within a certain range
+        if (enemy->getComponent<CEnemy>().activation_x <= m_player->getComponent<CTransform>().pos.x)
+        {
+            enemy->getComponent<CEnemy>().isActive = true;
+        }
+
+        if (enemy->getComponent<CEnemy>().type == EnemyType::KOOPA)
+        {
+            if (enemy->hasComponent<CLifeSpan>() && enemy->getComponent<CLifeSpan>().lifespan == 0)
+            {
+                enemy->removeComponent<CLifeSpan>();
+                enemy->getComponent<CAnimation>().animation = m_game->assets().getAnimation("KoopaWalk");
+                enemy->getComponent<CTransform>().velocity.x = -ENEMY_KINEMATICS::KOOPA_SPEED;
+            }
         }
     }
 }
@@ -1155,7 +1170,7 @@ void Scene_Play::sPlayerCollision()
                     {
                         enemy->getComponent<CAnimation>().animation = m_game->assets().getAnimation("KoopaShell");
                         enemy->getComponent<CTransform>().velocity.x = 0;
-                        enemy->addComponent<CLifeSpan>(200,0);
+                        enemy->addComponent<CLifeSpan>(100,0);
                     }
                 }
             }
