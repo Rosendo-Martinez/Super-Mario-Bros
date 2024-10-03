@@ -1323,6 +1323,15 @@ void Scene_Play::sRenderEntities(EntityVec & entities)
             continue;
         }
 
+        Vec2 cameraScreenSize = Vec2(m_game->window().getSize().x, m_game->window().getSize().y);
+        Vec2 cameraCenterPos = m_cameraPosition + cameraScreenSize/2; // points to the center of the screen
+
+        const Vec2 overlap = Physics::GetOverLap(cameraCenterPos, e->getComponent<CTransform>().pos, cameraScreenSize/2, e->getComponent<CAnimation>().animation.getSize()/2);
+        if (!Physics::IsCollision(overlap)) // Cull entity
+        {
+            continue;
+        }
+
         const Vec2 posRelativeToCamera = e->getComponent<CTransform>().pos - m_cameraPosition;
         const Vec2 scale = e->getComponent<CTransform>().scale;
         sf::Sprite & sprite = e->getComponent<CAnimation>().animation.getSprite();

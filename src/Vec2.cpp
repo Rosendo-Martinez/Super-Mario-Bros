@@ -46,6 +46,11 @@ Vec2 Vec2::operator * (const float val) const
     return Vec2(x*val, y*val);
 }
 
+Vec2 Vec2::operator / (const float val) const
+{
+    return Vec2(x/val, y/val);
+}
+
 void Vec2::operator += (const Vec2& rhs)
 {
     x += rhs.x;

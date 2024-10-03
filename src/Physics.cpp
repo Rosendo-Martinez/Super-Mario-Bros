@@ -2,7 +2,7 @@
 #include "Components.h"
 #include <cmath>
 
-Vec2 getOverLap(Vec2 aPos, Vec2 bPos, Vec2 aHalfSize, Vec2 bHalfSize)
+Vec2 Physics::GetOverLap(Vec2 aPos, Vec2 bPos, Vec2 aHalfSize, Vec2 bHalfSize)
 {
     Vec2 delta(std::abs(aPos.x - bPos.x), std::abs(aPos.y - bPos.y));
     float ox = aHalfSize.x + bHalfSize.x - delta.x;
@@ -18,7 +18,7 @@ Vec2 Physics::GetOverlap(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b)
     CBoundingBox aCB = a->getComponent<CBoundingBox>();
     CBoundingBox bCB = b->getComponent<CBoundingBox>();
     
-    return getOverLap(aCT.pos, bCT.pos, aCB.halfSize, bCB.halfSize);
+    return GetOverLap(aCT.pos, bCT.pos, aCB.halfSize, bCB.halfSize);
 }
 
 Vec2 Physics::GetPreviousOverlap(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b)
@@ -28,7 +28,7 @@ Vec2 Physics::GetPreviousOverlap(std::shared_ptr<Entity> a, std::shared_ptr<Enti
     CBoundingBox aCB = a->getComponent<CBoundingBox>();
     CBoundingBox bCB = b->getComponent<CBoundingBox>();
 
-    return getOverLap(aCT.prevPos, bCT.prevPos, aCB.halfSize, bCB.halfSize);
+    return GetOverLap(aCT.prevPos, bCT.prevPos, aCB.halfSize, bCB.halfSize);
 }
 
 bool Physics::IsCollision(const Vec2 & overlap)
