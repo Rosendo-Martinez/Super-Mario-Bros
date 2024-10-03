@@ -1352,6 +1352,16 @@ void Scene_Play::sRenderBoundingBoxes()
 
     for (auto e : m_entityManager.getEntities())
     {
+
+        Vec2 cameraScreenSize = Vec2(m_game->window().getSize().x, m_game->window().getSize().y);
+        Vec2 cameraCenterPos = m_cameraPosition + cameraScreenSize/2; // points to the center of the screen
+
+        const Vec2 overlap = Physics::GetOverLap(cameraCenterPos, e->getComponent<CTransform>().pos, cameraScreenSize/2, e->getComponent<CAnimation>().animation.getSize()/2);
+        if (!Physics::IsCollision(overlap)) // Cull entity
+        {
+            continue;
+        }
+
         Vec2 pos = e->getComponent<CTransform>().pos - m_cameraPosition;
         Vec2 size = e->getComponent<CBoundingBox>().size;
         sf::RectangleShape bb(sf::Vector2f(size.x,size.y));
