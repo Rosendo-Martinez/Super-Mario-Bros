@@ -92,8 +92,8 @@ Animation N T F S OX OY
     Texture Name        T   (string, reference to existing texture/image)
     Frame Count         F   (int, # frames in animation)
     Animation Speed     S   (int, # of game frames between animation frames)
-    Origin X Position   OX  (int, -1 for 1/2 the first frame width, relative to top left of texture)
-    Origin Y Position   OY  (int, -1 for 1/2 the first frame height, relative to top left of texture)
+    Origin X Position   OX  (float, -1 for 1/2 the first frame width, relative to top left of texture)
+    Origin Y Position   OY  (float, -1 for 1/2 the first frame height, relative to top left of texture)
 
 Font Asset:
 Font N P

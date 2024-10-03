@@ -20,6 +20,7 @@ public:
     Animation(const std::string & name, const sf::Texture & t, size_t duration);
     Animation(const std::string & name, const sf::Texture & t, size_t frameCount, size_t speed);
     Animation(const std::string & name, const sf::Texture & t, size_t frameCount, size_t speed, float scaleX, float scaleY);
+    Animation(const std::string & name, const sf::Texture & t, size_t frameCount, size_t speed, float scaleX, float scaleY, float ox, float oy);
     void update();
     bool hasEnded() const;
     const std::string & getName() const;

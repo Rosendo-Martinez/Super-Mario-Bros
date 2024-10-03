@@ -1,6 +1,7 @@
 #include "Animation.h"
 #include <cmath>
 #include <cassert>
+#include <iostream>
 
 // Should not be used
 Animation::Animation()
@@ -28,6 +29,14 @@ Animation::Animation(const std::string & name, const sf::Texture & t, size_t fra
 
 // For single-frame or multi-frame textures
 Animation::Animation(const std::string & name, const sf::Texture & t, size_t frameCount, size_t speed, float scaleX, float scaleY)
+    : Animation(name, t, frameCount, speed, scaleX, scaleY, -1, -1)
+{
+}
+
+/**
+ * If ox or oy are -1, then the origin will placed on the center of the first frame.
+ */
+Animation::Animation(const std::string & name, const sf::Texture & t, size_t frameCount, size_t speed, float scaleX, float scaleY, float ox, float oy)
     : m_name(name)
     , m_sprite(t)
     , m_frameCount(frameCount)
@@ -36,7 +45,15 @@ Animation::Animation(const std::string & name, const sf::Texture & t, size_t fra
 {
     assert(frameCount > 1 ? (speed > 0) : true); // Speed must be non-zero for multi-frame assets
     m_size = Vec2((float)t.getSize().x / frameCount, (float)t.getSize().y);
-    m_sprite.setOrigin(m_size.x / 2.0f, m_size.y / 2.0f);
+    if (ox == -1 || oy == -1)
+    {
+        m_sprite.setOrigin(m_size.x / 2.0f, m_size.y / 2.0f);
+    }
+    else
+    {
+        std::cout << "Custom Origin " << ox << " " << oy << "\n";
+        m_sprite.setOrigin(ox,oy);
+    }
     m_sprite.setTextureRect(sf::IntRect(0, 0, m_size.x, m_size.y));
     m_sprite.setScale(sf::Vector2f(scaleX, scaleY));
 }
