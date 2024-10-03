@@ -32,38 +32,38 @@ Texture CoinBlink bin/images/mario/CoinBlink64.png
 Texture KoopaWalk bin/images/mario/KoopaWalk64.png
 Texture EmptyShell bin/images/mario/EmptyShell64.png
 Texture ShellShake bin/images/mario/ShellShake64.png
-Animation GoombaWalk GoombaWalk 2 7
-Animation GoombaDead GoombaDead 1 10
-Animation FlagTop FlagTop 1 0
-Animation FlagPole FlagPole 1 0
-Animation BigMountain BigMountain 1 0
-Animation SmallMountain SmallMountain 1 0
-Animation SmallCastle SmallCastle 1 0
-Animation PipeTopLeft PipeTopLeft 1 0
-Animation PipeTopRight PipeTopRight 1 0
-Animation PipeLeft PipeLeft 1 0
-Animation PipeRight PipeRight 1 0
-Animation BushFront BushFront 1 0
-Animation BushMiddle BushMiddle 1 0
-Animation BushEnd BushEnd 1 0
-Animation CloudFrontTop CloudFrontTop 1 0
-Animation CloudMiddleTop CloudMiddleTop 1 0
-Animation CloudEndTop CloudEndTop 1 0
-Animation CloudFrontBottom CloudFrontBottom 1 0
-Animation CloudMiddleBottom CloudMiddleBottom 1 0
-Animation CloudEndBottom CloudEndBottom 1 0
-Animation Ground Ground 1 0
-Animation Brick Brick 1 0
-Animation BrokenBrick Brick 1 70
-Animation Block Block 1 0
-Animation QuestionMarkBlink QuestionMarkBlink 3 5
-Animation QuestionMarkBlockHit QuestionMarkBlockHit 1 0
-Animation MarioAir MarioAir 1 0
-Animation MarioRun MarioRun 3 4
-Animation MarioWalk MarioRun 3 6
-Animation MarioSkid MarioSkid 1 0
-Animation MarioStand MarioStand 1 0
-Animation CoinBlink CoinBlink 3 8
-Animation KoopaWalk KoopaWalk 2 7
-Animation KoopaShell EmptyShell 1 0
-Animation KoopaShake ShellShake 1 0
+Animation GoombaWalk GoombaWalk 2 7 -1 -1
+Animation GoombaDead GoombaDead 1 10 -1 -1
+Animation FlagTop FlagTop 1 0 -1 -1
+Animation FlagPole FlagPole 1 0 -1 -1
+Animation BigMountain BigMountain 1 0 -1 -1
+Animation SmallMountain SmallMountain 1 0 -1 -1
+Animation SmallCastle SmallCastle 1 0 -1 -1
+Animation PipeTopLeft PipeTopLeft 1 0 -1 -1
+Animation PipeTopRight PipeTopRight 1 0 -1 -1
+Animation PipeLeft PipeLeft 1 0 -1 -1
+Animation PipeRight PipeRight 1 0 -1 -1
+Animation BushFront BushFront 1 0 -1 -1
+Animation BushMiddle BushMiddle 1 0 -1 -1
+Animation BushEnd BushEnd 1 0 -1 -1
+Animation CloudFrontTop CloudFrontTop 1 0 -1 -1
+Animation CloudMiddleTop CloudMiddleTop 1 0 -1 -1
+Animation CloudEndTop CloudEndTop 1 0 -1 -1
+Animation CloudFrontBottom CloudFrontBottom 1 0 -1 -1
+Animation CloudMiddleBottom CloudMiddleBottom 1 0 -1 -1
+Animation CloudEndBottom CloudEndBottom 1 0 -1 -1
+Animation Ground Ground 1 0 -1 -1
+Animation Brick Brick 1 0 -1 -1
+Animation BrokenBrick Brick 1 70 -1 -1
+Animation Block Block 1 0 -1 -1
+Animation QuestionMarkBlink QuestionMarkBlink 3 5 -1 -1
+Animation QuestionMarkBlockHit QuestionMarkBlockHit 1 0 -1 -1
+Animation MarioAir MarioAir 1 0 -1 -1
+Animation MarioRun MarioRun 3 4 -1 -1
+Animation MarioWalk MarioRun 3 6 -1 -1
+Animation MarioSkid MarioSkid 1 0 -1 -1
+Animation MarioStand MarioStand 1 0 -1 -1
+Animation CoinBlink CoinBlink 3 8 -1 -1
+Animation KoopaWalk KoopaWalk 2 7 -1 -1
+Animation KoopaShell EmptyShell 1 0 -1 -1
+Animation KoopaShake ShellShake 1 0 -1 -1
