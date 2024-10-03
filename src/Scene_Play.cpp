@@ -1386,11 +1386,14 @@ void Scene_Play::sRenderDebugGrid()
     const int widthWindow = window.getSize().x;
     const int heightCell = m_gridCellSize.y;
     const int widthCell = m_gridCellSize.x;
-    const int MAP_WIDTH_BLOCKS = 400;
+    const int MAP_WIDTH_BLOCKS = 300;
+
+    const int startingColumn = floor(m_cameraPosition.x/64.f);
+    const int endingColumn = startingColumn + ceil(widthWindow/64.f) + 1; // off by one errors, smh...
 
     // Draw grid vertical lines
     const int verticalLines = ceil((float) widthWindow / widthCell);
-    for (int i = 0; i < MAP_WIDTH_BLOCKS; i++) 
+    for (int i = startingColumn; i < endingColumn; i++) 
     {
         int x = widthCell * (i + 1) - m_cameraPosition.x;
         sf::VertexArray line(sf::Lines, 2);
@@ -1419,7 +1422,7 @@ void Scene_Play::sRenderDebugGrid()
     }
 
     // Draw grid coordinates
-    for (int gx = 0; gx < MAP_WIDTH_BLOCKS; gx++)
+    for (int gx = startingColumn; gx < endingColumn; gx++)
     {
         for (int gy = 0; gy < horizontalLines; gy++)
         {
