@@ -40,6 +40,16 @@ C++ libraries used:
 - Many more...
 </pre>
 
+# Game Play
+
+https://github.com/user-attachments/assets/302967c9-5348-4e5b-9e8f-6409cc57fec6
+
+Game Features
+- Collision Detection (Enemy-Player, Player-Tile, etc.)
+- Animations
+- Real Physics (gravity, skidding, jumping, etc.)
+- Enemies (AI)
+
 # Credit
 
 I got a lot of help making this game from the game development lectures posted by Professor Churchill on YouTube and from a guide on the physics of Super Mario Bros posted by Jdaster64. I wouldn't have been able to make this game without the information they have generously made publicly available.
@@ -55,7 +65,6 @@ The perquisites:
 - SFML
 - CMake
 - GCC
-
 
 To build the project and run it:
 ```
