@@ -226,7 +226,7 @@ void Scene_Play::loadLevel()
 
             const Vec2 KOOPA_BB = Vec2(64,92);
             auto koopa = m_entityManager.addEntity("Enemy");
-            koopa->addComponent<CEnemy>(EnemyType::KOOPA, false, ad);
+            koopa->addComponent<CEnemy>(EnemyType::KOOPA, false, (gx - ad) * 64);
             koopa->addComponent<CAnimation>(m_game->assets().getAnimation("KoopaWalk"), true);
             koopa->addComponent<CTransform>(gridToCartesianRepresentation(Vec2(gx,gy), KOOPA_BB), Vec2(-ENEMY_KINEMATICS::KOOPA_SPEED, 0), Vec2(1,1), 0, 0, ENEMY_KINEMATICS::GRAVITY);
             koopa->addComponent<CBoundingBox>(KOOPA_BB);

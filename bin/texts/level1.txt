@@ -331,7 +331,6 @@ Decoration CloudEndBottom 223 10
 Koopa 22 2 22
 
 Goomba 30 2 20
-Koopa 37 2 27
 
 Goomba 40 2 13
 
@@ -343,6 +342,8 @@ Goomba 81 10 14
 
 Goomba 97 2 13
 Goomba 99 2 15
+
+Koopa 107 2 13
 
 Goomba 113 2 13
 Goomba 114 2 14
