@@ -252,7 +252,7 @@ void Scene_Play::spawnPlayer()
     auto player = m_entityManager.addEntity("Player");
     player->addComponent<CAnimation>(m_game->assets().getAnimation("MarioStand"), true);
     player->addComponent<CTransform>(gridToCartesianRepresentation(4,7,player));
-    player->addComponent<CBoundingBox>(Vec2(64, 64));
+    player->addComponent<CBoundingBox>(Vec2(56, 64));
     player->addComponent<CInput>();
     player->addComponent<CState>();
     m_player = player;
