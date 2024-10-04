@@ -375,6 +375,19 @@ void Scene_Play::sAnimation()
         e->getComponent<CAnimation>().animation.update();
     }
 
+    for (auto e : m_entityManager.getEntities("Enemy"))
+    {
+        CTransform& eCT = e->getComponent<CTransform>();
+        if (eCT.velocity.x < 0)
+        {
+            eCT.scale.x = 1;
+        }
+        else if (eCT.velocity.x > 0)
+        {
+            eCT.scale.x = -1;
+        }
+    }
+
     // Animations are short lived entities, who die when their animation is over
     for (auto e : m_entityManager.getEntities("Animation"))
     {
@@ -1254,46 +1267,100 @@ void Scene_Play::sEnemyCollision()
         }
     }
 
-    // Goomba-Goomba collisions (detection & resolution)
-    for (auto goomba1 : m_entityManager.getEntities("Enemy"))
+    // Enemy-Enemy collisions (detection & resolution)
+    for (auto enemy1 : m_entityManager.getEntities("Enemy"))
     {
-        if (!goomba1->getComponent<CEnemy>().isActive)
+        if (!enemy1->getComponent<CEnemy>().isActive || !enemy1->isActive()) // enemy can't move yet, or was killed
         {
             continue;
         }
 
-        for (auto goomba2 : m_entityManager.getEntities("Enemy"))
+        for (auto enemy2 : m_entityManager.getEntities("Enemy"))
         {
-            if (!goomba2->getComponent<CEnemy>().isActive || goomba1->id() == goomba2->id())
+            if (!enemy2->getComponent<CEnemy>().isActive || enemy1->id() == enemy2->id() || !enemy2->isActive()) // enemy can't move yet, was killed, or is same enemy
             {
                 continue;
             }
 
             // Note: goombas may have some overlap
-            Vec2 overlap = Physics::GetOverlap(goomba1, goomba2);
+            Vec2 overlap = Physics::GetOverlap(enemy1, enemy2);
             if (Physics::IsCollision(overlap))
             {
-                CTransform& g1CT = goomba1->getComponent<CTransform>();
-                CTransform& g2CT = goomba2->getComponent<CTransform>();
-                if (g1CT.pos.x <= g2CT.velocity.x)
-                { 
-                    // Leftmost goomba walks left
-                    g1CT.velocity.x *= (g1CT.velocity.x < 0) ? 1 : -1;
-                    // Rightmost goomba walks right
-                    g2CT.velocity.x *= (g2CT.velocity.x > 0) ? 1 : -1;
+                // if enemy1 is MKS and enemy2 is NOT MKS
+                    // what ever it is it gets killed
+                    // continue
+                // if enemy1 is not MKS and enemy2 is MKS
+                    // ?
+                    // 2 options
+                        // kill enemy1 and break
+                // else DO THE FOLLOWING
 
-                    g1CT.pos.x -= overlap.x/2;
-                    g2CT.pos.x += overlap.x/2;
-                }
-                else
+                // Moving koopa shell (MKS)
+                CTransform& e1CT = enemy1->getComponent<CTransform>();
+                CTransform& e2CT = enemy2->getComponent<CTransform>();
+                const bool isEnemy1MKS = enemy1->getComponent<CEnemy>().type == EnemyType::KOOPA && enemy1->getComponent<CAnimation>().animation.getName() == "KoopaShell" && enemy1->getComponent<CTransform>().velocity.x != 0;
+                const bool isEnemy2MKS = enemy2->getComponent<CEnemy>().type == EnemyType::KOOPA && enemy2->getComponent<CAnimation>().animation.getName() == "KoopaShell" && enemy2->getComponent<CTransform>().velocity.x != 0;
+
+                if (isEnemy1MKS && !isEnemy2MKS) // enemy1 is MKS and hit and killed enemy2
                 {
-                    // Leftmost goomba walks left
-                    g2CT.velocity.x *= (g2CT.velocity.x < 0) ? 1 : -1;
-                    // Rightmost goomba walks right
-                    g1CT.velocity.x *= (g1CT.velocity.x > 0) ? 1 : -1;
+                    // e2 is killed
+                    // turn it into animation
+                        // same place
+                        // same animation
+                        // e1 (MKS) came from right
+                            // throw e2 animation to right
+                            // make it spin clockwise
+                        // else came from left
+                            // throw e2 animation to left
+                            // make it spin counter cc
+                    // remove e2 animation (so it doesn't get rendered)
+                    auto e2Animation = m_entityManager.addEntity("Animation");
+                    Vec2 speed = Vec2(e1CT.velocity.x * -1, -AIRBORNE_VERTICAL_KINEMATICS::INITIAL_VELOCITY_L);
+                    float angularSpeed = e1CT.pos.x < e2CT.pos.x ? -10 : 10; // ccc if MKS came from left, else came from right so cc 
+                    e2Animation->addComponent<CTransform>(e2CT.pos, speed, Vec2(1,1), 0, angularSpeed, ENEMY_KINEMATICS::GRAVITY);
+                    e2Animation->addComponent<CAnimation>();
+                    e2Animation->getComponent<CAnimation>().animation = enemy2->getComponent<CAnimation>().animation;
+                    e2Animation->addComponent<CLifeSpan>(100, 0);
 
-                    g1CT.pos.x += overlap.x/2;
-                    g2CT.pos.x -= overlap.x/2;
+                    enemy2->destroy();
+                    enemy2->removeComponent<CAnimation>();
+                }
+                else if (isEnemy2MKS && !isEnemy1MKS) // enemy2 is MKS and hit and killed enemy1
+                {
+                    auto e1Animation = m_entityManager.addEntity("Animation");
+                    Vec2 speed = Vec2(e2CT.velocity.x * -1, -AIRBORNE_VERTICAL_KINEMATICS::INITIAL_VELOCITY_L);
+                    float angularSpeed = e2CT.pos.x < e1CT.pos.x ? -10 : 10; // ccc if MKS came from left, else came from right so cc 
+                    e1Animation->addComponent<CTransform>(e1CT.pos, speed, Vec2(1,1), 0, angularSpeed, ENEMY_KINEMATICS::GRAVITY);
+                    e1Animation->addComponent<CAnimation>();
+                    e1Animation->getComponent<CAnimation>().animation = enemy1->getComponent<CAnimation>().animation;
+                    e1Animation->addComponent<CLifeSpan>(100, 0);
+
+                    enemy1->destroy();
+                    enemy1->removeComponent<CAnimation>();
+                }
+                else // neither is MKS
+                {
+                    if (e1CT.pos.x <= e2CT.velocity.x)
+                    { 
+                        // Leftmost goomba walks left
+                        e1CT.velocity.x *= (e1CT.velocity.x < 0) ? 1 : -1;
+                        // Rightmost goomba walks right
+                        e2CT.velocity.x *= (e2CT.velocity.x > 0) ? 1 : -1;
+
+                        e1CT.pos.x -= overlap.x/2;
+                        e2CT.pos.x += overlap.x/2;
+
+                    }
+                    else
+                    {
+                        // Leftmost goomba walks left
+                        e2CT.velocity.x *= (e2CT.velocity.x < 0) ? 1 : -1;
+                        // Rightmost goomba walks right
+                        e1CT.velocity.x *= (e1CT.velocity.x > 0) ? 1 : -1;
+
+                        e1CT.pos.x += overlap.x/2;
+                        e2CT.pos.x -= overlap.x/2;
+                    }
                 }
             }
         }
@@ -1352,6 +1419,7 @@ void Scene_Play::sRenderBoundingBoxes()
 
     for (auto e : m_entityManager.getEntities())
     {
+        // WHAT IF E IS DEAD (INACTIVE)?
 
         Vec2 cameraScreenSize = Vec2(m_game->window().getSize().x, m_game->window().getSize().y);
         Vec2 cameraCenterPos = m_cameraPosition + cameraScreenSize/2; // points to the center of the screen
