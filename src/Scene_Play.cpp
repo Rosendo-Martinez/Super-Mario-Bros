@@ -378,7 +378,7 @@ void Scene_Play::sAnimation()
     for (auto e : m_entityManager.getEntities("Enemy"))
     {
         CTransform& eCT = e->getComponent<CTransform>();
-        if (eCT.velocity.x < 0)
+        if (eCT.velocity.x < 0) // for koopas and goombas -1 is facing right, 1 is facing left **sigh**
         {
             eCT.scale.x = 1;
         }
@@ -885,7 +885,7 @@ void Scene_Play::sEnemyState()
                 const Vec2 EMPTY_SHELL_BB = Vec2(64,64);
                 enemy->removeComponent<CLifeSpan>();
                 enemy->getComponent<CAnimation>().animation = m_game->assets().getAnimation("KoopaWalk");
-                enemy->getComponent<CTransform>().velocity.x = -ENEMY_KINEMATICS::KOOPA_SPEED;
+                enemy->getComponent<CTransform>().velocity.x = enemy->getComponent<CTransform>().scale.x < 0 ? ENEMY_KINEMATICS::KOOPA_SPEED : -ENEMY_KINEMATICS::KOOPA_SPEED;
                 enemy->addComponent<CBoundingBox>(KOOPA_BB);
                 enemy->getComponent<CTransform>().pos.y -= KOOPA_BB.y - EMPTY_SHELL_BB.y;
             }
