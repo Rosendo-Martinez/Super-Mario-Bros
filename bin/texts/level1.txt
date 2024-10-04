@@ -343,7 +343,7 @@ Goomba 81 10 14
 Goomba 97 2 13
 Goomba 99 2 15
 
-Koopa 107 2 13
+Koopa 105 2 13
 
 Goomba 113 2 13
 Goomba 114 2 14
